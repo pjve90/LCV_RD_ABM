@@ -4,9 +4,12 @@
 \usepackage{float}
 \usepackage{rotating}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage[round]{natbib}
 \usepackage{setspace}
 \onehalfspacing
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata,positioning}
 
 \title{
 Resources availability, sociality, and the diversity of the female human life cycle.\\
@@ -33,6 +36,36 @@ Dr. Heidi Colleran}
 
 There are many developmental paths an individual can follow through its life cycle (i.e. life-history strategy), which is the basis of the diversity seen across the tree of life. The diversity of reproductive schedules can go from a couple to thousands offspring (e.g. eastern hemlock vs rain moth \citep{tindale1932revision,van2017lifetime} and mortality ones from lifespans of days to thousands of years (e.g. hairyback vs patagonian cypress \citep{balsamo1988life,lara19933620}). The different life-history strategies have usually been related to the limited resources an individual posses in its environment and how it allocates them \citep{stearns2000life}. Humans pose an interesting case regarding its life cycle due to the short reproductive period in comparison to their long lifespan, framed within long juvenile and post-reproductive stages \citep{kaplan2000theory}. Within these boundaries, humans present a high diversity of life-history strategies with populations where life spans are long and their reproductive output is low (e.g. post-demographic transition Japan \citep{de2017maximum}) while others have short lifespans and high reproductive output (e.g. pygmies populations \citep{migliano2007life}). The diversity in female human life-history strategies has also been associated with resource availability, specially in terms of longevity \citep{kaplan2003embodied}; while for fertility the relationship is more complex \citep{mulder1998demographic,sear2016understanding}. Additionally, sociality has been proposed as a way to understand the different life-history strategies among female human populations. Here, the presence or different members of a population in the social network of an individual have been associated with different female life-history strategies \citep{sear2011much}. Examples can be found in literature related to cooperative breeding, sibling competition, female conflict, among others \citep{ivey2000cooperative,nitsch2013elder,mace2012female}.However, both frameworks have not been able to explain what drives the diversity of female human life-history strategies. The interplay between the resources an individual possess and its sociality may be key to understand how the female human life cycle has evolved and diversified. Hence,  this project aims first to understand how different combinations of resources and sociality vary the life cycle of an individual. Afterwards, see how variations of these combinations through time might shape differently the female human life cycle. Finally, if the relationship between resources, sociality, and the diversity of the female human life cycle might change with the interplay of different types of resources.
 \\\\
+The average female human life cycle can be described as having a long lifespan, where a short reproductive period is squeezed between long juvenile and post-reproductive stages (see \ref{fig:1} for a graphical representation). Humans also show a higher fertility in comparison to other primates, despite the short reproductive period, due to its capacity of producing offspring within short interbirth intervals \citep{kaplan2000theory}. However, female humans can show diverse life-history strategies within these boundaries. They can show long life-expectancy (e.g. contemporary Japan $=$ 125 years old \citep{de2017maximum}, or short ones (e.g. pigmy populations $=$15-24 years old \citep{migliano2007life}). The number of offspring can also vary from childless or one offspring (e.g. contemporary East Asian countries \citep{jones2019ultra}) to fertility rates up to 11 children per woman (e.g. Hutterites \citep{eaton1953social}). The length of the juvenile period can also vary, where sexual maturity can be reached at 12 years old, as in Pumé population \citep{kramer2008early}, or at 16 years old, as in Senegal population \citep{simondon1997nutritional}. This variation can also be seen with age at first reproduction, where female humans can have their first offspring early in life (e.g. 15 years old in Pumé population \citep{kramer2008early}) or postpone their reproduction until they are as near to menopause as possible (e.g. women over 50 years old that use assisted reproductive technology \citep{salihu2003childbearing}). Female humans can also vary their interbirth intervals from short intervals (e.g. 2.75 years in Southern Ethiopia \citep{yohannes2011duration}) to longer ones in order to ensure their optimal reproductive success (e.g. 4 years in !Kung population \citep{jones1986bushman}). Finally, the age at last reproduction is one of the traits that most vary in female humans, where individuals from the Herero finish have their last offspring at 29 years old while those from the Ache population have it at 42 years old \citep{towner2016women}. Therefore, the female human life cycle can be highly flexible within the boundaries of long juvenile and post-reproductive periods, with a short reproductive stage, allowing indivduals to adapt their life-history strategies to different scenarios.
+\\\\
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[->,>=stealth',auto,node distance=3.2cm,
+thick]
+\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+
+\node[state]		(A)              {1};
+\node[state]        (B) [right of=A] {2};
+\node[state]        (C) [right of=B] {3};
+\node[state]        (D) [right of=C] {4};
+\node[state]		(E) [right of=D] {5};
+
+\path (A) 	edge			(B)
+(B)	edge			(C)
+(C)	edge			(D)
+(D)	edge			(E)
+(C) edge[bend right=-45] (E)
+(C) edge[dashed,bend left=-45] (A)
+(D) edge[dashed,bend left=-45] (A)
+(B) edge[loop below] (B)
+(C) edge[loop below] (C)
+(D) edge[loop below] (D)
+(E) edge[loop below] (E);
+\end{tikzpicture}
+\caption{Life cycle graph of the human life cycle in five stages. 1 is the newborn stage, 2 the sexually immature stage (i.e. juvenile), 3 the reproductive non-breeding stage (i.e. adulthood), 4 the reproductive breeding stage (i.e. parenthood), and 5 the post-reproductive stage (i.e. elderhood). The thick arrows refers to the transition from one stage to the other or staying in the same one for a period of time, while the dashed one refers to offspring production. A newborn is produced either when an individual transition from stage 3 to 4 or when an individual remains in stage 4 (dashed arrow).}
+    \label{fig:1}
+\end{figure}
+
 Life history theory is the main framework used to understand the life cycle of an organism and its diversity across the tree of life,  from an evolutionary perspective. Life history theory aims to explain the differences in the survival, reproduction, growth, and development of organisms based on a differentiated individual allocation of resources depending on environmental conditions \citep{stearns2000life}. Humans are no exception, and several studies in evolutionary anthropology have used this framework to understand the different life-history strategies that female humans show \citep{mace2000evolutionary,borgerhoff2012human}. The main life-history trade-offs that have been addressed in human populations are quantity vs quality of offspring, reproduction now vs later, and reproductive vs (extra) somatic investment \citep{hill1999life}. Quantity vs quality offspring trade-off refers to the trade-off an individual faces on either investing resources to have a large number of “low-quality” offspring or a few “high-quality” ones. The trade-off reproduce now vs later refers to the moment an individual faces to either postpone reproduction or not, mainly related to its probability to survive later in life. The trade-off between reproduction and (extra) somatic investment alludes to the allocation of resources an individual does towards its offspring or to its own survival and development. Among these trade-offs, the quantity versus quality offspring trade-off has received major attention by itself, leaving few space to analyse the possibility of an interplay of different life-history trade-offs and/or the role of other trade-offs as well \citep{lawson2016offspring}. Furthermore, this situation has led to address mainly the relationship between the amount of resources available and offspring production. This approach usually does not question how and when resources are available but focuses more on how much there are.
 \\\\
 Competition and cooperation have been used to address how sociality may influence the life history trade-offs an individual faces across its life cycle \citep{cant2008reproductive,kramer2005children}. On the one hand, studies on competitive dynamics have focused on reproductive conflict, where intrasexual competition is high between generations \citep{mace2012female,lahdenpera2012severe} and co-residency patterns \citep{pettay2016costly}. Also, sibling competition has been studied in humans, by addressing how the competition among the offspring of an individual influences resource allocation and parent fitness \citep{lawson2009trade}. An example can be seen in rural Ethiopia where land inheritance may increase competition, decreasing productivity and reproductive success of younger siblings \citep{gibson2011land}. On the other hand, the relationship of cooperation and the female human life-history strategy has been framed within the cooperative breeding model, where individuals other than parents help rearing their offspring \citep{hrdy2007evolutionary}. Evidence has been found in rural Ireland, where siblings would suppress their reproduction to take care of the land for the older sibling that is inheriting the land \citep{strassmann1998ecological} while in Mayan and Pumé population infant care is shared between the mother (57\%) and other relatives (43\%) \citep{kramer2018infant}. Most likely, elements of competition and cooperation coexist in human populations, depending on such factors as resource availability \citep{mulder2007hamilton} or genetic relatedness \citep{strassmann2011cooperation}. 
@@ -45,7 +78,105 @@ The mechanisms by which the amount of resources a female human possess links to 
 \\\\
 However, the relationship of resources and sociality with the female human life cycle might also vary depending on the type of resources. Research on female human life-history strategies and the interplay between sociality and resource availability have mainly focused on material resources due to evidence that economic conditions may mediate reproductive behaviour \citep{shenk2013model}. However, there is also evidence that embodied resources also played a role, such as the influence of parental educational level, and their investment in the education of their offspring, in variations on the reproductive behaviour of the descendants \citep{kaplan1996theory,snopkowski2014synthetic,snopkowski2016pathways}. Furthermore, relational resources seem to also play a role in the female human life-history strategies, where social status and prestige across generations may be crucial to understand reproductive and survival schedules \citep{boone1999more,shenk2016status}. Examples can be seen in Agta and BaYaka hunter-gatherers, where women with high relational resources also present high fertility \citep{chaudhary2016competition,page2017hunter}. The ways in which the interplay of these types of resources and how they relate to the life-history strategies of female humans remain unclear. One of the few examples can be seen in Mpimbew population, where material and relational resources may be more important than embodied resources to ensure child survival \citep{mulder2011understanding}. Hence, the relationship between resources and sociality might need to account for different types of resources to explain the variations of life-history strategis in female human populations.
 \\\\
-In conclusion, this project aims to understand how and when the sociality and the resources that a female individual possess might shape its life-history strategy, and how this vary with different types of resources at different stages of life. Hence, the research questions of this project are \textbf{A) how does the interplay of resources and sociality shape the life-history strategy of a female human individual?} The life-history strategy of a female individual would vary mainly due to changes in the amount of resources that she possess, while sociality would play a buffering effect. An individual would increase its longevity and decrease its reproductive output as the amount of resources increase. However, sociality would buffer the resources effect since it would be spread the amount of resources in the population via transfers dynamics. \textbf{B) How does variations of the relationship between resources and sociality across the life cycle influence the life-history strategy of a female individual?} The female human life-history strategy would vary depending on the variability of resources and sociality during the early stages of the life cycle. Individuals would show a life-history more similar to the one experienced in their early stages of the life cycle if they would have more stable amount of resources and sociality during those stages. Sociality would have a buffering effect on oscillations of the amount of resources across the life cycle. Finally, \textbf{C) how the relationship of resources and sociality with the female human life-history strategies changes depending on the interplay of material, embodied, and relational resources?} Material resources would have the main influence in the relationship between resources, sociality, and the female human life-history strategy. Embodied resources would play a buffering effect under oscillations of material resources during the early stages of the life cycle, and relational one in the later ones.
+In conclusion, this project aims to understand how and when the sociality and the resources that a female individual possess might shape its life-history strategy, and how this vary with different types of resources at different stages of life. Hence, the research questions of this project are \textbf{A) how does the interplay of resources and sociality shape the life-history strategy of a female human individual?} The life-history strategy of a female individual would vary mainly due to changes in the amount of resources that she possess, while sociality would play a buffering effect. An individual would increase its longevity and decrease its reproductive output as the amount of resources increase. However, sociality would buffer the resources effect since it would be spread the amount of resources in the population via transfers dynamics (\ref{fig:2}). \textbf{B) How does variations of the relationship between resources and sociality across the life cycle influence the life-history strategy of a female individual?} The female human life-history strategy would vary depending on the variability of resources and sociality during the early stages of the life cycle. Individuals would show a life-history more similar to the one experienced in their early stages of the life cycle if they would have more stable amount of resources and sociality during those stages. Sociality would have a buffering effect on oscillations of the amount of resources across the life cycle. Finally, \textbf{C) how the relationship of resources and sociality with the female human life-history strategies changes depending on the interplay of material, embodied, and relational resources?} Material resources would have the main influence in the relationship between resources, sociality, and the female human life-history strategy. Embodied resources would play a buffering effect under oscillations of material resources during the early stages of the life cycle, and relational one in the later ones.
+
+\begin{figure}[H]
+     \begin{tikzpicture}[->,>=stealth',auto,node distance=3.8cm,
+thin]
+\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+
+\node[state]		(A)              {1};
+\node[state]        (B) [right of=A] {2};
+\node[state]        (C) [right of=B] {3};
+\node[state]        (D) [right of=C] {4};
+\node[state]		(E) [right of=D] {5};
+
+\path 
+(A) edge			(B)
+(B)	edge			(C)
+(C)	edge			(D)
+(D)	edge			(E)
+(C) edge[bend right=-45] (E)
+(C) edge[dashed,ultra thick,bend left=-45] (A)
+(D) edge[dashed,ultra thick,bend left=-45] (A)
+(B) edge[loop below] (B)
+(C) edge[loop below] (C)
+(D) edge[loop below] (D)
+(E) edge[loop below] (E);
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}[->,>=stealth',auto,node distance=3.4cm,
+thin]
+\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+
+\node[state]		(A)              {1};
+\node[state]        (B) [right of=A] {2};
+\node[state]        (C) [right of=B] {3};
+\node[state]        (D) [right of=C] {4};
+\node[state]		(E) [right of=D] {5};
+
+\path (A) 	edge			(B)
+(B)	edge			(C)
+(C)	edge			(D)
+(D)	edge			(E)
+(C) edge[bend right=-45] (E)
+(C) edge[dashed,bend left=-45] (A)
+(D) edge[dashed,bend left=-45] (A)
+(B) edge[loop below] (B)
+(C) edge[loop below] (C)
+(D) edge[loop below] (D)
+(E) edge[loop below] (E);
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,
+thin]
+\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+
+\node[state]		(A)              {1};
+\node[state]        (B) [right of=A] {2};
+\node[state]        (C) [right of=B] {3};
+\node[state]        (D) [right of=C] {4};
+\node[state]		(E) [right of=D] {5};
+
+\path (A) 	edge			(B)
+(B)	edge			(C)
+(C)	edge			(D)
+(D)	edge			(E)
+(C) edge[bend right=-45] (E)
+(C) edge[dashed,bend left=-45] (A)
+(D) edge[dashed,bend left=-45] (A)
+(B) edge[loop below] (B)
+(C) edge[loop below] (C)
+(D) edge[loop below] (D)
+(E) edge[loop below] (E);
+\end{tikzpicture}
+\hfill
+\begin{tikzpicture}[->,>=stealth',auto,node distance=2.6cm,
+thin]
+\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+
+\node[state]		(A)              {1};
+\node[state]        (B) [right of=A] {2};
+\node[state]        (C) [right of=B] {3};
+\node[state]        (D) [right of=C] {4};
+\node[state]		(E) [right of=D] {5};
+
+\path (A) 	edge			(B)
+(B)	edge			(C)
+(C)	edge			(D)
+(D)	edge			(E)
+(C) edge[bend right=-45] (E)
+(C) edge[dashed,ultra thick,bend left=-45] (A)
+(D) edge[dashed,ultra thick,bend left=-45] (A)
+(B) edge[loop below] (B)
+(C) edge[loop below] (C)
+(D) edge[loop below] (D)
+(E) edge[loop below] (E);
+\end{tikzpicture}
+\caption{Life cycle graphs of the human life cycle under different combinations of resources and sociality. 1 is the newborn stage, 2 the sexually immature stage (i.e. juvenile), 3 the reproductive non-breeding stage (i.e. adulthood), 4 the reproductive breeding stage (i.e. parenthood), and 5 the post-reproductive stage (i.e. elderhood). The thick arrows refers to the transition from one stage to the other or staying in the same one for a period of time, while the dashed one refers to offspring production. A newborn is produced either when an individual transition from stage 3 to 4 or when an individual remains in stage 4. The length of the transition arrows refer to different lengths of lifespan while the thickness of dashed arrows refers to the number of offspring produced in that life cycle. The first life cycle is the one for high amount of resources and sociality, the second one to high amount of resources but low sociality, the third one to low resources but high sociality, and the fourth one to low resources and sociality.}
+    \label{fig:2}
+\end{figure}
+
 
 \section{Methodology}
 
