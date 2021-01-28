@@ -81,99 +81,92 @@ However, the relationship of resources and sociality with the female human life 
 In conclusion, this project aims to understand how and when the sociality and the resources that a female individual possess might shape its life-history strategy, and how this vary with different types of resources at different stages of life. Hence, the research questions of this project are \textbf{A) how does the interplay of resources and sociality shape the life-history strategy of a female human individual?} The life-history strategy of a female individual would vary mainly due to changes in the amount of resources that she possess, while sociality would play a buffering effect. An individual would increase its longevity and decrease its reproductive output as the amount of resources increase. However, sociality would buffer the resources effect since it would be spread the amount of resources in the population via transfers dynamics (\ref{fig:2}). \textbf{B) How does variations of the relationship between resources and sociality across the life cycle influence the life-history strategy of a female individual?} The female human life-history strategy would vary depending on the variability of resources and sociality during the early stages of the life cycle. Individuals would show a life-history more similar to the one experienced in their early stages of the life cycle if they would have more stable amount of resources and sociality during those stages. Sociality would have a buffering effect on oscillations of the amount of resources across the life cycle. Finally, \textbf{C) how the relationship of resources and sociality with the female human life-history strategies changes depending on the interplay of material, embodied, and relational resources?} Material resources would have the main influence in the relationship between resources, sociality, and the female human life-history strategy. Embodied resources would play a buffering effect under oscillations of material resources during the early stages of the life cycle, and relational one in the later ones.
 
 \begin{figure}[H]
-     \begin{tikzpicture}[->,>=stealth',auto,node distance=3.8cm,
-thin]
+     \begin{tikzpicture}[->,>=stealth',auto,thin]
 \tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 \node[state]		(A)              {1};
-\node[state]        (B) [right of=A] {2};
-\node[state]        (C) [right of=B] {3};
-\node[state]        (D) [right of=C] {4};
-\node[state]		(E) [right of=D] {5};
+\node[state]        (B) [above left of=A,node distance=1.5cm] {P};
+\node[state]        (C) [above right of=A,node distance=1.5cm] {C};
+\node[state]        (D) [below left of=A,node distance=1.5cm] {R};
+\node[state]        (E) [below right of=A,node distance=1.5cm] {G};
+\node[state]		(F) [right of=A, node distance=3.5cm]             {2};
+\node[state]        (G) [above left of=F,node distance=1.5cm] {P};
+\node[state]        (H) [above right of=F,node distance=1.5cm] {C};
+\node[state]        (I) [below left of=F,node distance=1.5cm] {R};
+\node[state]        (J) [below right of=F,node distance=1.5cm] {G};
+\node[state]		(K) [right of=F, node distance=3.5cm]             {3};
+\node[state]        (L) [above left of=K,node distance=1.5cm] {P};
+\node[state]        (M) [above right of=K,node distance=1.5cm] {C};
+\node[state]        (N) [below left of=K,node distance=1.5cm] {R};
+\node[state]        (O) [below right of=K,node distance=1.5cm] {G};
+\node[state]		(P) [right of=K, node distance=3.5cm]             {4};
+\node[state]        (Q) [above left of=P,node distance=1.5cm] {P};
+\node[state]        (R) [above right of=P,node distance=1.5cm] {C};
+\node[state]        (S) [below left of=P,node distance=1.5cm] {R};
+\node[state]        (T) [below right of=P,node distance=1.5cm] {G};
+\node[state]		(U) [right of=P, node distance=3.5cm]             {5};
+\node[state]        (V) [above left of=U,node distance=1.5cm] {P};
+\node[state]        (W) [above right of=U,node distance=1.5cm] {C};
+\node[state]        (X) [below left of=U,node distance=1.5cm] {R};
+\node[state]        (Y) [below right of=U,node distance=1.5cm] {G};
+\node[state]        (Z) [above of=F,node distance=2.2cm,draw=none,fill=none] {};
+\node[state]        (AA) [above of=Z,node distance=2cm] {A};
+\node[state]        (BB) [left of=AA,node distance=1cm] {C};
+\node[state]        (CC) [left of=BB,node distance=1cm] {P};
+\node[state]        (DD) [right of=AA,node distance=1cm] {R};
+\node[state]        (EE) [right of=DD,node distance=1cm] {G};
+\node[state]        (FF) [above of=O,node distance=3.8cm,draw=none,fill=none] {};
+\node[state]        (GG) [above of=FF,node distance=2.3cm] {A};
+\node[state]        (HH) [left of=GG,node distance=1cm] {C};
+\node[state]        (II) [left of=HH,node distance=1cm] {P};
+\node[state]        (JJ) [right of=GG,node distance=1cm] {R};
+\node[state]        (KK) [right of=JJ,node distance=1cm] {G};
 
-\path 
-(A) edge			(B)
-(B)	edge			(C)
-(C)	edge			(D)
-(D)	edge			(E)
-(C) edge[bend right=-45] (E)
-(C) edge[dashed,ultra thick,bend left=-45] (A)
-(D) edge[dashed,ultra thick,bend left=-45] (A)
-(B) edge[loop below] (B)
-(C) edge[loop below] (C)
-(D) edge[loop below] (D)
-(E) edge[loop below] (E);
+\path
+(B) edge (A)
+(C) edge (A)
+(D) edge (A)
+(E) edge (A)
+(A) edge[loop below] (A)
+(A) edge (F)
+(G) edge (F)
+(H) edge (F)
+(I) edge (F)
+(J) edge (F)
+(F) edge[loop below] (F)
+(F) edge (K)
+(L) edge (K)
+(M) edge (K)
+(N) edge (K)
+(O) edge (K)
+(K) edge[loop below] (K)
+(K) edge (P)
+(Q) edge (P)
+(R) edge (P)
+(S) edge (P)
+(T) edge (P)
+(P) edge[loop below] (P)
+(P) edge (U)
+(V) edge (U)
+(W) edge (U)
+(X) edge (U)
+(Y) edge (U)
+(U) edge[loop below] (U)
+(K) edge[dashed,bend left=-100] (A)
+(P) edge[dashed,bend left=-110] (A)
+(AA) edge (Z)
+(BB) edge (Z)
+(CC) edge (Z)
+(DD) edge (Z)
+(EE) edge (Z)
+(GG) edge (FF)
+(HH) edge (FF)
+(II) edge (FF)
+(JJ) edge (FF)
+(KK) edge (FF)
+;
 \end{tikzpicture}
-\hfill
-\begin{tikzpicture}[->,>=stealth',auto,node distance=3.4cm,
-thin]
-\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
-
-\node[state]		(A)              {1};
-\node[state]        (B) [right of=A] {2};
-\node[state]        (C) [right of=B] {3};
-\node[state]        (D) [right of=C] {4};
-\node[state]		(E) [right of=D] {5};
-
-\path (A) 	edge			(B)
-(B)	edge			(C)
-(C)	edge			(D)
-(D)	edge			(E)
-(C) edge[bend right=-45] (E)
-(C) edge[dashed,bend left=-45] (A)
-(D) edge[dashed,bend left=-45] (A)
-(B) edge[loop below] (B)
-(C) edge[loop below] (C)
-(D) edge[loop below] (D)
-(E) edge[loop below] (E);
-\end{tikzpicture}
-\hfill
-\begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,
-thin]
-\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
-
-\node[state]		(A)              {1};
-\node[state]        (B) [right of=A] {2};
-\node[state]        (C) [right of=B] {3};
-\node[state]        (D) [right of=C] {4};
-\node[state]		(E) [right of=D] {5};
-
-\path (A) 	edge			(B)
-(B)	edge			(C)
-(C)	edge			(D)
-(D)	edge			(E)
-(C) edge[bend right=-45] (E)
-(C) edge[dashed,bend left=-45] (A)
-(D) edge[dashed,bend left=-45] (A)
-(B) edge[loop below] (B)
-(C) edge[loop below] (C)
-(D) edge[loop below] (D)
-(E) edge[loop below] (E);
-\end{tikzpicture}
-\hfill
-\begin{tikzpicture}[->,>=stealth',auto,node distance=2.6cm,
-thin]
-\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
-
-\node[state]		(A)              {1};
-\node[state]        (B) [right of=A] {2};
-\node[state]        (C) [right of=B] {3};
-\node[state]        (D) [right of=C] {4};
-\node[state]		(E) [right of=D] {5};
-
-\path (A) 	edge			(B)
-(B)	edge			(C)
-(C)	edge			(D)
-(D)	edge			(E)
-(C) edge[bend right=-45] (E)
-(C) edge[dashed,ultra thick,bend left=-45] (A)
-(D) edge[dashed,ultra thick,bend left=-45] (A)
-(B) edge[loop below] (B)
-(C) edge[loop below] (C)
-(D) edge[loop below] (D)
-(E) edge[loop below] (E);
-\end{tikzpicture}
-\caption{Life cycle graphs of the human life cycle under different combinations of resources and sociality. 1 is the newborn stage, 2 the sexually immature stage (i.e. juvenile), 3 the reproductive non-breeding stage (i.e. adulthood), 4 the reproductive breeding stage (i.e. parenthood), and 5 the post-reproductive stage (i.e. elderhood). The thick arrows refers to the transition from one stage to the other or staying in the same one for a period of time, while the dashed one refers to offspring production. A newborn is produced either when an individual transition from stage 3 to 4 or when an individual remains in stage 4. The length of the transition arrows refer to different lengths of lifespan while the thickness of dashed arrows refers to the number of offspring produced in that life cycle. The first life cycle is the one for high amount of resources and sociality, the second one to high amount of resources but low sociality, the third one to low resources but high sociality, and the fourth one to low resources and sociality.}
+\caption{Life cycle graphs of the human life cycle under different combinations of resources and sociality. 1 is the newborn stage, 2 the sexually immature stage (i.e. juvenile), 3 the reproductive non-breeding stage (i.e. adulthood), 4 the reproductive breeding stage (i.e. parenthood), and 5 the post-reproductive stage (i.e. elderhood). The thick arrows between life cycle stages refers to the transition from one stage to the other. A newborn is produced either when an individual transition from stage 3 to 4 or when an individual remains in stage 4. The dashed arrows refers to the production of offspring in that life cycle. The thick arrows between letters and life cycle stages or dashed line refers to the influence of resource dynamics (P=production, C=consumption, R=resources received, G=resources given away, A=resources accumulated) on the stage or offspring production. Loop arrows below life cycle stages refers to the probability of accumulating resources.}
     \label{fig:2}
 \end{figure}
 
