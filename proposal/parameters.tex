@@ -1,0 +1,43 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage{caption}
+\usepackage[round]{natbib}
+\usepackage{setspace}
+\onehalfspacing
+
+\title{List of parameters for model}
+\author{Pablo Jose Varas Enriquez}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Global parameters}
+
+The global parameters of the model are the ones used to define the dynamics in each stage of the human life cycle.
+
+\begin{itemize}
+    \item Die: Probability of dying in the stage.
+    \item Age: Amount of time spent in the stage.
+    \item Produce: Probability of producing resources.
+    \item Receive: Probability of receiving resources from another individual.
+    \item Consume: Probability of consuming resources.
+    \item Store: Probability of storing resources.
+    \item Give: Probability of giving resources to another individual.
+    \item Reproduce: Probability of producing offspring.
+    \item Transition: Probability of transitioning to the next stage. The transitions are specified as follow:
+    \begin{itemize}
+        \item Infant transition: Reaching the growth and development necessary to transition to the juvenile stage.
+        \item Sexual maturity: Reaching the development necessary for menarche and transition to the adult stage.
+        \item Reproduce (Adult stage): Producing your first offspring and transition to the breeder stage.
+        \item Menopause: Reaching the moment where you cannot, biologically, produce more offspring and transition to the post-reproductive stage.
+    \end{itemize}
+    \item Resources available: Amount of resources the individual has to allocate in storing, consuming, giving, survival, and/or transitioning.
+    \item Resources stored: Amount of resources the individual stores for later in time.
+\end{itemize}
+
+\end{document}

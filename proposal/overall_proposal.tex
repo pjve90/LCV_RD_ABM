@@ -54,7 +54,6 @@ thick]
 (B)	edge			(C)
 (C)	edge			(D)
 (D)	edge			(E)
-(C) edge[bend right=-45] (E)
 (C) edge[dashed,bend left=-45] (A)
 (D) edge[dashed,bend left=-45] (A)
 (B) edge[loop below] (B)
@@ -80,95 +79,168 @@ However, the relationship of resources and sociality with the female human life 
 \\\\
 In conclusion, this project aims to understand how and when the sociality and the resources that a female individual possess might shape its life-history strategy, and how this vary with different types of resources at different stages of life. Hence, the research questions of this project are \textbf{A) how does the interplay of resources and sociality shape the life-history strategy of a female human individual?} The life-history strategy of a female individual would vary mainly due to changes in the amount of resources that she possess, while sociality would play a buffering effect. An individual would increase its longevity and decrease its reproductive output as the amount of resources increase. However, sociality would buffer the resources effect since it would be spread the amount of resources in the population via transfers dynamics (\ref{fig:2}). \textbf{B) How does variations of the relationship between resources and sociality across the life cycle influence the life-history strategy of a female individual?} The female human life-history strategy would vary depending on the variability of resources and sociality during the early stages of the life cycle. Individuals would show a life-history more similar to the one experienced in their early stages of the life cycle if they would have more stable amount of resources and sociality during those stages. Sociality would have a buffering effect on oscillations of the amount of resources across the life cycle. Finally, \textbf{C) how the relationship of resources and sociality with the female human life-history strategies changes depending on the interplay of material, embodied, and relational resources?} Material resources would have the main influence in the relationship between resources, sociality, and the female human life-history strategy. Embodied resources would play a buffering effect under oscillations of material resources during the early stages of the life cycle, and relational one in the later ones.
 
+\begin{sidewaysfigure}
 \begin{figure}[H]
      \begin{tikzpicture}[->,>=stealth',auto,thin]
 \tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 \node[state]		(A)              {1};
-\node[state]        (B) [above left of=A,node distance=1.5cm] {P};
-\node[state]        (C) [above right of=A,node distance=1.5cm] {C};
-\node[state]        (D) [below left of=A,node distance=1.5cm] {R};
-\node[state]        (E) [below right of=A,node distance=1.5cm] {G};
-\node[state]		(F) [right of=A, node distance=3.5cm]             {2};
-\node[state]        (G) [above left of=F,node distance=1.5cm] {P};
-\node[state]        (H) [above right of=F,node distance=1.5cm] {C};
-\node[state]        (I) [below left of=F,node distance=1.5cm] {R};
-\node[state]        (J) [below right of=F,node distance=1.5cm] {G};
-\node[state]		(K) [right of=F, node distance=3.5cm]             {3};
-\node[state]        (L) [above left of=K,node distance=1.5cm] {P};
-\node[state]        (M) [above right of=K,node distance=1.5cm] {C};
-\node[state]        (N) [below left of=K,node distance=1.5cm] {R};
-\node[state]        (O) [below right of=K,node distance=1.5cm] {G};
-\node[state]		(P) [right of=K, node distance=3.5cm]             {4};
-\node[state]        (Q) [above left of=P,node distance=1.5cm] {P};
-\node[state]        (R) [above right of=P,node distance=1.5cm] {C};
-\node[state]        (S) [below left of=P,node distance=1.5cm] {R};
-\node[state]        (T) [below right of=P,node distance=1.5cm] {G};
-\node[state]		(U) [right of=P, node distance=3.5cm]             {5};
-\node[state]        (V) [above left of=U,node distance=1.5cm] {P};
-\node[state]        (W) [above right of=U,node distance=1.5cm] {C};
-\node[state]        (X) [below left of=U,node distance=1.5cm] {R};
-\node[state]        (Y) [below right of=U,node distance=1.5cm] {G};
-\node[state]        (Z) [above of=F,node distance=2.2cm,draw=none,fill=none] {};
-\node[state]        (AA) [above of=Z,node distance=2cm] {A};
-\node[state]        (BB) [left of=AA,node distance=1cm] {C};
-\node[state]        (CC) [left of=BB,node distance=1cm] {P};
-\node[state]        (DD) [right of=AA,node distance=1cm] {R};
-\node[state]        (EE) [right of=DD,node distance=1cm] {G};
-\node[state]        (FF) [above of=O,node distance=3.8cm,draw=none,fill=none] {};
-\node[state]        (GG) [above of=FF,node distance=2.3cm] {A};
-\node[state]        (HH) [left of=GG,node distance=1cm] {C};
-\node[state]        (II) [left of=HH,node distance=1cm] {P};
-\node[state]        (JJ) [right of=GG,node distance=1cm] {R};
-\node[state]        (KK) [right of=JJ,node distance=1cm] {G};
+\node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
+\node[state]		(C) [below left of=A,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]		(D) [below of=C,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (E) [below of=D,node distance=1.5cm] {R};
+\node[state]        (F) [below right of=A,node distance=1.5cm] {C};
+\node[state]		(G) [below of=F,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (H) [below of=G,node distance=1.5cm] {A};
+\node[state]		(I) [right of=A, node distance=5cm]             {2};
+\node[state]		(J) [below of=I,node distance=0.6cm,draw=none,fill=none] {};
+\node[state]		(K) [below left of=I,node distance=1.5cm] {P};
+\node[state]		(L) [below of=K,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (M) [below of=L,node distance=1.5cm] {R};
+\node[state]        (N) [below right of=I,node distance=1.5cm] {C};
+\node[state]		(O) [below of=N,node distance=1.5cm] {A};
+\node[state]        (P) [below of=O,node distance=1.5cm] {G};
+\node[state]		(Q) [right of=I, node distance=5cm]             {3};
+\node[state]		(R) [below of=Q,node distance=0.6cm,draw=none,fill=none] {};
+\node[state]		(S) [below left of=Q,node distance=1.5cm] {P};
+\node[state]		(T) [below of=S,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (U) [below of=T,node distance=1.5cm] {R};
+\node[state]        (V) [below right of=Q,node distance=1.5cm] {C};
+\node[state]		(W) [below of=V,node distance=1.5cm] {A};
+\node[state]        (X) [below of=W,node distance=1.5cm] {G};
+\node[state]		(Y) [right of=Q, node distance=5cm]             {4};
+\node[state]		(Z) [below of=Y,node distance=0.6cm,draw=none,fill=none] {};
+\node[state]		(AA) [below left of=Y,node distance=1.5cm] {P};
+\node[state]		(BB) [below of=AA,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (CC) [below of=BB,node distance=1.5cm] {R};
+\node[state]        (DD) [below right of=Y,node distance=1.5cm] {C};
+\node[state]		(EE) [below of=DD,node distance=1.5cm] {A};
+\node[state]        (FF) [below of=EE,node distance=1.5cm] {G};
+\node[state]		(GG) [right of=Y, node distance=5cm]             {5};
+\node[state]		(HH) [below of=GG,node distance=0.6cm,draw=none,fill=none] {};
+\node[state]		(II) [below left of=GG,node distance=1.5cm] {P};
+\node[state]		(JJ) [below of=II,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (KK) [below of=JJ,node distance=1.5cm] {R};
+\node[state]        (LL) [below right of=GG,node distance=1.5cm] {C};
+\node[state]		(MM) [below of=LL,node distance=1.5cm] {A};
+\node[state]        (NN) [below of=MM,node distance=1.5cm] {G};
+\node[state]		(OO) [above left of=I, node distance=2.8cm,draw=none,fill=none]             {};
+\node[state]		(PP) [above left of=OO,node distance=2.2cm] {P};
+\node[state]		(QQ) [above of=PP,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (RR) [above of=QQ,node distance=1.5cm] {R};
+\node[state]        (SS) [above right of=OO,node distance=2.2cm] {C};
+\node[state]		(TT) [above of=SS,node distance=1.5cm] {A};
+\node[state]        (UU) [above of=TT,node distance=1.5cm] {G};
+\node[state]		(VV) [above of=Q, node distance=3cm,draw=none,fill=none]             {};
+\node[state]		(WW) [above left of=VV,node distance=2cm] {P};
+\node[state]		(XX) [above of=WW,node distance=1.5cm,draw=none,fill=none] {};
+\node[state]        (YY) [above of=XX,node distance=1.5cm] {R};
+\node[state]        (ZZ) [above right of=VV,node distance=2cm] {C};
+\node[state]		(AAA) [above of=ZZ,node distance=1.5cm] {A};
+\node[state]        (BBB) [above of=AAA,node distance=1.5cm] {G};
 
 \path
-(B) edge (A)
-(C) edge (A)
-(D) edge (A)
-(E) edge (A)
-(A) edge[loop below] (A)
-(A) edge (F)
-(G) edge (F)
+(E) edge (B)
+(F) edge (B)
+(H) edge[bend left=-90, min distance=1.8cm] (B)
+(E) edge (F)
+(E) edge (H)
 (H) edge (F)
-(I) edge (F)
-(J) edge (F)
-(F) edge[loop below] (F)
-(F) edge (K)
-(L) edge (K)
-(M) edge (K)
-(N) edge (K)
-(O) edge (K)
-(K) edge[loop below] (K)
+(A) edge[loop below] (A)
+(A) edge (I)
+(K) edge (J)
+(M) edge[bend right=-90,min distance=1.8cm] (J)
+(N) edge (J)
+(O) edge[bend left=-90,min distance=1.25cm] (J)
+(P) edge[bend left=-90,min distance=1.8cm] (J)
+(K) edge (N)
+(M) edge (N)
+(O) edge (N)
+(K) edge (O)
+(M) edge (O)
 (K) edge (P)
-(Q) edge (P)
-(R) edge (P)
-(S) edge (P)
-(T) edge (P)
-(P) edge[loop below] (P)
-(P) edge (U)
-(V) edge (U)
-(W) edge (U)
-(X) edge (U)
-(Y) edge (U)
-(U) edge[loop below] (U)
-(K) edge[dashed,bend left=-100] (A)
-(P) edge[dashed,bend left=-110] (A)
+(M) edge (P)
+(O) edge (P)
+(I) edge[loop below] (I)
+(I) edge (Q)
+(S) edge (R)
+(U) edge[bend right=-90,min distance=1.8cm] (R)
+(V) edge (R)
+(W) edge[bend left=-90,min distance=1.25cm] (R)
+(X) edge[bend left=-90,min distance=1.8cm] (R)
+(S) edge (V)
+(U) edge (V)
+(W) edge (V)
+(S) edge (W)
+(U) edge (W)
+(S) edge (X)
+(U) edge (X)
+(W) edge (X)
+(Q) edge[loop below] (Q)
+(Q) edge (Y)
 (AA) edge (Z)
-(BB) edge (Z)
-(CC) edge (Z)
+(CC) edge[bend right=-90,min distance=1.8cm] (Z)
 (DD) edge (Z)
-(EE) edge (Z)
-(GG) edge (FF)
-(HH) edge (FF)
-(II) edge (FF)
-(JJ) edge (FF)
-(KK) edge (FF)
+(EE) edge[bend left=-90,min distance=1.25cm] (Z)
+(FF) edge[bend left=-90,min distance=1.8cm] (Z)
+(AA) edge (DD)
+(CC) edge (DD)
+(EE) edge (DD)
+(AA) edge (EE)
+(CC) edge (EE)
+(AA) edge (FF)
+(CC) edge (FF)
+(EE) edge (FF)
+(Y) edge[loop below] (Y)
+(Y) edge (GG)
+(II) edge (HH)
+(KK) edge[bend right=-90,min distance=1.8cm] (HH)
+(LL) edge (HH)
+(MM) edge[bend left=-90,min distance=1.25cm] (HH)
+(NN) edge[bend left=-90,min distance=1.8cm] (HH)
+(II) edge (LL)
+(KK) edge (LL)
+(MM) edge (LL)
+(II) edge (MM)
+(KK) edge (MM)
+(II) edge (NN)
+(KK) edge (NN)
+(MM) edge (NN)
+(GG) edge[loop below] (GG)
+(Q) edge[dashed,bend left=-45] (A)
+(PP) edge (OO)
+(RR) edge[bend left=-65,min distance=1.8cm] (OO)
+(SS) edge (OO)
+(TT) edge[bend right=-75,min distance=1.25cm] (OO)
+(UU) edge[bend right=-75,min distance=1.8cm] (OO)
+(PP) edge (SS)
+(RR) edge (SS)
+(TT) edge (SS)
+(PP) edge (TT)
+(RR) edge (TT)
+(PP) edge (UU)
+(RR) edge (UU)
+(TT) edge (UU)
+(Y) edge[dashed,bend left=-45] (A)
+(WW) edge (VV)
+(YY) edge[bend left=-65,min distance=1.8cm] (VV)
+(ZZ) edge (VV)
+(AAA) edge[bend right=-75,min distance=1.25cm] (VV)
+(BBB) edge[bend right=-75,min distance=1.8cm] (VV)
+(WW) edge (ZZ)
+(YY) edge (ZZ)
+(AAA) edge (ZZ)
+(WW) edge (AAA)
+(YY) edge (AAA)
+(WW) edge (BBB)
+(YY) edge (BBB)
+(AAA) edge (BBB)
 ;
 \end{tikzpicture}
 \caption{Life cycle graphs of the human life cycle under different combinations of resources and sociality. 1 is the newborn stage, 2 the sexually immature stage (i.e. juvenile), 3 the reproductive non-breeding stage (i.e. adulthood), 4 the reproductive breeding stage (i.e. parenthood), and 5 the post-reproductive stage (i.e. elderhood). The thick arrows between life cycle stages refers to the transition from one stage to the other. A newborn is produced either when an individual transition from stage 3 to 4 or when an individual remains in stage 4. The dashed arrows refers to the production of offspring in that life cycle. The thick arrows between letters and life cycle stages or dashed line refers to the influence of resource dynamics (P=production, C=consumption, R=resources received, G=resources given away, A=resources accumulated) on the stage or offspring production. Loop arrows below life cycle stages refers to the probability of accumulating resources.}
     \label{fig:2}
 \end{figure}
+\end{sidewaysfigure}
 
 
 \section{Methodology}
