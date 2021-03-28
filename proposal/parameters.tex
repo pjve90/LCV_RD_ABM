@@ -22,12 +22,12 @@ The global parameters of the model are the ones used to define the dynamics in e
 
 \begin{itemize}
     \item Die: Probability of dying in the stage.
-    \item Age: Amount of time spent in the stage.
     \item Produce: Probability of producing resources.
     \item Receive: Probability of receiving resources from another individual.
     \item Consume: Probability of consuming resources.
     \item Store: Probability of storing resources.
     \item Give: Probability of giving resources to another individual.
+    \itme Lose: Probability of losing resources.
     \item Reproduce: Probability of producing offspring.
     \item Transition: Probability of transitioning to the next stage. The transitions are specified as follow:
     \begin{itemize}
@@ -36,6 +36,14 @@ The global parameters of the model are the ones used to define the dynamics in e
         \item Reproduce (Adult stage): Producing your first offspring and transition to the breeder stage.
         \item Menopause: Reaching the moment where you cannot, biologically, produce more offspring and transition to the post-reproductive stage.
     \end{itemize}
+\end{itemize}
+
+\section{Individual parameters}
+
+the individual parameters of the model are the ones used to define the dynamics of an individual across its life cycle.
+
+\begin{itemize}
+    \item Age: Amount of time spent in the stage.
     \item Resources available: Amount of resources the individual has to allocate in storing, consuming, giving, survival, and/or transitioning.
     \item Resources stored: Amount of resources the individual stores for later in time.
 \end{itemize}
