@@ -27,7 +27,7 @@ The global parameters of the model are the ones used to define the dynamics in e
     \item Consume: Probability of consuming resources.
     \item Store: Probability of storing resources.
     \item Give: Probability of giving resources to another individual.
-    \itme Lose: Probability of losing resources.
+    \item Lose: Probability of losing resources.
     \item Reproduce: Probability of producing offspring.
     \item Transition: Probability of transitioning to the next stage. The transitions are specified as follow:
     \begin{itemize}
@@ -38,14 +38,22 @@ The global parameters of the model are the ones used to define the dynamics in e
     \end{itemize}
 \end{itemize}
 
+\goodbreak
+
 \section{Individual parameters}
 
-the individual parameters of the model are the ones used to define the dynamics of an individual across its life cycle.
+The individual parameters of the model are the ones used to define the dynamics of an individual across its life cycle.
 
 \begin{itemize}
     \item Age: Amount of time spent in the stage.
-    \item Resources available: Amount of resources the individual has to allocate in storing, consuming, giving, survival, and/or transitioning.
-    \item Resources stored: Amount of resources the individual stores for later in time.
+    \item Stage: Life cycle stage in which the individual is at the moment.
+    \item Resources produced: Amount of resources the individual produce, given the stage-specific production probability.
+    \item Resources received: Amount of resources the individual receive, given the stage-specific receiving probability.
+    \item Resources consumed: Amount of resources the individual consume for maintenance, given the stage-specific consumption probability.
+    \item Resources gave: Amount of resources the individual gives, given the stage-specific giving probability.
+    \item Resources stored: Amount of resources the individual stores for later in time, given the stage-specific storing probability.
+    \item Resources lost: Amount of resources the individual loses, given the stage-specific losing probability.
+    \item Resources available: Amount of resources the individual has to allocate in survival, reproduction, and/or transitioning, after the dynamics of producing, receiving, consuming, giving, storing, and losing resources.
 \end{itemize}
 
 \end{document}
