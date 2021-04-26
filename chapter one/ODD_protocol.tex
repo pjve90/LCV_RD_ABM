@@ -1,0 +1,134 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{float}
+\usepackage{rotating}
+\usepackage{caption}
+\usepackage[round]{natbib}
+\usepackage{setspace}
+\onehalfspacing
+
+\title{The interplay of resource acquisition and sharing dynamics explains the diversity of female human reproductive decisions:
+\\
+ODD protocol}
+\author{Pablo J. Varas Enriquez}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Overview}
+
+\subsection{Purpose}
+
+The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. The boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by individual reproductive decisions. Previous work has linked reproductive decisions to the amount of resources available to an individual in its environment or the availability of a network of potential helpers, but how the interplay of both of them change reproductive decisions of an individual remains unclear. Here I develop a theoretical framework to describe how the interplay of resource acquisition and their sharing across the social network may be key to understand female reproductive decisions. More specifically, it provides an opportunity to simulate different scenarios in which the female human life cycle varies.
+
+\subsection{State variables and scales}
+
+\subsubsection{State variables}
+
+Every individual in the simulation is characterised by the following state variables:
+
+\begin{itemize}
+    \item Age: Sum of the amount of time spent in all stages.
+    \item Stage: Life cycle stage in which the individual is at the moment.
+    \item Resources produced: Amount of resources the individual produce, given the stage-specific production probability.
+    \item Resources received: Amount of resources the individual receive, given the stage-specific receiving probability.
+    \item Resources consumed: Amount of resources the individual consume for maintenance, given the stage-specific consumption probability.
+    \item Resources gave: Amount of resources the individual gives, given the stage-specific giving probability.
+    \item Resources stored: Amount of resources the individual stores for later in time, given the stage-specific storing probability.
+    \item Resources lost: Amount of resources the individual loses, given the stage-specific losing probability.
+    \item Resources available: Amount of resources the individual has to allocate in survival, reproduction, and/or transitioning, after the dynamics of producing, receiving, consuming, giving, storing, and losing resources.
+\end{itemize}
+
+\subsubsection{Auxiliary variables}
+
+The individual dynamics are constrained by the following auxiliary variables:
+
+\begin{itemize}
+    \item Die: Probability of dying in the stage.
+    \item Produce: Probability of producing resources.
+    \item Receive: Probability of receiving resources from another individual.
+    \item Consume: Probability of consuming resources.
+    \item Store: Probability of storing resources.
+    \item Give: Probability of giving resources to another individual.
+    \item Lose: Probability of losing resources.
+    \item Reproduce: Probability of producing offspring.
+    \item Transition: Probability of transitioning to the next stage. The transitions are specified as follow:
+    \begin{itemize}
+        \item Infant transition: Reaching the growth and development necessary to transition to the juvenile stage.
+        \item Sexual maturity: Reaching the development necessary for menarche and transition to the adult stage.
+        \item Reproduce (Adult stage): Producing your first offspring and transition to the breeder stage.
+        \item Menopause: Reaching the moment where you cannot, biologically, produce more offspring and transition to the post-reproductive stage.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Higher entity description}
+
+Individuals represent females in a single-sex, haploid population. The carrying capacity is established at $K=?$. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age of sexual maturity. Adults are individuals that have reached sexual maturity until they have their first offspring or reach menopause. Adults transition to a breeder stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
+
+\subsubsection{Scale}
+
+Each iteration in the model represents one year. The probabilities  of producing, receiving, consuming, giving, and losing are binomial, with the values of happening ($1$) or not ($0$). The amount of resources an individual produces, receives, consumes, gives, and lose are fixed for each stage.
+
+\subsection{Process overview and scheduling}
+
+Infant individuals go through survival, receiving, consuming, storing, and losing sub models each year until they transition to the next stage. Once in the juvenile stage, individuals go through survive, produce, receive, consume, give, store, and lose sub models for each year until they reach sexual maturity, transitioning to the adult stage. In the adult stage, individuals also go through surviving, producing, receiving, consuming, giving, storing and losing sub models until they have their first offspring or reach menopause. If an adult transition to a breeder, it goes through surviving, producing, receiving, consuming, giving, storing and losing sub models and also through a reproduction sub model until it reaches menopause. Once in a post-reproductive stage, the individual goes through the surviving, producing, receiving, consuming, giving, storing and losing sub models of the stage. In each year, the individual increase its age and updates they amount of resources it has. During each transition, the individual updates its stage variable and also transitions with the resources it has available form the earlier stage.
+
+\section{Design concepts}
+
+\subsection{Emergence}
+
+
+
+\subsection{Adaptation}
+
+
+
+\subsection{Fitness}
+
+
+
+\subsection{Prediction}
+
+
+
+\subsection{Sensing}
+
+
+
+\subsection{Interaction}
+
+
+
+\subsection{Stochasticity}
+
+
+
+\subsection{Collectives}
+
+
+
+\subsection{Observation}
+
+
+
+
+\section{Details}
+
+
+
+\subsection{Initialisation}
+
+
+
+\subsection{Input}
+
+
+
+\subsection{Submodels}
+
+\end{document}
