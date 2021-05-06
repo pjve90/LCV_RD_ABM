@@ -8,7 +8,7 @@
 \usepackage{setspace}
 \onehalfspacing
 
-\title{The interplay of resource acquisition and sharing dynamics explains the diversity of female human reproductive decisions:
+\title{The interplay of resource acquisition and sharing dynamics explains the diversity of female human reproductive allocative decisions:
 \\
 ODD protocol}
 \author{Pablo J. Varas Enriquez}
@@ -24,7 +24,7 @@ ODD protocol}
 
 \subsection{Purpose}
 
-The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. The boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by individual reproductive decisions. Previous work has linked reproductive decisions to the amount of resources available to an individual in its environment or the availability of a network of potential helpers, but how the interplay of both of them change reproductive decisions of an individual remains unclear. Here I develop a theoretical framework to describe how the interplay of resource acquisition and their sharing across the social network may be key to understand female reproductive decisions. More specifically, it provides an opportunity to simulate different scenarios in which the female human life cycle varies.
+The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. The boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by individual reproductive allocative decisions. Previous work has linked reproductive allocative decisions to the amount of resources available to an individual in its environment or the availability of a network of potential helpers, but how the interplay of both of them change reproductive allocative decisions of an individual remains unclear. Here I develop a theoretical framework to describe how the interplay of resource acquisition and their sharing across the social network may be key to understand female reproductive decisions. More specifically, it allows to analyse fitness differentials by simulating different scenarios in which the female human life cycle might vary.
 
 \subsection{State variables and scales}
 
@@ -42,6 +42,7 @@ Every individual in the simulation is characterised by the following state varia
     \item Resources stored: Amount of resources the individual stores for later in time, given the stage-specific storing probability.
     \item Resources lost: Amount of resources the individual loses, given the stage-specific losing probability.
     \item Resources available: Amount of resources the individual has to allocate in survival, reproduction, and/or transitioning, after the dynamics of producing, receiving, consuming, giving, storing, and losing resources.
+    \item Reproduction: Number of offspring produced, given the stage-specific fertility probability.
 \end{itemize}
 
 \subsubsection{Auxiliary variables}
@@ -68,11 +69,11 @@ The individual dynamics are constrained by the following auxiliary variables:
 
 \subsubsection{Higher entity description}
 
-Individuals represent females in a single-sex, haploid population. The carrying capacity is established at $K=?$. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age of sexual maturity. Adults are individuals that have reached sexual maturity until they have their first offspring or reach menopause. Adults transition to a breeder stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
+Individuals represent females in a single-sex, haploid population. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age of sexual maturity. Adults are individuals that have reached sexual maturity until they have their first offspring or reach menopause. Adults transition to a breeder stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
 
 \subsubsection{Scale}
 
-Each iteration in the model represents one year. The probabilities  of producing, receiving, consuming, giving, and losing are binomial, with the values of happening ($1$) or not ($0$). The amount of resources an individual produces, receives, consumes, gives, and lose are fixed for each stage.
+Each iteration in the model represents one year. The probabilities  of producing, receiving, consuming, giving, and losing are binomial, with the values of happening ($1$) or not ($0$). The amount of resources an individual produces, receives, consumes, gives, and lose are stage-specific.
 
 \subsection{Process overview and scheduling}
 
@@ -82,53 +83,117 @@ Infant individuals go through survival, receiving, consuming, storing, and losin
 
 \subsection{Emergence}
 
-
+ The life cycle of an individual emerge from its behaviour. The life cycle is represented by the timing of its reproductive allocative decision and its reproductive output, constrained by the stage-specific submodels related to resource acquisition and sharing. Population dynamics also emerge from the behaviour of the individuals. The population dynamics are represented as the age distributions of the life cycle transitions, reproductive output, and surviving individuals. 
 
 \subsection{Adaptation}
 
-
+Not apply.
 
 \subsection{Fitness}
 
-
+Fitness is defined as population growth ($\lambda$).
 
 \subsection{Prediction}
 
-
+Not apply.
 
 \subsection{Sensing}
 
-
+Individuals are assumed to know their age, stage, and their current resources available  in order to apply the probabilities of producing, receiving, consuming, giving, losing resources, reproducing, surviving, and transitioning.
 
 \subsection{Interaction}
 
-
+Not apply.
 
 \subsection{Stochasticity}
 
-
+The life-history and resource dynamics models are based on probability distributions. Therefore, reproductive allostatic decisions are stochastic.
 
 \subsection{Collectives}
 
-
+Not apply.
 
 \subsection{Observation}
 
-
-
+For model testing, the life cycle of the individuals was observed process by process. For model analysis, timing (e.g. longevity, age of transition), reproductive (e.g. number of offspring), and resource-related (e.g. production, consumption, giving, receiving, losing) variables were recorded.
 
 \section{Details}
 
-
-
 \subsection{Initialisation}
 
-
+At initialisation, each individual in the population starts in the infant stage with no resources. 
 
 \subsection{Input}
 
-
+The resource dynamics that individuals are subjected to during their life cycle are drawn from binomial distributions that are specific for the life cycle stage in which the individual is.
 
 \subsection{Submodels}
+
+\subsubsection{Infant}
+
+\begin{itemize}
+    \item Die
+    \item Receive
+    \item Consume
+    \item Store
+    \item Lose
+    \item Transition
+\end{itemize}
+
+\subsubsection{Juvenile}
+
+\begin{itemize}
+    \item Die
+    \item Produce
+    \item Receive
+    \item Consume
+    \item Give
+    \item Store
+    \item Lose
+    \item Age at sexual maturity
+\end{itemize}
+
+\subsubsection{Adult}
+
+\begin{itemize}
+    \item Die
+    \item Produce
+    \item Receive
+    \item Consume
+    \item Give
+    \item Store
+    \item Lose
+    \item Transition
+    \begin{itemize}
+        \item Age at first reproduction
+        \item Menopause
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Breeder}
+
+\begin{itemize}
+    \item Die
+    \item Produce
+    \item Receive
+    \item Consume
+    \item Give
+    \item Store
+    \item Lose
+    \item Reproduce
+    \item Menopause
+\end{itemize}
+
+\subsubsection{Post-reproductive}
+
+\begin{itemize}
+    \item Die
+    \item Produce
+    \item Receive
+    \item Consume
+    \item Give
+    \item Store
+    \item Lose
+\end{itemize}
 
 \end{document}
