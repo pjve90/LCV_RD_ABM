@@ -8,7 +8,7 @@
 \usepackage{setspace}
 \onehalfspacing
 
-\title{The interplay of resource acquisition and sharing dynamics explains the diversity of female human reproductive allocative decisions:
+\title{The interplay of resource acquisition and sharing dynamics explains the diversity of female human reproductive allocative decisions.
 \\
 ODD protocol}
 \author{Pablo J. Varas Enriquez}
@@ -24,7 +24,7 @@ ODD protocol}
 
 \subsection{Purpose}
 
-The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. The boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by individual reproductive allocative decisions. Previous work has linked reproductive allocative decisions to the amount of resources available to an individual in its environment or the availability of a network of potential helpers, but how the interplay of both of them change reproductive allocative decisions of an individual remains unclear. Here I develop a theoretical framework to describe how the interplay of resource acquisition and their sharing across the social network may be key to understand female reproductive decisions. More specifically, it allows to analyse fitness differentials by simulating different scenarios in which the female human life cycle might vary.
+The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. The boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by individual reproductive allocative decisions. Previous work has linked reproductive allocative decisions to the amount of resources available to an individual in its environment or the availability of a network of potential helpers, but how the interplay of both of them change reproductive allocative decisions of an individual remains unclear. Here I develop a theoretical framework to describe how the interplay of resource acquisition and their sharing across the social network may be key to understand female reproductive decisions. More specifically, it allows to analyse fitness differentials by simulating different scenarios in which the female human life cycle might vary. [Comment DL: why a agent-based simulation and not a sequence of equations: e.g. infant starts with 1 resource - probability to survive 0.85 * resources 1 - probability to receive 0.9 * 1 - 1.9 resources -> probability to consume 1 * 0.75 - 1.15 resources -> probability to store 0.95 * remaining - 1.0925 -> probability to loose 0.05 * remaining -> 1.038 resources on average at the end; if transition occurs at 1.2 resources means it takes 5.2 years to transition to juvenile; survive to that age 0.85*0.88*0.91*0.95*0.99 = 0.64]
 
 \subsection{State variables and scales}
 
@@ -42,7 +42,8 @@ Every individual in the simulation is characterised by the following state varia
     \item Resources stored: Amount of resources the individual stores for later in time, given the stage-specific storing probability.
     \item Resources lost: Amount of resources the individual loses, given the stage-specific losing probability.
     \item Resources available: Amount of resources the individual has to allocate in survival, reproduction, and/or transitioning, after the dynamics of producing, receiving, consuming, giving, storing, and losing resources.
-    \item Reproduction: Number of offspring produced, given the stage-specific fertility probability.
+    \item Reproduction: Sum of offspring produced, given the stage-specific fertility probability.
+    \item Reproductive effort: Amount of resources the individual uses for reproduction, given the stage-specific probability.
 \end{itemize}
 
 \subsubsection{Auxiliary variables}
@@ -53,9 +54,11 @@ The individual dynamics are constrained by the following auxiliary variables:
     \item Die: Probability of dying in the stage.
     \item Produce: Probability of producing resources.
     \item Receive: Probability of receiving resources from another individual.
-    \item Consume: Probability of consuming resources.
+    \item Times receiving: Number of times receiving resources from other individual(s).
+    \item Consume: Stage-specific amount of resources necessary for somatic maintenance.
     \item Store: Probability of storing resources.
     \item Give: Probability of giving resources to another individual.
+    \item Times giving: Number of times giving resources from other individual(s).
     \item Lose: Probability of losing resources.
     \item Reproduce: Probability of producing offspring.
     \item Transition: Probability of transitioning to the next stage. The transitions are specified as follow:
@@ -73,7 +76,7 @@ Individuals represent females in a single-sex, haploid population. Individuals t
 
 \subsubsection{Scale}
 
-Each iteration in the model represents one year. The probabilities  of producing, receiving, consuming, giving, and losing are binomial, with the values of happening ($1$) or not ($0$). The amount of resources an individual produces, receives, consumes, gives, and lose are stage-specific.
+Each iteration in the model represents one year. The probabilities  of producing, receiving, consuming, giving, and losing are binomial, with the values of happening ($1$) or not ($0$). The amount of resources an individual produces, receives, consumes, gives, and lose are stage-specific. Reproductive effort is evaluated after the resource dynamics, followed by the evaluation for stage transition. Finally, the amount or resources available are passed from one year to the next, being evaluated for survival at the beginning of the iteration.
 
 \subsection{Process overview and scheduling}
 
@@ -121,7 +124,7 @@ For model testing, the life cycle of the individuals was observed process by pro
 
 \subsection{Initialisation}
 
-At initialisation, each individual in the population starts in the infant stage with no resources. 
+At initialisation, each individual in the population starts in the infant stage with the baseline resources to survive, resembling the amount of resources acquired during pregnancy. Hence, an individual would be guaranteed to survive the first survival submodel and go through the resource dynamics submodels, only ageing after surviving the survival submodel in the next iteration.
 
 \subsection{Input}
 
@@ -129,71 +132,82 @@ The resource dynamics that individuals are subjected to during their life cycle 
 
 \subsection{Submodels}
 
+Each individual goes through all the stage-specific submodels each iteration.
+
 \subsubsection{Infant}
 
 \begin{itemize}
-    \item Die
-    \item Receive
-    \item Consume
-    \item Store
-    \item Lose
-    \item Transition
+    \item Die: The infant survives by sampling a value equal or higher than the stage-specific survival rate from a *specify* distribution. The infant has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+    \item Receive: The infant has a probability of receiving a fixed stage-specific amount of resources from another individual by sampling from a binomial distribution.
+    \item Times receiving: The individual receives resources the number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Consume: The infant consumes the amount of resources necessary for somatic maintenance.
+    \item Store: The infant has a probability of storing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Lose: The infant has a probability of losing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Transition: The infant transition by sampling a value equal or higher than the stage-specific probability of transition from a *specify* distribution. The infant has a higher chance to transition if it has a larger amount of resources available. The amount of resources decreases by the costs of transition, while the remaining amount transition to the juvenile stage.
 \end{itemize}
 
 \subsubsection{Juvenile}
 
 \begin{itemize}
-    \item Die
-    \item Produce
-    \item Receive
-    \item Consume
-    \item Give
-    \item Store
-    \item Lose
-    \item Age at sexual maturity
+    \item Die: The juvenile survives by sampling a value equal or higher than the stage-specific survival rate from a *specify* distribution. The juvenile has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+    \item Produce: The juvenile has a probability of producing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Receive: The juvenile has a probability of receiving a fixed stage-specific amount of resources from another individual by sampling from a binomial distribution.
+    \item Times receiving: The individual receives resources the number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Consume: The juvenile consumes the amount of resources necessary for somatic maintenance.
+    \item Give: The juvenile has a probability of giving a fixed stage-specific amount of resources to another individual by sampling from a binomial distribution.
+    \item Times giving: The individual gives resources a number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Store: The juvenile has a probability of storing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Lose: The juvenile has a probability of losing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Age at sexual maturity: The juvenile transition by sampling a value equal or higher than the stage-specific probability of transition from a *specify* distribution. The infant has a higher chance to be sexually mature if it has a larger amount of resources available. The amount of resources decreases by the costs of transition, while the remaining amount transition to the adult stage.
 \end{itemize}
 
 \subsubsection{Adult}
 
 \begin{itemize}
-    \item Die
-    \item Produce
-    \item Receive
-    \item Consume
-    \item Give
-    \item Store
-    \item Lose
-    \item Transition
+    \item Die: The adult survives by sampling a value equal or higher than the stage-specific survival rate from a *specify* distribution. The adult has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+    \item Produce: The adult has a probability of producing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Receive: The adult has a probability of receiving a fixed stage-specific amount of resources from another individual by sampling from a binomial distribution.
+    \item Times receiving: The adult receives resources the number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Consume: The adult consumes the amount of resources necessary for somatic maintenance.
+    \item Give: The adult has a probability of giving a fixed stage-specific amount of resources to another individual by sampling from a binomial distribution.
+    \item Times giving: The individual gives resources a number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Store: The adult has a probability of storing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Lose: The adult has a probability of losing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Transition: The adult transition either to a reproductive stage (i.e. breeder) or a post-reproductive stage depending on either the individual have a offspring or reaches menopause, respectively.
     \begin{itemize}
-        \item Age at first reproduction
-        \item Menopause
+        \item Age at first reproduction: The adult transition by sampling a value equal or higher than the stage-specific fertility rate from a Poisson distribution. The adult has a higher chance to have its first offspring if it has a larger amount of resources available. The amount of resources decreases by the costs of reproduction, while the remaining amount transition to the breeding stage.
+        \item Menopause: The adult transition by sampling a value equal or higher than the stage-specific probability of transition from a *specify* distribution. The adult has a lower chance to transition if it has a larger amount of resources available, where the chance increases every iteration. The amount of resources decreases by the costs of menopause, while the remaining amount transition to the post-reproductive stage.
     \end{itemize}
 \end{itemize}
 
 \subsubsection{Breeder}
 
 \begin{itemize}
-    \item Die
-    \item Produce
-    \item Receive
-    \item Consume
-    \item Give
-    \item Store
-    \item Lose
-    \item Reproduce
-    \item Menopause
+    \item Die: The breeder survives by sampling a value equal or higher than the stage-specific survival rate from a *specify* distribution. The breeder has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+    \item Produce: The breeder has a probability of producing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Receive: The breeder has a probability of receiving a fixed stage-specific amount of resources from another individual by sampling from a binomial distribution.
+    \item Times receiving: The breeder receives resources the number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Consume: The breeder consumes the amount of resources necessary for somatic maintenance.
+    \item Give: The breeder has a probability of giving a fixed stage-specific amount of resources to another individual by sampling from a binomial distribution.
+    \item Times giving: The individual gives resources a number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Store: The breeder has a probability of storing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Lose: The breeder has a probability of losing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+   \item Reproduce: The breeder produce an offspring by sampling a value equal or higher than the stage-specific fertility rate from a Poisson distribution. The adult has a higher chance to have its first offspring if it has a larger amount of resources available. The amount of resources decreases by the costs of reproduction
+    \item Menopause: The breeder transition by sampling a value equal or higher than the stage-specific probability of transition from a *specify* distribution. The breeder has a lower chance to transition if it has a larger amount of resources available, where the chance increases every iteration. The amount of resources decreases by the costs of menopause, while the remaining amount transition to the post-reproductive stage.
 \end{itemize}
 
 \subsubsection{Post-reproductive}
 
 \begin{itemize}
-    \item Die
-    \item Produce
-    \item Receive
-    \item Consume
-    \item Give
-    \item Store
-    \item Lose
+    \item Die: The post-reproductive survives by sampling a value equal or higher than the stage-specific survival rate from a *specify* distribution. The individual has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+    \item Produce: The post-reproductive has a probability of producing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Receive: The post-reproductive has a probability of receiving a fixed stage-specific amount of resources from another individual by sampling from a binomial distribution.
+    \item Times receiving: The post-reproductive receives resources the number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Consume: The post-reproductive consumes the amount of resources necessary for somatic maintenance.
+    \item Give: The post-reproductive has a probability of giving a fixed stage-specific amount of resources to another individual by sampling from a binomial distribution.
+    \item Times giving: The individual gives resources a number of times by randomly sampling a value between zero and the maximum number of individuals in the population.
+    \item Store: The post-reproductive has a probability of storing a fixed stage-specific amount of resources by sampling from a binomial distribution.
+    \item Lose: The post-reproductive has a probability of losing a fixed stage-specific amount of resources by sampling from a binomial distribution.
 \end{itemize}
 
 \end{document}
