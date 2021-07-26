@@ -127,9 +127,30 @@ For model testing, the life cycle of the individuals was observed process by pro
 
 \subsection{Initialisation}
 
-At initialisation, each individual in the population starts in the infant stage with the baseline resources to survive, resembling the amount of resources acquired during pregnancy. Hence, an individual would be guaranteed to survive the first survival submodel and go through the resource dynamics submodels, only ageing after surviving the survival submodel in the next iteration.
+At initialisation, the population will be composed of equal number of individuals per life cycle stage. Each individual in the population starts in the infant stage with the baseline resources to survive to guarantee the survival in the first survival submodel and go through the resource dynamics submodels, only ageing after surviving the survival submodel in the next iteration.
+\\\\
+The auxiliary variables for each stage are set at initialisation. The values for each variable and stage are based on previous research (Table \ref{tab:1}).
 
-The auxiliary variables for each stage are set at initialisation. The values for each variable and stage are based on *X* population.
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{ l r }
+    \hline
+    Auxiliary variable & Reference \\ 
+    \hline
+    Die & \cite{gurven2007longevity} \\  
+    Produce & \cite{koster2020life} \\  
+    Times receiving & \cite{gurven2004give} \\  
+    Receive & \cite{gurven2004give} \\  
+    Consume & \cite{kaplan2000theory} \\  
+    Store & missing reference \\  
+    Times giving & \cite{gurven2004give} \\  
+    Reproduce & Hutterites reference \\  
+    Transition & missing reference  \\
+    \hline
+    \end{tabular}
+    \caption{Caption}
+    \label{tab:1}
+\end{table}
 
 \subsection{Input}
 
