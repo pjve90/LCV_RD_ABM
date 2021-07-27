@@ -2,8 +2,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[margin=2.6cm]{geometry}
 \usepackage{float}
-\usepackage{graphicx}
 \usepackage{rotating}
+\usepackage{graphicx}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage[round]{natbib}
@@ -12,7 +12,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows,automata,positioning}
 
-\title{The interplay of resource acquisition and sharing dynamics explains the diversity of female human reproductive allocative decisions.
+\title{The interplay of resource acquisition and transfers explains the diversity of female human reproductive allocative decisions.
 \\
 Registered Report}
 \author{Pablo J. Varas Enriquez, Monique Bogerhoff Mulder, Heidi Colleran, Dieter Lukas*\\\\
@@ -35,13 +35,211 @@ The model will be developed in an agent-based model framework, considering that 
 
 \subsection{Purpose}
 
-The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. The boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by individual reproductive allocative decisions. Previous work has linked reproductive allocative decisions to the amount of resources available to an individual in its environment or the availability of a network of potential helpers, but how the interplay of both of them change reproductive allocative decisions of an individual, and its life cycle as consequence, remains unclear. Here we will develop a theoretical framework to understand how the interplay of resource acquisition and their sharing across the social network influence female reproductive allocative decisions. More specifically, the model would allow identify which scenarios vary the timing of life stage transitions, longevity, and reproductive timing and output of individuals, and their fitness, ultimately. A graphical explanation can be seen in Fig. \ref{fig:1}
+The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. The boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by individual reproductive allocative decisions. Previous work has linked reproductive allocative decisions to the amount of resources available to an individual in its environment or the availability of a network of potential helpers, but how the interplay of both of them change reproductive allocative decisions of an individual, and its life cycle as consequence, remains unclear. Here we will develop a theoretical framework to understand how the interplay of resource acquisition and their sharing across the social network influence female reproductive allocative decisions. More specifically, the model would allow identify which scenarios vary the timing of life stage transitions, longevity, and reproductive timing and output of individuals, and their fitness, ultimately. A graphical explanation can be seen in Fig. \ref{fig:1}.
+\\\\
+For the purpose of this model, the life cycle of an individual will be described by the time spent across five discrete stages (i.e. infant, juvenile, adult, reproductive-career, post-reproductive) and the number of surviving offspring until sexual maturity (i.e. lifetime reproductive success). Therefore, reproductive allocative decisions will be understood as the key events that define the individual life cycle, including the timing of each life stage transition, longevity, and reproductive timing and output. Resource acquisition in the model will be related to resource production and consumption, while sharing will be related to the giving and receiving dynamics an individual is subject to. A graphical representation can be seen in Fig. \ref{fig:2}.
+
+\subsection{Entities, state variables, and scale}
+
+\subsubsection{Entities}
+
+Individuals represent females in a single-sex, haploid population. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age of sexual maturity. Adults are individuals that have reached sexual maturity until they have their first offspring or reach menopause. Adults transition to a reproductive-career stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
+
+\subsubsection{State variables}
+
+Every individual in the simulation is characterised by state variables that are a) calculated new in each iteration, and b) modified from one iteration to the next:
+
+\begin{itemize}
+    \item Variables that are calculated new each iteration:
+    \begin{itemize}
+        \item Resources produced: Amount of resources produced by the individual. The amount is fixed to each stage. Therefore, the individual whether produce resources (stage-specific resource production) or not (0) based on a stage-specific production probability specified during initialisation.
+        \item Resources received: Amount of resources received by the individual from other individual(s). The amount received by another individual is fixed to each stage. Therefore, the individual receives resources depending on the number of times the stage-specific probability is successful ($1$) or not ($0$), constrained by the stage-specific number of times receiving specified during initialisation.
+        \item Resources gave: Amount of resources given by the individual to other individual(s). The amount given to another individual is fixed to each stage. Therefore, the individual gives resources depending on the number of times the stage-specific probability is successful ($1$) or not ($0$), constrained by the stage-specific number of times giving specified during initialisation.
+        \item Resources available: Amount of resources an individual has after the dynamics of producing, consuming, giving, receiving, and storing resources. The resources available influence the probabilities for surviving, reproducing, and/or transitioning of an individual and decrease with the costs of each dynamic.
+        \item Reproductive effort: Amount of resources the individual uses for reproduction, given the stage-specific probability. The amount is fixed to each stage. Therefore, the individual whether gives birth (stage-specific fertility probability)  or not (0) based on the stage-specific fertility probability and the amount of resources available.
+    \end{itemize}
+    \item Variables that are modified from one iteration to the next:
+    \begin{itemize}
+        \item Age: Amount of iterations the individual goes through from its birth until it dies. Age increases by one after each iteration, reflecting one year.
+        \item Stage: Life cycle stage in which the individual is at the moment. There are five stages (infant, juvenile, adult, reproductive-career, post-reproductive), each with its own stage-specific resource and life-history dynamics. Individual progression through the stages is determined by their age and resources available.
+        \item Resources stored: Amount of resources the individual stores for later in time (i.e. next iteration). The amount of resources stored depends on the surplus resources after the stage-specific resource and life-history dynamics. Therefore, the individual whether stores the surplus (stage-specific storing) or loses it (0) based on the stage-specific storing probability. Additionally, stored resources may decay with time.
+        \item Reproductive output: Amount of offspring produced, given the stage-specific fertility probability. Reproductive output increases by one after an iteration, if reproductive requirements (i.e. fertility probability and resources available) are met.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Auxiliary variables}
+
+The individual dynamics are constrained by the following auxiliary variables. These variables are stage-specific, set at the initialisation and apply to all individuals in dependence on their state variables.
+
+\begin{itemize}
+    \item Die: Probability of dying in the stage. The probability is based on the mortality rates from \cite{gurven2007longevity}, which is adjusted according to the resources available for an individual.
+    \item Produce: Probability of producing resources. The probability is based on a binomial distribution regarding whether the individual produces resources ($1$) or not ($0$). The values of the distribution are based on \cite{koster2020life}.
+    \item Times receiving: Number of individuals from whom receiving resources. The values can go from zero to the maximum number of individuals available for giving in \cite{gurven2004give}.
+    \item Receive: Probability of receiving resources from another individual. The probability is based on a binomial distribution regarding whether the individual receives resources ($1$) or not ($0$) . The values of the distribution are based on \cite{gurven2004give}. The sampling size is defined by the \emph{Times receiving}.
+    \item Consume: Amount of resources necessary for somatic maintenance, based on \cite{kaplan2000theory}.
+    \item Store: Probability of storing the surplus of resources at the end of an iteration. The probability is based on a binomial distribution regarding whether the individual stores resources ($1$) or not ($0$). The values of the distribution are based on \citep{bowles2011cultivation}.
+    \item Times giving: Number of times giving resources from other individual(s). The values can go from zero to the maximum number of individuals available for receiving in \cite{gurven2004give}.
+    \item Give: Probability of giving resources to another individual. The probability is based on a binomial distribution regarding whether the individual gives resources ($1$) or not ($0$) . The values of the distribution are based on \cite{gurven2004give}. The sampling size is defined by \emph{Times giving}.
+    \item Reproduce: Probability of producing an offspring. The probability is based on a stage-specific fertility rate, which is adjusted according to the resources available for an individual.
+    \item Transition: Probability of transitioning to the next stage. The transitions are specified as follow:
+    \begin{itemize}
+        \item Infant transition: Reaching the growth and development necessary to transition to the juvenile stage.
+        \item Sexual maturity: Reaching the development necessary for menarche and transition to the adult stage.
+        \item Reproduce (adult stage): Producing your first offspring and transition to the reproductive-career stage.
+        \item Menopause: Reaching the moment where you cannot, biologically, produce more offspring and transition to the post-reproductive stage.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Scale}
+
+Each iteration in the model represents one year. The probabilities  of producing, receiving, consuming, giving, and storing are binomial, with the values of happening ($1$) or not ($0$). The amount of resources an individual produces, receives, consumes, gives, and store are stage-specific. The number of times an individual receives and gives are also stage-specific . Reproductive effort is evaluated after the resource dynamics, followed by the evaluation for stage transition. Finally, the amount or resources available are stored and passed from one year to the next, being evaluated for survival at the beginning of the iteration.
+
+\subsection{Process overview and scheduling}
+
+Infant individuals go through survival, receiving, consuming, and storing sub models each year until they transition to the next stage. Once in the juvenile stage, individuals go through survive, produce, receive, consume, give, and store sub models for each year until they reach sexual maturity, transitioning to the adult stage. In the adult stage, individuals go through surviving, producing, receiving, consuming, giving, and storing sub models until they have their first offspring or reach menopause. If an adult transition to a reproductive-career stage, it goes through surviving, producing, receiving, consuming, giving, storing sub models and also through a reproduction sub model until it reaches menopause. Once in a post-reproductive stage, the individual goes through the surviving, producing, receiving, consuming, giving, and storing sub models of the stage. In each year, the individual increase its age and updates they amount of resources it has. During each transition, the individual updates its stage variable and also transitions with the resources it has stored from the earlier stage.
+\\\\
+The scheduling of the process starts with the survival sub model so only individuals who survive can age and go through the rest of the sub models in the iteration. The resource-related sub models start with those who may increase the amount of resources available (production and receiving), followed by those who decrease the amount of resources (consumption and giving), and ending with the storing sub model. The reproduction sub model follows the resource-related ones in order to see the influence of resource dynamics in the reproductive output and timing. The schedule ends with the transition sub model to evaluate if the individual moves to the next life cycle stage or not.
+
+\subsection{Design concepts}
+
+\subsubsection{Basic principles}
+
+The model aims to offer a theoretical framework to understand the variability of life cycles within the human species, by understanding the role of resource acquisition and transfers, combined, in reproductive allocative decisions. Evolutionary models have focused on the evolution of the human life cycle, and its characterisation of having a long lifespan where a short reproductive-career develops between long juvenile and post-reproductive stages. However, understanding how the female human life cycle varies might shed some lights on the different pathways under which the human life cycle has evolved. Here, the embodied capital theory suggests that the surplus of resource production during adulthood allows the evolution of the female human life cycle \citep{kaplan2000theory}. This model proposes that the difference between resource production and consumption allows high parental investment, translated in short interbirth intervals and long post-reproductive periods for the parents and long juvenile periods for their offspring. Furthermore, the pooled energy model deepens in this framework by suggesting that alloparenting from individuals of different generations would allow to decrease the load of parental investment \citep{kramer2010pooled}. Resource transfer theory poses that inter-generational transfers would play a major role in the mortality and fertility schedules of human populations. \cite{lee2003rethinking} suggests that age-specific mortality is proportional to the remaining reproductive value and resource transfers made at later ages, predicting the early-life and later-life mortality patterns characteristics of the female human life cycle. Additionally, \cite{chu2006co} model shows that inter-generational transfers co-evolve with low mortality, since adults are more efficient to produce energy, which is transferred to juveniles, who are more efficient to turn that energy into body size, allowing lower mortality. Hence, these models show that the female human life cycle evolves from the interplay of resources acquisition and transfers. However, they do not explain the conditions under which the life cycle varies, as our model aims to do.
+
+\subsubsection{Emergence}
+
+The life cycle of an individual emerges from its behaviour. The life cycle is represented by the timing of its reproductive allocative decision (i.e. life stage transition, reproductive output and timing, and longevity) constrained by the stage-specific sub models related to resource acquisition and transfers. Population dynamics also emerge from the behaviour of the individuals. The population dynamics are represented as the age distributions of the life cycle transitions, reproductive output and timing, and longevity and surviving individuals. The aims are to a) observe the ages of transition between stages and reproductive behaviour (i.e. reproductive output and timing) that emerge in scenarios with different resource productivity and sharing dynamics (fix resources produced, given, received, and stored) and b) calculate fitness differences associated with the different strategies that emerge in the different scenarios.
+
+\subsubsection{Adaptation}
+
+The model has three adaptive behaviours, that characterise the female human life cycle: 1) the time to transition from one life stage to another, 2) the reproductive output and timing, and 3) longevity. The three of them are based on whether the individual satisfies the requirements to transition, reproduce, and/or survive in an iteration, by having enough resources from the resource-related sub models. An individual transitions, reproduces, and/or survives using an stochastic process described below in the corresponding sub models.
+
+\subsubsection{Objectives}
+
+The objective measure used by the individuals in the model to whether transition, reproduce, and/or survive is the amount of resources available to the individual from production, receiving, consumption, giving, and storing dynamics. The resource-related dynamics are based on a stochastic process described below in the corresponding sub models.
+
+\subsubsection{Learning}
+
+Not apply
+
+\subsubsection{Prediction}
+
+The adaptive behaviour of individuals is based on the implicit prediction that transition, reproduction, and/or survival when  the objective measure is below the necessary amount of resources available is likely  to  eventually  result  in  the  individual developing a life cycle with less time per life cycle stage, low reproductive output, short interbirth intervals, and longevity.
+
+\subsubsection{Sensing}
+
+Individuals are assumed to know their age, stage, and their current resources available  in order to apply the probabilities of producing, receiving, consuming, giving, and storing resources, as well as reproducing, surviving, and transitioning.
+
+\subsubsection{Interaction}
+
+Not apply
+
+\subsubsection{Stochasticity}
+
+The life cycle and resource dynamics models are based on probability distributions. Therefore, reproductive allostatic decisions are stochastic.
+
+\subsubsection{Collectives}
+
+Not apply
+
+\subsubsection{Observation}
+
+The purpose of the model is to identify which scenarios of resource acquisition and transfer vary the timing of life stage transitions, longevity, and reproductive timing and output of individuals, and their fitness, ultimately. Therefore, the different reproductive allocative decision of the individuals are recorded, as well as resource-related measures (e.g. production, consumption, giving, receiving, storing). At the population level, distributions of each reproductive allocative decision and resource-related measure are produced based on the individual data.
+
+\subsection{Initialization}
+
+At initialisation, the population will be composed of equal number of individuals per life cycle stage. Each individual in the population starts in the infant stage with the baseline resources to survive to guarantee the survival in the first survival sub model and go through the resource dynamics sub models, only ageing after surviving the survival sub model in the next iteration.
+\\\\
+The auxiliary variables for each stage are set at initialisation. The values for each variable and stage are based on previous research (Table \ref{tab:1}).
+
+\subsection{Input Data}
+
+The model does not use input data to represent time-varying processes.
+
+\subsection{Sub models}
+
+Each individual goes through all the stage-specific sub models each iteration.
+
+\begin{itemize}
+    \item Infant
+    \begin{itemize}
+        \item Die: The infant survives by sampling a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The infant has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
+        \item Receive: The infant has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the values on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
+        \item Consume: The infant consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
+        \item Store: The infant has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the values on \citep{bowles2011cultivation}. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
+        \item Transition: The infant transition by sampling a value equal or higher than the stage-specific probability of transition, based on the values on \emph{(ref. missing)}. The infant has a higher chance to transition if it has a larger amount of resources available. The amount of resources decreases by the costs of transition, while the remaining amount is stored, and transition to the juvenile stage.
+    \end{itemize}
+    \item Juvenile
+    \begin{itemize}
+        \item Die: The juvenile survives by sampling a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The juvenile has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+        \item Produce: The juvenile has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
+        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
+        \item Receive: The juvenile has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
+        \item Consume: The juvenile consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
+        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
+        \item Give: The juvenile has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
+        \item Store: The juvenile has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the values on \citep{bowles2011cultivation}. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
+        \item Age at sexual maturity: The juvenile transition by sampling a value equal or higher than the stage-specific probability of reaching sexual maturity, based on the values on \citep{ellison2017reproductive}. The juvenile has a higher chance to be sexually mature if it has a larger amount of resources available. The amount of resources decreases by the costs of transition, while the remaining amount is stored, and transition to the adult stage.
+    \end{itemize}
+    \item Adult
+    \begin{itemize}
+        \item Die: The adult survives by sampling a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The adult has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+        \item Produce: The adult has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
+        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
+        \item Receive: The adult has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
+        \item Consume: The adult consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
+        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
+        \item Give: The adult has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
+        \item Store: The adult has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the values on \citep{bowles2011cultivation}. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
+        \item Transition: The adult transition either to a reproductive stage (i.e. adult) or a post-reproductive stage depending on either the individual have a offspring or reaches menopause, respectively.
+        \begin{itemize}
+            \item Age at first reproduction: The adult transition by sampling from a Poisson distribution a value equal or higher than the stage-specific fertility rate, based on the values on \citep{wood2017dynamics}. The adult has a higher chance to have its first offspring if it has a larger amount of resources available. The amount of resources decreases by the costs of reproduction, while the remaining amount is stored, and transition to the breeding stage.
+            \item Menopause: The adult transition by sampling a value equal or higher than the stage-specific probability of menopause, based on the values on \citep{laisk2019demographic}. The adult has a lower chance to transition if it has a larger amount of resources available, where the chance increases every iteration. The amount of resources decreases by the costs of menopause, while the remaining amount is stored, and transition to the post-reproductive stage.
+        \end{itemize}
+    \end{itemize}
+    \item Reproductive career
+    \begin{itemize}
+        \item Die: The individual in its reproductive career survives by sampling a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The individual has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+        \item Produce: The individual in its reproductive career has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
+        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
+        \item Receive: The individual in its reproductive career has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
+        \item Consume: The individual in its reproductive career consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
+        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
+        \item Give: The individual in its reproductive career has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
+        \item Store: The individual in its reproductive career has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the values on \citep{bowles2011cultivation}. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
+        \item Reproduce: The individual in its reproductive career produce an offspring by sampling from a Poisson distribution a value equal or higher than the stage-specific fertility rate, based on the values on \citep{wood2017dynamics}. If the individual samples a value equal or higher than the stage-specific fertility rate, then it produces one offspring. The individual in its reproductive career has a higher chance to have an offspring if it has a larger amount of resources available. The amount of resources decreases by the costs of reproduction, which diminishes after every reproduction.
+        \item Menopause: The individual in its reproductive career transition by sampling a value equal or higher than the stage-specific probability of menopause, based on the values on \citep{laisk2019demographic}. The individual in its reproductive career has a lower chance to transition if it has a larger amount of resources available, where the chance increases every iteration. The amount of resources decreases by the costs of menopause, while the remaining amount is stored, and transition to the post-reproductive stage.
+    \end{itemize}
+    \item Post-reproductive
+    \begin{itemize}
+        \item Die: The post-reproductive survives by sampling a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The post-reproductive has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
+        \item Produce: The post-reproductive has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
+        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
+        \item Receive: The post-reproductive has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
+        \item Consume: The post-reproductive consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
+        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
+        \item Give: The post-reproductive has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
+        \item Store: The post-reproductive has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$),based on the values on \citep{bowles2011cultivation}. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
+    \end{itemize}
+\end{itemize}
+
+\section{Model Analysis}
+
+The model analysis will consist on developing regression models based on the patterns emerging from the agent-based model, in order to determine if the interplay of resource acquisition and transfers predict variations in the reproductive allocative decisions, and the female human life cycle \ref{fig:1}. This way, it would be possible to understand how the different resource dynamics predict the timing of transition from one life cycle stage to another, the number and timing of offspring, the individual longevity, and its offspring survival. Additionally, the uncertainty of the model will be addressed by extracting summary statistics from the outcomes of the model. For this, the model will be run several times, which would allow to build distributions for each of the reproductive allocative decisions and resource dynamics.
+
+\section{Future modifications}
+
+
+
+\section{Tables and Figures}
 
 \begin{figure}[H]
     \centering
-    \begin{tikzpicture}[->,>=stealth',auto,thin]
+    \begin{tikzpicture}[->,>=stealth',auto,thin,]
 \tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
+\node[state]        (O) [left of=A,node distance=1cm,draw=none,fill=none] {1)};
 \node[state]		(A)              {P};
 \node[state]		(B) [right of=A,node distance=1.5cm,draw=none,fill=none] {};
 \node[state]		(C) [below of=B,node distance=1.5cm] {C};
@@ -57,6 +255,7 @@ The female human life cycle is characterised by a long lifespan, within which th
     \begin{tikzpicture}[->,>=stealth',auto,thin]
 \tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
+\node[state]        (O) [left of=A,node distance=1cm,draw=none,fill=none] {2)};
 \node[state]		(A)              {R};
 \node[state]		(B) [right of=A,node distance=1.5cm,draw=none,fill=none] {};
 \node[state]		(C) [below of=B,node distance=1.5cm] {G};
@@ -72,6 +271,7 @@ The female human life cycle is characterised by a long lifespan, within which th
     \begin{tikzpicture}[->,>=stealth',auto,thin]
 \tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
+\node[state]        (O) [left of=A,node distance=1cm,draw=none,fill=none] {3)};
 \node[state]		(A)              {P};
 \node[state]		(B) [right of=A,node distance=1.5cm] {C};
 \node[state]		(C) [below of=B,node distance=1.5cm] {S};
@@ -93,13 +293,11 @@ The female human life cycle is characterised by a long lifespan, within which th
 (D) edge[bend left=-90, min distance=1cm] (F)
 (E) edge (F)
 ;
+
     \end{tikzpicture}
-    \caption{Caption}
+    \caption{Graphical representation of the relationship of resource dynamics with the female human life cycle (LF). Figure 1 represents the relationship of resource acquisition with LF, via resource production (P) and consumption (C). Figure 2 represents the dynamics with sharing, where the LF of an individual might be influenced by receiving (R) or giving (G) resources. Figure 3 represents the dynamics of the interplay between resource acquisition and sharing and the female human life cycle, as well as including the role of storing resources (S).}
     \label{fig:1}
 \end{figure}
-
-For the purpose of this model, the life cycle of an individual will be described by the time spent across five discrete stages (i.e. infant, juvenile, adult, reproductive-career, post-reproductive) and the number of surviving offspring until sexual maturity (i.e. lifetime reproductive success). Therefore, reproductive allocative decisions will be understood as the key events that define the individual life cycle, including the timing of each life stage transition, longevity, and reproductive timing and output. Resource acquisition in the model will be related to resource production and consumption, while sharing will be related to the giving and receiving dynamics an individual is subject to. A graphical representation can be seen in Fig. \ref{fig:2}.
-
 
 \begin{sidewaysfigure}
 \begin{figure}[H]
@@ -271,188 +469,7 @@ For the purpose of this model, the life cycle of an individual will be described
 \end{figure}
 \end{sidewaysfigure}
 
-
-
-
-
-
-
-
-
-
-
-
-Graphically described in Fig. \ref{fig:1}, infant individuals go through survival, receiving, consuming, and storing sub models each year until they transition to the next stage. Once in the juvenile stage, individuals go through survive, produce, receive, consume, give, and store sub models for each year until they reach sexual maturity, transitioning to the adult stage. In the adult stage, individuals also go through surviving, producing, receiving, consuming, giving, and storing sub models until they have their first offspring or reach menopause. If an adult transition to a reproductive career stage, it goes through surviving, producing, receiving, consuming, giving, and storing sub models and also through a reproduction sub model until it reaches menopause. Once in a post-reproductive stage, the individual goes through the surviving, producing, receiving, consuming, giving, and storing sub models of the stage. In each year, the individual increase its age and updates they amount of resources it has. During each transition, the individual updates its stage variable and also transitions with the resources it has available form the earlier stage.
-
-\subsection{Specify key assumptions uncertainties}
-
-Individuals represent females in a single-sex, haploid population. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age of sexual maturity. Adults are individuals that have reached sexual maturity until they have their first offspring or reach menopause. Adults transition to a breeder stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
-\\\\
-Individuals are assumed to know their age, stage, and their current resources available  in order to apply the probabilities of producing, receiving, consuming, giving, losing resources, reproducing, surviving, and transitioning.
-\\\\
-The life cycle and resource dynamics models are based on probability distributions. Therefore, reproductive allostatic decisions are stochastic.
-
-\subsection{Define conceptual model: identify predictor response variables}
-
-\subsubsection{State variables}
-
-Every individual in the simulation is characterised by state variables that are a) calculated new in each iteration, and b) modified from one iteration to the next:
-
-\begin{itemize}
-    \item Variables that are calculated new each iteration:
-    \begin{itemize}
-        \item Resources produced: Amount of resources produced by the individual. The amount is fixed to each stage. Therefore, the individual whether produce resources (stage-specific resource production) or not (0) based on a stage-specific production probability specified during initialisation.
-        \item Resources received: Amount of resources received by the individual from other individual(s). The amount received by another individual is fixed to each stage. Therefore, the individual receives resources depending on the number of times the stage-specific probability is successful ($1$) or not ($0$), constrained by the stage-specific number of times receiving specified during initialisation.
-        \item Resources gave: Amount of resources given by the individual to other individual(s). The amount given to another individual is fixed to each stage. Therefore, the individual gives resources depending on the number of times the stage-specific probability is successful ($1$) or not ($0$), constrained by the stage-specific number of times giving specified during initialisation.
-        \item Resources available: Amount of resources an individual has after the dynamics of producing, consuming, giving, receiving, and storing resources. The resources available influence the probabilities for surviving, reproducing, and/or transitioning of an individual and decrease with the costs of each dynamic.
-        \item Reproductive effort: Amount of resources the individual uses for reproduction, given the stage-specific probability. The amount is fixed to each stage. Therefore, the individual whether gives birth (stage-specific fertility probability)  or not (0) based on the stage-specific fertility probability and the amount of resources available.
-    \end{itemize}
-    \item Variables that are modified from one iteration to the next:
-    \begin{itemize}
-        \item Age: Amount of iterations the individual goes through from its birth until it dies. Age increases by one after each iteration, reflecting one year.
-        \item Stage: Life cycle stage in which the individual is at the moment. There are five stages (infant, juvenile, adult, breeder, post-reproductive), each with its own stage-specific resource and life-history dynamics. Individual progression through the stages is determined by their age and resources available.
-        \item Resources stored: Amount of resources the individual stores for later in time (i.e. next iteration). The amount of resources stored depends on the surplus resources after the stage-specific resource and life-history dynamics. Therefore, the individual whether stores the surplus (stage-specific storing) or loses it (0) based on the stage-specific storing probability. Additionally, stored resources may decay with time.
-        \item Reproductive output: Amount of offspring produced, given the stage-specific fertility probability. Reproductive output increases by one after an iteration, if reproductive requirements (i.e. fertility probability and resources available) are met.
-    \end{itemize}
-\end{itemize}
-
-\subsubsection{Auxiliary variables}
-
-The individual dynamics are constrained by the following auxiliary variables. These variables are stage-specific, set at the initialisation and apply to all individuals in dependence on their state variables.
-
-\begin{itemize}
-    \item Die: Probability of dying in the stage. The probability is based on the mortality rates from \cite{gurven2007longevity}, which is adjusted according to the resources available for an individual.
-    \item Produce: Probability of producing resources. The probability is based on a binomial distribution regarding whether the individual produces resources ($1$) or not ($0$). The values of the distribution are based on \cite{koster2020life}.
-    \item Times receiving: Number of individuals from whom receiving resources. The values can go from zero to the maximum number of individuals available for giving in \cite{gurven2004give}.
-    \item Receive: Probability of receiving resources from another individual. The probability is based on a binomial distribution regarding whether the individual receives resources ($1$) or not ($0$) . The values of the distribution are based on \cite{gurven2004give}. The sampling size is defined by the \emph{Times receiving}.
-    \item Consume: Amount of resources necessary for somatic maintenance, based on \cite{kaplan2000theory}.
-    \item Store: Probability of storing the surplus of resources at the end of an iteration. The probability is based on a binomial distribution regarding whether the individual stores resources ($1$) or not ($0$). The values of the distribution are based on *cross-cultural ref*.
-    \item Times giving: Number of times giving resources from other individual(s). The values can go from zero to the maximum number of individuals available for receiving in \cite{gurven2004give}.
-    \item Give: Probability of giving resources to another individual. The probability is based on a binomial distribution regarding whether the individual gives resources ($1$) or not ($0$) . The values of the distribution are based on \cite{gurven2004give}. The sampling size is defined by \emph{Times giving}.
-    \item Reproduce: Probability of producing an offspring. The probability is based on a stage-specific fertility rate, which is adjusted according to the resources available for an individual.
-    \item Transition: Probability of transitioning to the next stage. The transitions are specified as follow:
-    \begin{itemize}
-        \item Infant transition: Reaching the growth and development necessary to transition to the juvenile stage.
-        \item Sexual maturity: Reaching the development necessary for menarche and transition to the adult stage.
-        \item Reproduce (adult stage): Producing your first offspring and transition to the breeder stage.
-        \item Menopause: Reaching the moment where you cannot, biologically, produce more offspring and transition to the post-reproductive stage.
-    \end{itemize}
-\end{itemize}
-
-\subsubsection{Sub models}
-
-Each individual goes through all the stage-specific submodels each iteration.
-
-\begin{itemize}
-    \item Infant
-    \begin{itemize}
-        \item Die: The infant survives by sampling from a *specify distribution* a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The infant has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
-        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
-        \item Receive: The infant has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
-        \item Consume: The infant consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
-        \item Store: The infant has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the probability on the *population reference*. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
-        \item Transition: The infant transition by sampling from a *specify distribution* a value equal or higher than the stage-specific probability of transition, based on the *population reference*. The infant has a higher chance to transition if it has a larger amount of resources available. The amount of resources decreases by the costs of transition, while the remaining amount is stored, and transition to the juvenile stage.
-    \end{itemize}
-    \item Juvenile
-    \begin{itemize}
-        \item Die: The juvenile survives by sampling from a *specify distribution* a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The juvenile has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
-        \item Produce: The juvenile has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
-        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
-        \item Receive: The juvenile has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
-        \item Consume: The juvenile consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
-        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
-        \item Give: The juvenile has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
-        \item Store: The juvenile has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the probability on the *population reference*. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
-        \item Age at sexual maturity: The juvenile transition by sampling from a *specify distribution* a value equal or higher than the stage-specific probability of reaching sexual maturity, based on the *population reference*. The juvenile has a higher chance to be sexually mature if it has a larger amount of resources available. The amount of resources decreases by the costs of transition, while the remaining amount is stored, and transition to the adult stage.
-    \end{itemize}
-    \item Adult
-    \begin{itemize}
-        \item Die: The adult survives by sampling from a *specify distribution* a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The adult has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
-        \item Produce: The adult has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
-        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
-        \item Receive: The adult has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
-        \item Consume: The adult consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
-        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
-        \item Give: The adult has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
-        \item Store: The adult has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the probability on the *population reference*. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
-        \item Transition: The adult transition either to a reproductive stage (i.e. adult) or a post-reproductive stage depending on either the individual have a offspring or reaches menopause, respectively.
-        \begin{itemize}
-            \item Age at first reproduction: The adult transition by sampling from a Poisson distribution a value equal or higher than the stage-specific fertility rate, based on the *population reference*. The adult has a higher chance to have its first offspring if it has a larger amount of resources available. The amount of resources decreases by the costs of reproduction, while the remaining amount is stored, and transition to the breeding stage.
-            \item Menopause: The adult transition by sampling from a *specify distribution* a value equal or higher than the stage-specific probability of menopause, based on the *population reference*. The adult has a lower chance to transition if it has a larger amount of resources available, where the chance increases every iteration. The amount of resources decreases by the costs of menopause, while the remaining amount is stored, and transition to the post-reproductive stage.
-        \end{itemize}
-    \end{itemize}
-    \item Reproductive career
-    \begin{itemize}
-        \item Die: The individual in its reproductive career survives by sampling from a *specify distribution* a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The individual has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
-        \item Produce: The individual in its reproductive career has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
-        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
-        \item Receive: The individual in its reproductive career has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
-        \item Consume: The individual in its reproductive career consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
-        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
-        \item Give: The individual in its reproductive career has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
-        \item Store: The individual in its reproductive career has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the probability on the *population reference*. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
-        \item Reproduce: The individual in its reproductive career produce an offspring by sampling from a Poisson distribution a value equal or higher than the stage-specific fertility rate, based on the *population reference*. If the individual samples a value equal or higher than the stage-specific fertility rate, then it produces one offspring. The individual in its reproductive career has a higher chance to have an offspring if it has a larger amount of resources available. The amount of resources decreases by the costs of reproduction, which diminishes after every reproduction.
-        \item Menopause: The individual in its reproductive career transition by sampling from a *specify distribution* a value equal or higher than the stage-specific probability of menopause, based on the *population reference*. The individual in its reproductive career has a lower chance to transition if it has a larger amount of resources available, where the chance increases every iteration. The amount of resources decreases by the costs of menopause, while the remaining amount is stored, and transition to the post-reproductive stage.
-    \end{itemize}
-    \item Post-reproductive
-    \begin{itemize}
-        \item Die: The post-reproductive survives by sampling from a *specify distribution* a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The post-reproductive has a higher chance to survive if it has a larger amount of resources available. The amount of resources decreases by the costs of survival.
-        \item Produce: The post-reproductive has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), based on the probability on \cite{koster2020life}. The amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
-        \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
-        \item Receive: The post-reproductive has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} submodel. 
-        \item Consume: The post-reproductive consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory}.
-        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
-        \item Give: The post-reproductive has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), based on the probability on \cite{gurven2004give}. The amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} submodel. 
-        \item Store: The post-reproductive has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the probability on the *population reference*. In case the individual does not store ($0$) then the surplus is lost. Finally, stored resources decay with time.
-    \end{itemize}
-\end{itemize}
-
-\subsection{Conceptual model evaluation}
-
-For model testing, the life cycle of the individuals was observed process by process. For model analysis, timing (e.g. longevity, age of transition), reproductive (e.g. number of offspring, timing of reproduction), and resource-related (e.g. production, consumption, giving, receiving, losing) variables were recorded.
-
-\section{Formalise and Specify Model}
-
-\subsection{Choose model class, framework and approach}
-
-
-\subsection{Choose model features and family}
-
-\subsubsection{Explain how you will operationalise response variable(s)}
-
-The life cycle of an individual is characterised by longevity, age of transition from one stage to another, number of offspring, and the timing of reproduction. Resource-related variables are related to the auxiliary variables of production, consumption, giving, receiving, and storing.
-
-\subsection{Choose model family}
-
-State and auxiliary variables are based on stage-specific binomial distribution, where it is decided if the individual acts ($1$) or not ($0$). Reproduction is based on stage-specific fertility rates and a Poisson distribution. The values for the distributions are based on references from the literature (Table \ref{tab:1}).
-
-\subsection{Choose approach for identifying model structure and parameters}
-
-\emph{Not sure it applies}
-
-\subsection{Specify model assumptions and uncertainties}
-
-Individuals represent females in a single-sex, haploid population. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age of sexual maturity. Adults are individuals that have reached sexual maturity until they have their first offspring or reach menopause. Adults transition to a reproductive career stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
-
-\subsection{Specify formal model}
-
-\emph{Once critical decisions have been made about the approach and method of model specification,¬†translate the conceptual model into the quantitative model}
-
-\section{Model Calibration, Model Fitting and Checking}
-
-\emph{Describe the validation scheme you will use for model testing and evaluation. Please explain your reasoning for your choice of model calibration and validation scheme. The model may be cross-validated on random sub-samples of the data used to parameterise the model (internal cross-validation) [Yates et al. (2018);(Barnard et al. 2019)??}
-
-\section{Model Validation and Evaluation}
-
-\emph{Not sure it applies}
-
-\section{Model Application}
-
-\emph{Not sure it applies}
-
-\section{Tables and Figures}
-
-\begin{table}[h!]
+\begin{table}[H]
     \centering
     \begin{tabular}{ l r }
     \hline
@@ -466,13 +483,12 @@ Individuals represent females in a single-sex, haploid population. Individuals t
     Store & \cite{bowles2011cultivation} \\  
     Times giving & \cite{gurven2004give} \\  
     Reproduce & \cite{wood2017dynamics} \\  
-    Transition & \cite{ellison2017reproductive,wood2017dynamics} \\
+    Transition & \cite{ellison2017reproductive,wood2017dynamics,laisk2019demographic} \\
     \hline
     \end{tabular}
     \caption{References for setting the scenarios in which the individuals will evolve.}
     \label{tab:1}
 \end{table}
-
 
 \bibliographystyle{apalike}
 \bibliography{optimal_ref}
