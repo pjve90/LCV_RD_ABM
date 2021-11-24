@@ -29,23 +29,27 @@ Registered Report}
 
 \section{Problem Formulation}
 
-There are many developmental paths an individual can follow through its life cycle, which is the basis of the diversity seen across the tree of life. The diversity of reproductive schedules can go from a couple to thousands offspring (e.g. eastern hemlock vs rain moth \citep{tindale1932revision,van2017lifetime} and mortality ones from lifespans of days to thousands of years (e.g. hairyback vs patagonian cypress \citep{balsamo1988life,lara19933620}). The differences in life cycles have usually been related to the ways in which an individual allocates the limited resources it posses in its environment \citep{stearns2000life}. Female humans pose an interesting case regarding its life cycle due to the short reproductive period in comparison to their long lifespan, framed within long juvenile and post-reproductive stages \citep{kaplan2000theory}. Within these boundaries, female humans present a high diversity of life cycles across populations, where life spans can be long and their reproductive output low (e.g. post-demographic transition Japan \citep{de2017maximum}) while other populations have short lifespans and high reproductive output (e.g. foraging populations \citep{migliano2007life}). The high diversity of female life cycles among human populations is fuelled by the differences in longevity and fertility schedule between individuals within a population. While the differences in longevity at an individual level has been associated with resource acquisition (i.e. more resources equals longer lifespans) \citep{kaplan2003embodied}, the relationship of resource acquisition with fertility is more complex \citep{mulder1998demographic,sear2016understanding}. Additionally, resource transfers have been proposed as a way to understand the different life cycles among female humans. Here, the presence or different members of the population in the social network of a female individual have been associated with different life cycles \citep{sear2011much}. Examples can be found in literature related to cooperative breeding, sibling competition, female conflict, among others \citep{ivey2000cooperative,nitsch2013elder,mace2012female}. However, both frameworks usually focus on a) specific components of the life cycle (e.g. longevity, number of offsprings) and/or b) black box the ways in which resources are available for a female individual. The main evolutionary models that have tried to tackle these two aspects can be summarized in the embodied capital models and the resource transfer models. The embodied capital theory suggests that the surplus of resource production during adulthood allows the evolution of the female human life cycle \citep{kaplan2000theory}. This model proposes that the difference between resource production and consumption allows high parental investment, translated in short interbirth intervals and long post-reproductive periods for the parents and long juvenile periods for their offspring. Furthermore, the pooled energy model deepens in this framework by suggesting that alloparenting from individuals of different generations would allow to decrease the load of parental investment \citep{kramer2010pooled}. Resource transfer theory poses that inter-generational transfers would play a major role in the mortality and fertility schedules of human populations. \cite{lee2003rethinking} suggests that age-specific mortality is proportional to the remaining reproductive value and resource transfers made at later ages, predicting the early-life and later-life mortality patterns characteristics of the female human life cycle. Additionally, \cite{chu2006co} model shows that inter-generational transfers co-evolve with low mortality, since adults are more efficient to produce energy, which is transferred to juveniles, who are more efficient to turn that energy into body size, allowing lower mortality. Hence, these models show that the female human life cycle evolves from the interplay of resources acquisition and transfers. However, they do not explain the conditions under which the life cycle varies within a population nor completely address the influence of the different resource dynamics, as our model aims to do (see Fig.\ref{fig:1} for a graphical summary).
-
-Therefore, this project aims to develop a theoretical framework to understand a) individual-level variations in the different components that characterize the female human life cycle (i.e. survival, age at menarche, age at first reproduction, number of offspring, interbirth intervals, age at last reproduction, age at menopause, longevity), and b) how these variations might be caused by different resource dynamics (i.e. resource production, consumption, transfer, storage) across the life cycle. The framework will be developed with agent-based models and will be described using an ODD (Overview, Design concepts, Details) protocol, as an standardised way to clarify the scope, assumptions, and parameters used to answer our questions \citep{grimm2006standard,grimm2020odd}.
+There are many paths an individual can follow through its life cycle, which is the basis of the diversity seen across the tree of life. The diversity of mortality schedules can vary lifespans of days to thousands of years (e.g. hairyback vs patagonian cypress \citep{balsamo1988life,lara19933620}) and reproductive outputs can go from a couple to thousands of offspring (e.g. eastern hemlock vs rain moth \citep{tindale1932revision,van2017lifetime}. Within the tree of life, the female human life cycle is characterized by a long lifespan and a short reproductive career, framed within long juvenile and post-reproductive stages \citep{kaplan2000theory}. Within these boundaries, the life cycle of female humans also varies in terms of mortality and fertility, with populations showing long lifespans and low reproductive output (e.g. post-demographic transition Japan \citep{de2017maximum}) or short lifespans and high reproductive output (e.g. foraging populations \citep{migliano2007life}). The diversity of life cycles observed among female human populations is fuelled by the differences in longevity and fertility between individuals within a population. However, it is not clear if the within-population variability of female human life cycles is also explained by the same processes that explain the differences among species across the tree of life. 
+\\\\
+The differences in life cycles between species have usually been related to the ways in which an individual allocates the limited resources available in its environment towards survival or reproduction \citep{stearns2000life}. In the case of humans, the differences in longevity at an individual level have been associated with resource availability (i.e. more resources equals longer lifespans) \citep{kaplan2003embodied}, while the relationship of fertility with resources is more complex \citep{mulder1998demographic,sear2016understanding}. Sharing dynamics have also been proposed as a key component to understand the different life cycles among female humans, due to the social nature of our species. Here, the presence of different members of the population have been associated with differences in the longevity and reproductive output of female individuals,as can be found in the literature related to cooperative breeding, sibling competition, female conflict, among others \citep{ivey2000cooperative,nitsch2013elder,mace2012female,sear2011much}. However, research in the area usually focus on specific components of the life cycle (e.g. longevity, number of offspring) rather than addressing them together, and/or black box the ways in which resources are available for female individuals (e.g. amount of food, presence of the grandmother). Therefore, the understanding of the mechanisms linking resources availability with the variability of life cycles within a female human population remains limited.
+\\\\
+Models that address these two limitations of how resource availability shape the life cycles of women in a population focus on the conditions that differentiate the female human life cycle from other species. The embodied capital model suggests that the surplus of resource production during adulthood allows the evolution of the female human life cycle \citep{kaplan2000theory}. This model proposes that the difference between resource production and consumption allows high parental investment, translated in short interbirth intervals and long post-reproductive periods for the parents and long juvenile periods for their offspring. The pooled energy model deepens in this framework by suggesting that alloparenting from individuals of different generations would allow to decrease the load of parental investment \citep{kramer2010pooled}. Resource transfer model poses that inter-generational transfers would play a major role in the mortality and fertility schedules of human populations. \cite{lee2003rethinking} suggests that age-specific mortality is proportional to the remaining reproductive value and resource transfers made at later ages, predicting the early-life and later-life mortality patterns characteristics of the female human life cycle. Additionally, \cite{chu2006co} model shows that inter-generational transfers co-evolve with low mortality, since adults are more efficient to produce energy, which is transferred to juveniles, who are more efficient to turn that energy into body size, allowing lower mortality. While these models show that the female human life cycles co-evolved with the interplay of resource acquisition and transfers, they do not address how different resource dynamics can shape the variations of the life cycle within a population (see Fig.\ref{fig:1} for a graphical summary).
+\\\\
+Therefore, this project aims to develop a theoretical framework to understand how resource dynamics (i.e. resource production, consumption, transfer, storage) influence variations of the female human life cycle. The model would focus on a) how the life cycle of an individual varies under different resource dynamics across its lifespan, and b) how the variability of life cycles within a female human population changes due to differences in resource production, consumption, transfer, and storage. The framework will be developed with agent-based models and will be described using an ODD (Overview, Design concepts, Details) protocol, as an standardised way to clarify the scope, assumptions, and parameters used to answer our questions \citep{grimm2006standard,grimm2020odd}.
 
 \section{Model description}
 
-\subsection{Purpose}
+\subsection{Purpose and patterns}
 
-The female human life cycle is characterised by a long lifespan, within which there is usually a short reproductive period in between long juvenile and post-reproductive stages. Longevity, the boundaries of the reproductive period, and the frequency at which births occur during this period, are influenced by allocation of resources made by the individual. Previous work has linked variations in the life cycle of a female individual to the amount of resources available in the environment or the availability of a network of potential helpers, but how the interplay of both of them change the allocation of resources of an individual, and variations in its life cycle as consequence, remains unclear. Here we will develop a theoretical framework to understand how the interplay of resource acquisition and their sharing across the social network influence the variations of female life cycles within a population. More specifically, the model would allow identify which resource dynamics vary the timing of life stage transitions, longevity, and reproductive timing and output of individuals.
+The purpose of the model is to understand how different resource dynamics influence variations of the female life cycles within a population. The mechanism driving this influence at an individual level is in the interplay of resource production, consumption, transfer, and storage which allows individuals to allocate resources for different life stage transition timings, reproductive timing and output within stages, and overall lifespan. Variability of the female human life cycle at the population level would be explained by the amount of different life cycles that arise from individual differences, which are based on the mechanism described earlier. The expected patterns are that variability should be higher in scenarios where individuals would have lower access to resources via receiving or production, less storage capacity, and/or give more resources to other individuals. On the other hand, there should be less variability of life cycles in a population where individuals would have higher access to resources via receiving or production, higher storage capacity, and/or give less resources to other individuals. Between these two extremes, the variability of female life cycles should be more sensitive to changes in resource production and consumption, whereas sharing and storing dynamics should have a buffering effect.
 \\\\
-For the purpose of this model, the life cycle of a female individual will be described by the time spent across five discrete stages (i.e. infant, juvenile, adult, reproductive-career, post-reproducitve), which are defined by the timing of key events of the life course (i.e. age at menarche, age at first reproduction, age at menopause, and death). Longevity will also be a characteristic of the life cycle (i.e. number of years alive), as well as lifetime reproductive success (i.e. number of surviving offspring until sexual maturity). The influence of resource dynamics into the life cycle will be understood by the timing of reproductive events (i.e. age at first and last reproduction, and interbirth intervals) and life stage transitions (i.e. age at menarche, age at first reproduction, age at menopause). Finally, resource dynamics will be characterized by the amount of resources produced, transferred, consumed, and stored in each life cycle stage. A graphical representation can be seen in Fig. \ref{fig:2}.
+The life cycle of a female individual will be described by the time spent across five discrete stages (i.e. infant, juvenile, adult, reproductive-career, post-reproductive), which are defined by the timing of key events of the life course (i.e. age at menarche, age at first reproduction, age at menopause, and death). Longevity will also be a characteristic of the life cycle (i.e. number of years alive), as well as lifetime reproductive success (i.e. number of surviving offspring until sexual maturity). The influence of resource dynamics into the life cycle will be understood by the timing of reproductive events (i.e. age at first and last reproduction, and interbirth intervals) and life stage transitions (i.e. age at menarche, age at first reproduction, age at menopause). Finally, resource dynamics will be characterized by the amount of resources produced, transferred, consumed, and stored in each life cycle stage. A graphical representation can be seen in Fig. \ref{fig:2}.
 
 \subsection{Entities, state variables, and scale}
 
 \subsubsection{Entities}
 
-Individuals represent females in a single-sex, haploid population. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age at menarche. Adults are individuals that have reached menarche until they have their first offspring or reach menopause. Adults transition to a reproductive-career stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
+Individuals represent females in a single-sex population. Individuals that are born until they reach \emph{age at transition trait} are considered infants. Juveniles are individuals that transition from infants, until they reach age at menarche. Adults are individuals that have reached menarche until they have their first offspring or reach menopause. Adults transition to a reproductive-career stage once they have their first offspring, and remain in this stage until they reach menopause. From menopause onward individuals are considered post-reproductive.
 
 \subsubsection{State variables}
 
@@ -160,7 +164,7 @@ The model does not use input data to represent time-varying processes.
 
 \subsection{Sub models}
 
-Each individual goes through all the stage-specific sub models each iteration.
+Each individual alive in a given iteration goes through all the sub models specific to the life stage that it is in.
 
 \begin{itemize}
     \item Infant
@@ -174,13 +178,13 @@ Each individual goes through all the stage-specific sub models each iteration.
     \end{itemize}
     \item Juvenile
     \begin{itemize}
-        \item Die: The juvenile survives by sampling a value equal or higher than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The juvenile has a higher chance to survive if it has a larger amount of resources stored from the previous iteration. The amount of resources decreases by the costs of survival.
+        \item Die: The juvenile survives by sampling a value equal or lower than the stage-specific survival rate, based on \cite{gurven2007longevity}. If the individual samples a value lower than the stage-specific survival rate, then it dies. The juvenile has a higher chance to survive if it has a larger amount of resources stored from the previous iteration. The amount of resources decreases by the costs of survival.
         \item Produce: The juvenile has a probability of producing by sampling from a binomial distribution. The individual either produces resources ($1$) or not ($0$), and the amount of resources produced is fixed, stage-specific, and based on \cite{koster2020life}.
         \item Times receiving: The individual receives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of givers in \cite{gurven2004give}, constrained by population size.
         \item Receive: The juvenile has a probability of receiving from another individual by sampling from a binomial distribution. The individual either receives resources ($1$) or not ($0$), and the amount of resources received per giver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times receiving} sub model. 
         \item Consume: The juvenile consumes the amount of resources necessary for somatic maintenance from the resources available in the iteration, based on \cite{kaplan2000theory,pontzer2021daily}.
-        \item Times giving: The individual gives resources from a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
-        \item Give: The juvenile has a probability of giving from another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), and the amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} sub model. 
+        \item Times giving: The individual gives resources to a certain number of individuals. This is based on sampling a value between zero and the maximum number of receivers in \cite{gurven2004give}, constrained by population size.
+        \item Give: The juvenile has a probability of giving to another individual by sampling from a binomial distribution. The individual either gives resources ($1$) or not ($0$), and the amount of resources gave per receiver is fixed, stage-specific, and based on the \cite{gurven2004give}. The sample size is defined by the value from the \emph{Times giving} sub model. 
         \item Store: The juvenile has a probability of storing the surplus of resources available in the iteration by sampling from a binomial distribution. The individual either stores ($1$) or not ($0$), based on the values on \citep{bowles2011cultivation}. In case the individual does not store ($0$) then the surplus of resources in the iteration is lost.
         \item Age at sexual maturity: The juvenile transition by sampling a value equal or higher than the stage-specific probability of reaching sexual maturity, based on the values on \citep{ellison2017reproductive}. The juvenile has a higher chance to be sexually mature if it has a larger amount of resources available from the resource-related sub models of the iteration. The amount of resources decreases by the costs of transition, while the remaining amount is stored, and transition to the adult stage.
     \end{itemize}
@@ -248,11 +252,11 @@ The model might be modified in order to include two-sex dynamics and inter-gener
 \node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
 \node[state]		(C) [below of=B,node distance=1.5cm,fill=black] {};
-\node[state]		(D) [below of=C,shape=diamond,node distance=1.5cm] {RA};
+\node[state]		(D) [below of=C,shape=diamond,node distance=1.5cm] {RA$_J$};
 \node[state]        (E) [right of=A,shape=circle, node distance=5cm] {A};
 \node[state]		(F) [below of=E,node distance=0.6cm,draw=none,fill=none] {};
 \node[state]		(G) [below of=F,node distance=1.5cm,fill=black] {};
-\node[state]		(H) [below of=G,shape=diamond,node distance=1.5cm] {RA};
+\node[state]		(H) [below of=G,shape=diamond,node distance=1.5cm] {RA$_A$};
 \node[state]        (I) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
 \node[state]        (J) [above of=I,node distance=1cm,draw=none,fill=none] {};
 
@@ -278,13 +282,13 @@ The model might be modified in order to include two-sex dynamics and inter-gener
 %\node[state]        (O) [left of=A,node distance=1cm,draw=none,fill=none] {2)};
 \node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(C) [below left of=B,node distance=1.5cm] {R};
-\node[state]        (D) [below right of=B,node distance=1.5cm] {S};
+\node[state]		(C) [below left of=B,node distance=1.5cm] {R$_J$};
+\node[state]        (D) [below right of=B,node distance=1.5cm] {S$_J$};
 \node[state]        (E) [right of=A, node distance=5cm,shape=circle] {A};
 \node[state]		(F) [below of=E,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(G) [below left of=F,node distance=1.5cm] {G};
-\node[state]		(I) [below of=F,node distance=2.5cm] {P};
-\node[state]        (J) [below right of=F,node distance=1.5cm] {S};
+\node[state]		(G) [below left of=F,node distance=1.5cm] {G$_A$};
+\node[state]		(I) [below of=F,node distance=2.5cm] {P$_A$};
+\node[state]        (J) [below right of=F,node distance=1.5cm] {S$_A$};
 \node[state]        (K) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
 \node[state]        (L) [above of=K,node distance=1cm,draw=none,fill=none] {};
 
@@ -310,20 +314,21 @@ The model might be modified in order to include two-sex dynamics and inter-gener
 \begin{subfigure}{.4\textwidth}
   \centering   
   \begin{tikzpicture}[->,>=stealth',auto,thin]
-\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+\tikzstyle{every state}=[fill=white,shape=square,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 %\node[state]        (O) [left of=A,node distance=1cm,draw=none,fill=none] {3)};
-\node[state]        (A)         {J};
+\node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(C) [below left of=B,node distance=1.5cm] {R};
-\node[state]        (D) [below right of=B,node distance=1.5cm] {S};
-\node[state]        (E) [right of=A, node distance=5cm] {A};
+\node[state]		(C) [below left of=B,node distance=1.5cm] {R$_J$};
+\node[state]        (D) [below right of=B,node distance=1.5cm] {S$_J$};
+\node[state]        (E) [right of=A, node distance=5cm,shape=circle] {A};
 \node[state]		(F) [below of=E,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(G) [below left of=F,node distance=1.5cm] {P};
-\node[state]		(I) [below of=F,node distance=2.5cm] {C};
-\node[state]        (J) [below right of=F,node distance=1.5cm] {G};
-\node[state]        (K) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
-\node[state]        (L) [above of=K,node distance=1cm,draw=none,fill=none] {};
+\node[state]		(G) [below left of=F,node distance=1.5cm] {P$_A$};
+\node[state]		(I) [below of=G,node distance=1.5cm] {C$_A$};
+\node[state]        (J) [below right of=F,node distance=1.5cm] {G$_A$};
+\node[state]        (K) [below of=J,node distance=1.5cm,] {R$_A$};
+\node[state]        (L) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
+\node[state]        (M) [above of=L,node distance=1cm,draw=none,fill=none] {};
 
 \path
 (A) edge[loop below] (A)
@@ -334,9 +339,10 @@ The model might be modified in order to include two-sex dynamics and inter-gener
 (E) edge[loop below] (E)
 (E) edge[dashed,bend left=-45] (A)
 (G) edge (I)
-(I) edge (J)
-(J) edge[bend right=90, min distance=1.5cm] (L)
+(I) edge (K)
+(J) edge[bend right=90, min distance=1.5cm] (M)
 (J) edge (F)
+(K) edge (J)
 ;
     \end{tikzpicture}
     \caption{Inter-generational resource transfer model}
@@ -344,30 +350,30 @@ The model might be modified in order to include two-sex dynamics and inter-gener
 \begin{subfigure}{.4\textwidth}
   \centering
   \begin{tikzpicture}[->,>=stealth',auto,thin]
-\tikzstyle{every state}=[fill=white,shape=circle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+\tikzstyle{every state}=[fill=white,shape=square,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 %\node[state]        (O) [left of=A,node distance=1cm,draw=none,fill=none] {4)};
-\node[state]        (A)         {J};
+\node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(C) [below left of=B,node distance=1.5cm] {R};
-\node[state]        (D) [below of=C,node distance=3cm] {G};
-\node[state]		(E) [below of=B,node distance=2.5cm] {C};
-\node[state]        (F) [below right of=B,node distance=1.5cm] {P};
-\node[state]		(G) [below of=F,node distance=3cm] {S};
-\node[state]        (H) [right of=A, node distance=5cm] {A};
+\node[state]		(C) [below left of=B,node distance=1.5cm] {R$_J$};
+\node[state]        (D) [below of=C,node distance=3cm] {G$_J$};
+\node[state]		(E) [below of=B,node distance=2.5cm] {C$_J$};
+\node[state]        (F) [below right of=B,node distance=1.5cm] {P$_J$};
+\node[state]		(G) [below of=F,node distance=3cm] {S$_J$};
+\node[state]        (H) [right of=A, node distance=5cm,shape=circle] {A};
 \node[state]		(I) [below of=H,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(J) [below left of=I,node distance=1.5cm] {R};
-\node[state]		(K) [below of=J,node distance=3cm] {G};
-\node[state]		(L) [below of=I,node distance=2.5cm] {C};
-\node[state]        (M) [below right of=I,node distance=1.5cm] {P};
-\node[state]		(N) [below of=M,node distance=3cm] {S};
+\node[state]		(J) [below left of=I,node distance=1.5cm] {R$_A$};
+\node[state]		(K) [below of=J,node distance=3cm] {G$_A$};
+\node[state]		(L) [below of=I,node distance=2.5cm] {C$_A$};
+\node[state]        (M) [below right of=I,node distance=1.5cm] {P$_A$};
+\node[state]		(N) [below of=M,node distance=3cm] {S$_A$};
 \node[state]        (O) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
 \node[state]        (P) [above of=O,node distance=1.1cm,draw=none,fill=none] {};
-\node[state]		(Q) [above left of=P,node distance=1.5cm] {R};
-\node[state]		(R) [above of=Q,node distance=3cm] {G};
-\node[state]		(S) [above of=P,node distance=2.5cm] {C};
-\node[state]        (T) [above right of=P,node distance=1.5cm] {P};
-\node[state]		(U) [above of=T,node distance=3cm] {S};
+\node[state]		(Q) [above left of=P,node distance=1.5cm] {R$_A$};
+\node[state]		(R) [above of=Q,node distance=3cm] {G$_A$};
+\node[state]		(S) [above of=P,node distance=2.5cm] {C$_A$};
+\node[state]        (T) [above right of=P,node distance=1.5cm] {P$_A$};
+\node[state]		(U) [above of=T,node distance=3cm] {S$_A$};
 
 \path
 (A) edge[loop below] (A)
@@ -419,52 +425,52 @@ The model might be modified in order to include two-sex dynamics and inter-gener
     \begin{tikzpicture}[->,>=stealth',auto,thin]
 \tikzstyle{every state}=[fill=white,shape=square,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
-\node[state]		(A) [shape=circle]             {I};
+\node[state]		(A) [shape=circle]             {$I$};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(C) [below left of=B,node distance=1.5cm] {R};
-\node[state]		(D) [below of=B,node distance=2.5cm] {C};
+\node[state]		(C) [below left of=B,node distance=1.5cm] {R$_I$};
+\node[state]		(D) [below of=B,node distance=2.5cm] {C$_I$};
 \node[state]        (E) [below right of=B,node distance=1.5cm,draw=none,fill=none] {};
-\node[state]		(F) [below of=E,node distance=3cm] {S};
-\node[state]        (G) [right of=A, node distance=5cm,shape=circle] {J};
+\node[state]		(F) [below of=E,node distance=3cm] {S$_I$};
+\node[state]        (G) [right of=A, node distance=5cm,shape=circle] {$J$};
 \node[state]		(H) [below of=G,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(I) [below left of=H,node distance=1.5cm] {R};
-\node[state]        (J) [below of=I,node distance=3cm] {G};
-\node[state]		(K) [below of=H,node distance=2.5cm] {C};
-\node[state]        (L) [below right of=H,node distance=1.5cm] {P};
-\node[state]		(M) [below of=L,node distance=3cm] {S};
+\node[state]		(I) [below left of=H,node distance=1.5cm] {R$_J$};
+\node[state]        (J) [below of=I,node distance=3cm] {G$_J$};
+\node[state]		(K) [below of=H,node distance=2.5cm] {C$_J$};
+\node[state]        (L) [below right of=H,node distance=1.5cm] {P$_J$};
+\node[state]		(M) [below of=L,node distance=3cm] {S$_J$};
 \node[state]        (N) [right of=G, node distance=5cm,shape=circle] {A};
 \node[state]		(O) [below of=N,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(P) [below left of=O,node distance=1.5cm] {R};
-\node[state]		(Q) [below of=P,node distance=3cm] {G};
-\node[state]		(R) [below of=O,node distance=2.5cm] {C};
-\node[state]        (S) [below right of=O,node distance=1.5cm] {P};
-\node[state]		(T) [below of=S,node distance=3cm] {S};
+\node[state]		(P) [below left of=O,node distance=1.5cm] {R$_A$};
+\node[state]		(Q) [below of=P,node distance=3cm] {G$_A$};
+\node[state]		(R) [below of=O,node distance=2.5cm] {C$_A$};
+\node[state]        (S) [below right of=O,node distance=1.5cm] {P$_A$};
+\node[state]		(T) [below of=S,node distance=3cm] {S$_A$};
 \node[state]		(U) [right of=N, node distance=5cm,shape=circle]             {RC};
 \node[state]		(V) [below of=U,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(W) [below left of=V,node distance=1.5cm] {R};
-\node[state]		(X) [below of=W,node distance=3cm] {G};
-\node[state]		(Y) [below of=V,node distance=2.5cm] {C};
-\node[state]        (Z) [below right of=V,node distance=1.5cm] {P};
-\node[state]		(AA) [below of=Z,node distance=3cm] {S};
+\node[state]		(W) [below left of=V,node distance=1.5cm] {R$_{RC}$};
+\node[state]		(X) [below of=W,node distance=3cm] {G$_{RC}$};
+\node[state]		(Y) [below of=V,node distance=2.5cm] {C$_{RC}$};
+\node[state]        (Z) [below right of=V,node distance=1.5cm] {P$_{RC}$};
+\node[state]		(AA) [below of=Z,node distance=3cm] {S$_{RC}$};
 \node[state]		(BB) [right of=U, node distance=5cm,shape=circle]             {PR};
 \node[state]		(CC) [below of=BB,node distance=0.6cm,draw=none,fill=none] {};
-\node[state]		(DD) [below left of=CC,node distance=1.5cm] {R};
-\node[state]		(EE) [below of=DD,node distance=3cm] {G};
-\node[state]		(FF) [below of=CC,node distance=2.5cm] {C};
-\node[state]        (GG) [below right of=CC,node distance=1.5cm] {P};
-\node[state]		(HH) [below of=GG,node distance=3cm] {S};
+\node[state]		(DD) [below left of=CC,node distance=1.5cm] {R$_{PR}$};
+\node[state]		(EE) [below of=DD,node distance=3cm] {G$_{PR}$};
+\node[state]		(FF) [below of=CC,node distance=2.5cm] {C$_{PR}$};
+\node[state]        (GG) [below right of=CC,node distance=1.5cm] {P$_{PR}$};
+\node[state]		(HH) [below of=GG,node distance=3cm] {S$_{PR}$};
 \node[state]		(II) [above of=G, node distance=2.2cm,draw=none,fill=none] {};
-\node[state]		(JJ) [above left of=II,node distance=2.2cm] {R};
-\node[state]        (KK) [above of=JJ,node distance=3cm] {G};
-\node[state]		(LL) [above of=II,node distance=3cm] {C};
-\node[state]        (MM) [above right of=II,node distance=2.2cm] {P};
-\node[state]        (NN) [above of=MM,node distance=3cm] {S};
+\node[state]		(JJ) [above left of=II,node distance=2.2cm] {R$_A$};
+\node[state]        (KK) [above of=JJ,node distance=3cm] {G$_A$};
+\node[state]		(LL) [above of=II,node distance=3cm] {C$_A$};
+\node[state]        (MM) [above right of=II,node distance=2.2cm] {P$_A$};
+\node[state]        (NN) [above of=MM,node distance=3cm] {S$_A$};
 \node[state]		(OO) [above right of=N, node distance=3cm,draw=none,fill=none] {};
-\node[state]		(PP) [above left of=OO,node distance=2.2cm] {R};
-\node[state]        (QQ) [above of=PP,node distance=3cm] {G};
-\node[state]		(RR) [above of=OO,node distance=3cm] {C};
-\node[state]        (SS) [above right of=OO,node distance=2.2cm] {P};
-\node[state]        (TT) [above of=SS,node distance=3cm] {S};
+\node[state]		(PP) [above left of=OO,node distance=2.2cm] {R$_{RC}$};
+\node[state]        (QQ) [above of=PP,node distance=3cm] {G$_{RC}$};
+\node[state]		(RR) [above of=OO,node distance=3cm] {C$_{RC}$};
+\node[state]        (SS) [above right of=OO,node distance=2.2cm] {P$_{RC}$};
+\node[state]        (TT) [above of=SS,node distance=3cm] {S$_{RC}$};
 
 \path
 (A) edge[loop below] (A)
