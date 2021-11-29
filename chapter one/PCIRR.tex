@@ -13,6 +13,7 @@
 \onehalfspacing
 \usepackage{tikz}
 \usetikzlibrary{arrows,automata,positioning,shapes}
+\usepackage{adjustbox}
 
 \title{The interplay of resource acquisition and transfers explains the diversity of the female human life cycle.
 \\
@@ -41,7 +42,7 @@ Therefore, this project aims to develop a theoretical framework to understand ho
 
 \subsection{Purpose and patterns}
 
-The purpose of the model is to understand how different resource dynamics influence variations of the female life cycles within a population. The mechanism expected to influence the life cycle at an individual level is in the interplay of resource production, consumption, transfer, and storage which allows individuals to allocate resources for different life stage transition timings, reproductive timing and output within stages, and overall lifespan. Variability of the female human life cycle at the population level would be explained by the amount of different life cycles that arise from individual differences, which are based on the mechanism described earlier. The expected patterns can be described at an individual and at a population level. First, the life cycle of an individual should vary more due to differences in the amount of resources produced and consumed across the life cycle, while the sharing and storing dynamics would play a buffering role, by compensating the surplus and/or lack of resources that can be allocated in the life cycle from the other dynamics. Second, there should be less variability of life cycles in a population where individuals would have higher access to resources via receiving or production, higher storage capacity, and/or give less resources to other individuals. Between these two extremes, the variability of female life cycles in the population should be more sensitive to changes in resource production and consumption in comparison to sharing and storing resources.
+The purpose of the model is to understand how different resource dynamics influence variations of the female life cycles within a population. The mechanism expected to influence the life cycle at an individual level is in the interplay of resource production, consumption, transfer, and storage which allows individuals to allocate resources for different life stage transition timings, reproductive timing and output within stages, and overall lifespan. Variability of the female human life cycle at the population level would be explained by the amount of different life cycles that arise from individual differences, which are based on the mechanism described earlier. The expected patterns can be described at an individual and at a population level. First, the life cycle of an individual should vary more due to differences in the amount of resources produced and consumed across the life cycle, while the sharing and storing dynamics would play a buffering role, by compensating the surplus and/or lack of resources that can be allocated in the life cycle from the other dynamics. Second, there should be less variability of life cycles in a population where individuals would have higher access to resources via receiving or production, higher storage capacity, and/or give less resources to other individuals. The variability of female life cycles in the population should be more sensitive to changes in resource production and consumption in comparison to sharing and storing resources (Table \ref{tab:1}).
 \\\\
 The life cycle of a female individual will be described by the time spent across five discrete stages (i.e. infant, juvenile, adult, reproductive-career, post-reproductive), which are defined by the timing of key events of the life course (i.e. age at weaning, age at menarche, age at first reproduction, age at menopause, and death). Longevity will also be a characteristic of the life cycle (i.e. number of years alive), as well as lifetime reproductive success (i.e. number of surviving offspring until sexual maturity). The influence of resource dynamics into the life cycle will be understood by the timing of reproductive events (i.e. age at first and last reproduction, and interbirth intervals) and life stage transitions (i.e. age at menarche, age at first reproduction, age at menopause). Finally, resource dynamics will be characterized by the amount of resources produced, transferred, consumed, and stored in each life cycle stage. A graphical representation can be seen in Fig. \ref{fig:2}.
 
@@ -231,13 +232,13 @@ The model might be modified in order to include inter-generational resource tran
 
 \section{Tables and Figures}
 
-\begin{sidewaysfigure}
 \begin{figure}[H]
-    \centering
-\begin{subfigure}{.4\textwidth}
-  \centering
+\centering
+\begin{minipage}{.47\textwidth}
+\centering
+\vfill
   \begin{tikzpicture}[->,>=stealth',auto,thin]
-\tikzstyle{every state}=[fill=white,shape=square,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+\tikzstyle{every state}=[fill=white,shape=rectangle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 \node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
@@ -247,7 +248,6 @@ The model might be modified in order to include inter-generational resource tran
 \node[state]		(F) [below of=E,node distance=1.5cm,fill=black] {};
 \node[state]        (G) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
 \node[state]        (H) [above of=G,node distance=1cm,draw=none,fill=none] {};
-\node[state]        (I) [below of=G,node distance=2.1cm,shape=diamond] {RA};
 
 \path
 (A) edge[loop below] (A)
@@ -257,16 +257,19 @@ The model might be modified in order to include inter-generational resource tran
 (D) edge[dashed,bend left=-45] (A)
 (F) edge (E)
 (F) edge[bend right=90, min distance=2.5cm] (H)
-(I) edge (C)
-(I) edge (F)
 ;
     \end{tikzpicture}
-    \caption{Resources available blackbox}
-\end{subfigure}
-\begin{subfigure}{.4\textwidth}
-  \centering
-  \begin{tikzpicture}[->,>=stealth',auto,thin,]
-\tikzstyle{every state}=[fill=white,shape=square,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+ \vfill
+\captionsetup{labelformat=empty}
+\caption{1) Black box resource dynamics model}
+\label{fig:blackbox}
+\vspace{\baselineskip}
+\end{minipage}\qquad
+\begin{minipage}{.47\textwidth}
+\centering
+\vfill
+\begin{tikzpicture}[->,>=stealth',auto,thin,]
+\tikzstyle{every state}=[fill=white,shape=rectangle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 \node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
@@ -277,9 +280,8 @@ The model might be modified in order to include inter-generational resource tran
 \node[state]		(G) [below left of=F,node distance=1.5cm] {G$_A$};
 \node[state]		(I) [below of=F,node distance=2.5cm] {P$_A$};
 \node[state]        (J) [below right of=F,node distance=1.5cm] {S$_A$};
-\node[state]        (K) [left of=I,shape=diamond,node distance=2.7cm] {RA};
-\node[state]        (L) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
-\node[state]        (M) [above of=L,node distance=1cm,draw=none,fill=none] {};
+\node[state]        (K) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
+\node[state]        (L) [above of=K,node distance=1cm,draw=none,fill=none] {};
 
 \path
 (A) edge[loop below] (A)
@@ -291,20 +293,21 @@ The model might be modified in order to include inter-generational resource tran
 (E) edge[dashed,bend left=-45] (A)
 (I) edge (G)
 (I) edge (J)
-(I) edge[bend right=100, min distance=4cm] (M)
+(I) edge[bend right=100, min distance=4cm] (L)
 (J) edge (F)
-(K) edge (I)
 ;
     \end{tikzpicture}
-    \caption{Embodied capital model}
-\end{subfigure}
+\vfill
+\captionsetup{labelformat=empty}
+\caption{2) Embodied capital model}
+\label{fig:embodied}
+\end{minipage}
 
-\newline
-
-\begin{subfigure}{.4\textwidth}
-  \centering   
-  \begin{tikzpicture}[->,>=stealth',auto,thin]
-\tikzstyle{every state}=[fill=white,shape=square,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+\begin{minipage}{.41\textwidth}
+\centering
+\vfill
+      \begin{tikzpicture}[->,>=stealth',auto,thin]
+\tikzstyle{every state}=[fill=white,shape=rectangle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 \node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
@@ -318,7 +321,6 @@ The model might be modified in order to include inter-generational resource tran
 \node[state]        (K) [below of=J,node distance=1.5cm,] {R$_A$};
 \node[state]        (L) [right of=A,node distance=2.5cm,draw=none,fill=none] {};
 \node[state]        (M) [above of=L,node distance=1cm,draw=none,fill=none] {};
-\node[state]        (N) [below of=L,node distance=1.65cm,shape=diamond] {RA};
 
 \path
 (A) edge[loop below] (A)
@@ -333,15 +335,18 @@ The model might be modified in order to include inter-generational resource tran
 (J) edge[bend right=90, min distance=1.5cm] (M)
 (J) edge (F)
 (K) edge (J)
-(N) edge (G)
 ;
     \end{tikzpicture}
-    \caption{Inter-generational resource transfer model}
-\end{subfigure}
-\begin{subfigure}{.4\textwidth}
-  \centering
-  \begin{tikzpicture}[->,>=stealth',auto,thin]
-\tikzstyle{every state}=[fill=white,shape=square,draw,thick,text=black, text centered, text width=0.5cm, align=center]
+ \vfill
+\captionsetup{labelformat=empty}
+\caption{3) Inter-generational resource transfer model}
+\label{fig:transfer}
+\end{minipage}\qquad
+\begin{minipage}{.5\textwidth}
+\centering
+\vfill
+    \begin{tikzpicture}[->,>=stealth',auto,thin]
+\tikzstyle{every state}=[fill=white,shape=rectangle,draw,thick,text=black, text centered, text width=0.5cm, align=center]
 
 \node[state]        (A) [shape=circle]        {J};
 \node[state]		(B) [below of=A,node distance=0.6cm,draw=none,fill=none] {};
@@ -398,16 +403,33 @@ The model might be modified in order to include inter-generational resource tran
 (T) edge (S)
 (U) edge[bend right=-90] (P)
 ;
-
     \end{tikzpicture}
-    \caption{Proposed model}
-\end{subfigure}
-
-    \caption{Graphical representation of the relationship of resource dynamics with the female human life cycle. Figure 1 represents the embodied capital model \citep{kaplan1996theory}, figure 2 represents the inter-generational resource transfer model \citep{chu2006co}, and figure 3 represents our model. J and A represent juvenile and adult life stages, respectively. The thick arrows between life cycle stages refers to the transition from one stage to the other. Loop arrows below life cycle stages refers to the probability of staying in that stage. The dashed arrows refers to the production of offspring in that life cycle.  The resource dynamics are production (P), consumption (C), receiving (R), giving (G), and storing (S), and the thick arrows represent the relationship among them and the female human life cycle.}
+\vfill
+\captionsetup{labelformat=empty}
+\caption{4) Proposed model}
+\label{fig:ourmodel}
+\end{minipage}
+\setcounter{figure}{0}
+    \caption{Graphical representation of the different approaches used to understand the relationship between resources and the female human life cycle. \ref{fig:blackbox}) is the black boxing of resource dynamics. \ref{fig:embodied}) is the embodied capital approach, where individuals produce resources that are invested in embodied capital or their offspring. \ref{fig:transfer}) is the inter-generational resource transfer model, where the output of production and consumption is transferred from adults to juveniles. \ref{fig:ourmodel}) is the proposed model, where each resource dynamic has an independent influence on the life cycle. J and A represent juvenile and adult life stages, respectively. Loop arrows below life cycle stages refers to survival and the dashed arrows to reproduction. The resource dynamics are production (P), consumption (C), receiving (R), giving (G), and storing (S). The thick arrows represent the relationship between two elements.}
     \label{fig:1}
     
 \end{figure}
-\end{sidewaysfigure}
+
+\begin{table}[H]
+    \centering
+    \caption{Summary of the study design. \emph{Question} is where are the research questions driving the development of the model. \emph{Hypothesis} is where are the predictions answering the research questions. \emph{Analysis plan} is where the tests used to answer the research question are described. \emph{Interpretation} is a description of possible different outcomes, and their interpretation in relation to the hypothesis. \emph{Contested theory} is a description on how the possible outcomes could prove wrong or show incomplete current theories.}
+    \begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{p{4cm}p{4cm}p{4cm}p{4cm}p{4cm} }
+    \hline
+    Question & Hypothesis & Analysis plan & Interpretation & Contested Theory \\ 
+    \hline
+    How does the life cycle of an individual varies by different resource dynamics? & An individual life cycle should vary more by the dynamics of resource production and consumption, while sharing and storing dynamics have a buffering effect & Multi-variate and multi-level models based on the different resource dynamic combinations and key components of the life cycle of an individual & An individual that experiences higher amount of resources and more successful random decisions is likely to live longer and reproduce more by expanding their time in the reproductive career stage. An individual that experiences less resources and successful random decisions is likely to life shorter and reproduce less by shrinking their reproductive career stage. Sharing and storing dynamics should decrease the impact in both cases. & The results would synthesis the theories developed from the embodied and inter-generational transfer models, by accounting for embodied capital (i.e. storing dynamics) and resource transfers (i.e. resource transfers)\\  
+    How does the variability of life cycles within a population varies under different resource dynamics scenarios? & The variability of life cycles within a population is lower if there is high sharing and storing dynamics, while populations that have higher production and consumption should have higher variability & Multi-variate and multi-level models based on the different resource dynamic combinations and distributions of the key components of the life cycle built from the population & Populations with high production and consumption, and low sharing and storing dynamics, should have wider distributions of the different components of the life cycle than those population where individuals experience higher sharing and storing dynamics & The results would fill a gap in the understanding on how resource dynamics might limit the variability within a population, instead of characterizing the scenarios under which the female human life cycle could have evolved.\\  
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \label{tab:1}
+\end{table}
 
 \begin{sidewaysfigure}
 \begin{figure}[H]
@@ -539,44 +561,25 @@ The model might be modified in order to include inter-generational resource tran
 \end{figure}
 \end{sidewaysfigure}
 
-\begin{landscape}
-    \centering
-    \caption{Summary of the different models developed to address the influence of resource availability and sharing dynamics on the female human life cycle}
-    \begin{longtable}{ p{0.1\textwidth} p{0.25\textwidth} p{0.25\textwidth} p{0.25\textwidth} p{0.15\textwidth} p{0.1\textwidth} p{0.1\textwidth} p{0.1\textwidth} p{0.1\textwidth} p{0.1\textwidth} p{0.25\textwidth} p{0.25\textwidth} }
-    \hline
-    Model & Evolutionary pattern & Driver of behavioural change & Modified variables & Outcome variables & Production & Consumption & Receiving & Giving & Storing & Gaps & Reference \\ 
-    \hline
-    Embodied capital model & Surplus of resource production during adulthood allows the evolution of the female human life cycle & Differences in the allocation of income into the survival and embodied capital of offpsring. & Number of offspring to produce. Resources invested in offspring survival until adulthood. Resources invested in the embodied capital of the offspring. & Fitness (i.e. expected lifetime reproduction = R0) & Income & Individual survival & Income & Reproductive effort (resource transfer from parent to offspring) & Embodied capital & Resource dynamics are coupled as income. Resource transfers towards offspring income and survival (i.e. parental investment) are considered reproductive effort. & \cite{kaplan1996theory,kaplan2000theory,kaplan2003embodied} \\ 
-    Pooled energy model & Alloparenting decreases the load of parental investment, allowing overlaping reproductive events. Pooling energy from juveniles, postpones age of sexual maturity, explaining long juvenile periods and slow growth in humans. & Differences in the energy costs and availability for an individual changes the allocation of resources to growth and reproduction, where pooled energy has a buffering effect & Maintenance, production, activity (i.e. labor transfers) & Growth and reproduction & Individual production & Individual consumption & Juveniles receives calories from adult in exchange of low-productivity activity & Adult gives a share of calories to juvenile, to focus on high-productive activities & NA & Transfers are related to a common pool of energy, allowing individuals beyond mother-offspring to be involved & \cite{kramer2010pooled} \\  
-    Inter-generational model (I) & Early-life and later-life mortality patterns are because of later age reproductive value and resource transfers & Fertility and resource transfers change the force of selection on mortality, changin the population growth rate (r) & Mortality, fertility, resource dynamics (i.e. production, consumption, transfers) & Stable population growth rate (r) & Individual production & Individual consumption & Negative difference from production$-$consumption & Positive difference from production$-$consumption & NA & Transfers are only directed downwards and modelled as the difference between production and consumption. No storage function. No third generation & \cite{lee2002children,lee2003rethinking,lee2008sociality} \\  
-    Inter-generational model (II) & Low mortality co-evolves with downward resource transfers & Changes in resource transfers influence survival and fitness, coevolving more transfers with low mortality. & Maintenance, fertility, growth, resource transfers & Population growth ($\lambda$) & Individual production & Maintenance & Juvenile probability of receiving & Adult probability of giving & Body size & Transfers are only directed downwards. No third generation & \cite{chu2006co} \\  
-    Thomas model & Optimal IBIs varies depending on environmental mortality and sibling competition. At high levels of infant mortality, sibling effects become less important, and viceversa. & The probability of having an offspring and its survival depends on the survival probabilities of the adult female as well as the number of siblings, and their weights on child survival (e.g. sibling competition or juvenile help) & Adult female survival and its probability of making it to the next state, the probability of having a child and survives, the wieght of family structure (i.e. number of siblings). & Expected number of offsprings left t years in the future by a female. Interbirth intervals & NA & NA & NA & NA & Transfers are not specified in the model. Sibling effects are based on the competition and helping weighting of earlier offspring (i.e. family structure). No third generation & \cite{thomas2015dynamic} \\  
-    Mace model & The decision to have another baby depends on the wealth of the household, the current family size, and the costs of marrying a son or a daughter. Higher fertility is associated with higher wealth and with marrying daughters over sons (sons are more costly). & Changes in the number of camels and the number of children that an adult has influence the decision to have an offspring at time t & Herd size (i.e. wealth) and family size & Expected (at time t) number of children that will be alive at the end of the parents reproductive life (time T) that the parents will have sufficient wealth to marry off. & Wealth & Costs of marriage & NA & NA & Wealth & Transfers are not specified in the model. Resource dynamics are considered only as production and consumption. No third generation &  \cite{mace1996have} \\  
-    Price and Jones model & Individuals don't maximize fitness directly, but deal with proximate variables (consumption) where pessimistic (risk-aversion) is the one that alings with fitness maximization & Changes in the decisions of consumption of proximate variables influence variations of age-specific survival and fertility, which influence changes in fitness. & Age-specific survival and fertility. Consumption of proximate variables (i.e. resources) & Fitness (i.e. rate of exponential growth rate of a phenotype a (logarithm of growth rate)) & NA & Consumption of proximate variables & NA & NA & NA & Consumption, resource transfers, and storing are not specified in the model. Only consumption of proximate variables. & \cite{price2020fitness} \\  
-    ADP model: somatic state-based & Individuals can develop different phenotypic outcomes depending on changes of a somatic state variable, due to a developmental input, that is linked to a phenotypic outcome. & A phenotype would be adaptive if the developmental input influences the state variable that makes the phenotype advantageous.The alternative phenotype must be adaptive in case the adult environment does not match the developmental input. & Developmental input, the somatic state variable that is associated with the developmental input, and a phenotype. & Fitness & NA & NA & NA & NA & NA & Resource dynamics are not modelled. Only addresses the influence of early conditions (i.e. developmental input) with later phenotypic outcomes. & \cite{nettle2015adaptive} \\  
-    ADP model: information & Individuals develop different phenotypic outcomes depending on developmental inputs in earlier stages of the life cycle that forecast adult environment. & A phenotype would be adaptive if the developmental input strongly predicts the adult environment. The alternative phenotype must be adaptive for the alternative adult environment. & Developmental input that predict future environment and the phenotype associated with it. & Fitness & NA & NA & NA & NA & NA & Resource dynamics are not modelled. Only addresses the influence of early conditions (i.e. developmental input) with later phenotypic outcomes. & \cite{nettle2015adaptive} \\
-    Our model & Differences in the interacion of resource dynamics (i.e. transfers, production, consumption, and storage) makes individuals to vary their life cycle. Resource transfers have a buffering effect in the variations of the female human life cycle, while production and consumption increase variations. & Changes in the interaction among resource dynamics (e.g. high production and low resource transfer) changes more drastically, or not, the female human life cycle & Resource transfers (i.e. given and recieved), production, consumption, and storage. & Longevity, number of offspring, age at menarche, age at first and last reproduction, age at menopause, interbirth interval. & Stage-specific individual production & Stage-specific individual consumption & Stage-specific probability of receiving & Stage-specific probability of giving & Stage-specific probability of storing &Resource dynamics do not include the influence of previous resource dynamcis into future events, making decisions of the individual be based on the current resources available (produced, consumed, shared, and stored so far). & \\
-    \hline
-    \end{longtable}
-    \label{tab:1}
-\end{landscape}
-
 \begin{table}[H]
     \centering
     \caption{References for setting the scenarios in which the individuals will evolve.}
-    \begin{tabular}{ l r }
+    \begin{tabular}{ l l r }
     \hline
-    Auxiliary variable & Reference \\ 
+    Auxiliary variable & & Reference \\ 
     \hline
-    Die & \cite{gurven2007longevity} \\  
-    Produce & \cite{koster2020life} \\  
-    Times receiving & \cite{gurven2004give} \\  
-    Receive & \cite{gurven2004give} \\  
-    Consume & \cite{kaplan2000theory,pontzer2021daily} \\  
-    Store & \cite{bowles2011cultivation} \\  
-    Times giving & \cite{gurven2004give} \\  
-    Reproduce & \cite{wood2017dynamics} \\  
-    Transition & \cite{mulder1989menarche,kramer2010teen,wood2017dynamics,laisk2019demographic} \\
+    Die & & \cite{gurven2007longevity} \\  
+    Produce & & \cite{koster2020life} \\  
+    Receive & & \cite{gurven2004give} \\  
+    Consume & & \cite{kaplan2000theory,pontzer2021daily} \\  
+    Store & & \cite{bowles2011cultivation} \\  
+    Give & & \cite{gurven2004give} \\  
+    Reproduce & & \cite{wood2017dynamics} \\  
+    Transition & & \\
+     & Age of weaning & \cite{wood2017dynamics}\\
+     & Age at menarche & \cite{mulder1989menarche,kramer2010teen}\\
+     & Age at first reproduction & \cite{wood2017dynamics} \\
+     & Age at menopause & \cite{laisk2019demographic}\\
     \hline
     \end{tabular}
     \label{tab:2}
