@@ -1,0 +1,16 @@
+---
+title: "Life cycle variation and resource dynamics ABM: Code"
+author: "Pablo J. Varas Enríquez"
+date: "25-01-2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Starting point
+
+```{r}
+1:10
+```
