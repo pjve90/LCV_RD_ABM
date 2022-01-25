@@ -8,5 +8,7 @@ These are the following components of the project so far:
 
 - Manuscript draft: Here you can find all the drafts related to a Registered Report and final manuscript of the project.
 
+- Model code: Here you can find all the documents related to the code of the model.
+
 - Other drafts: Here you can find drafts and files related to earlier stages (e.g. reading lists) and presentations in conferences and workshops.
 
