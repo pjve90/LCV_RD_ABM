@@ -1,16 +1,74 @@
 ---
-title: "Life cycle variation and resource dynamics ABM: Code"
+title: 'Life cycle variation and resource dynamics ABM: Code'
 author: "Pablo J. Varas Enríquez"
-date: "25-01-2022"
-output: html_document
+date: "`r format(Sys.time(), '%d/%m/%y')`"
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+Sys.setlocale("LC_TIME", "C")
 ```
 
-## Starting point
+## Outline
+
+The following code is meant to develop an agent-based model to understand how the resource dynamics of female individuals influence the variability of life cycles at the population level. 
+
+At first, there is a section called "Starting point", which are the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once less modules work, more modules will be developed and included in the model. The starting point has two life cycle stages (i.e. juvenile, reproductive career), and two resource dynamics (i.e. production, consumption).
+
+The following sections are the different scenarios where the model will be used. The scenarios are:
+
+- A population where all individuals have medium probabilities of resource production and sharing.
+- A population where all individuals have high probabilities for resource production and sharing.
+- A population where most individuals (75% of the population) have a high probability of production and low probability of sharing. The rest (25%) have medium probabilities for production and sharing.
+- A population where most individuals (75% of the population) have a low probability of production and high probability of sharing. The rest (25%) have medium probabilities for production and sharing.
+- A population where all individuals have low probabilities for resource production and sharing.
+
+### Starting point
+
+The starting point section consists of the different attempts to start building the model. First, there will be one life cycle stage and the resource dynamics of production and consumption. Second, one with two life cycle stages, production, and consumption. Third, storage will be added, and finally, one with sharing dynamics.
+
+#### First attempt: one life cycle, two resource dynamics.
+
+Setting up the auxiliary variables. The probabilities for survival, reproduction, production, and consumption.
 
 ```{r}
-1:10
+#these are made up for now
+#surival
+surv <- 0.75
+#reproduction
+repro <- 0.5
+#production
+prod <- 0.5
+#consumption
+cons <- 0.5
 ```
+
+Make a population of a 1000 individuals with the variables that need to be recorded for each individual.
+
+```{r}
+#make dataframe with life history traits and resource dynamics
+pop <- data.frame(lc_stage=rep(NA,length.out=1000),age=rep(NA,length.out=1000),transition=rep(NA,length.out=1000),age_repro=rep(NA,length.out=1000),n_repro=rep(NA,length.out=1000),prod=rep(NA,length.out=1000),cons=rep(NA,length.out=1000))
+#check data frame
+head(pop)
+```
+
+Set the functions for the resource dynamics.
+
+```{r}
+
+```
+
+Set the functions for survival and reproduction.
+
+```{r}
+
+```
+
+
+
+
+
+
