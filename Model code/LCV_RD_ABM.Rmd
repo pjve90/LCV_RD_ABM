@@ -46,6 +46,9 @@ At first, a population of 1000 individuals will be used for the model. The follo
 pop <- data.frame(id=1:1000,age=rep(NA,length.out=1000),age_repro=rep(NA,length.out=1000),n_repro=rep(NA,length.out=1000),prod=rep(NA,length.out=1000),cons=rep(NA,length.out=1000))
 #check data frame
 head(pop)
+
+##### The functions below seem to store additional data in this data frame (e.g. res_prod=resources produced and available). Maybe that needs to be set up here too?
+
 ```
 
 You set the auxiliary variables, which are fixed values set at initialisation to define the life-history and resource dynamics that individuals can experience. Regarding life-history dynamics, you define the surviving probability (`surv_p`) and cost (`surv_c`), the reproductive probability (`repro_p`), cost (`repro_c`), and number of descendants per reproduction (`repro_n`). Resource-related auxiliary variables are the probability of production (`prod_p`) and consumption (`cons_p`), with the respective amount of resources associated (`prod_n` and `cons_n`, respectively). An individual can only produce one descendant in case of a reproductive event.
@@ -89,17 +92,68 @@ produce <- function(ind){
   return(ind)
 }
 
+####Comment from Dieter: The function above seems to be set up wrong. It looks like you are adding an extra step with sampling, which is not necessary because the repetition can already be included in th rbinom function. With the combination, you get an error because you cannot sample repeatedly if there is only a single outcome (the other way around could work). I think it can simply be:
+# produce <- function(ind){
+#  ind$prod<-rbinom(nrow(ind),1,prod_p)
+#  return(ind)
+# }
+
+
+# Same goes for this consumption function:
+
 #consumption
 consume <- function(ind){
   ind$cons <- sample(x=rbinom(1,1,cons_p),size=nrow(ind),prob=cons_p)
   return(ind)
 }
+
+# consume <- function(ind){
+#  ind$cons<-rbinom(nrow(ind),1,cons_p)
+#  return(ind)
+# }
+
+
+
+# For both though, i wonder whether you need to plan the functions more flexibly. If I understand it correctly, the production probability can change according to the stage the individual is in. So I think that this should be part of the function definition:
+
+# produce <- function(ind,production_probability){
+#  ind$prod<-rbinom(nrow(ind),1,production_probability)
+#  return(ind)
+# }
+
+# The function can than be used as:
+# produce(pop,prod_p)
+# Where the prod_p can be adjusted according to the stage of the individuals. Though I assume if you end up having a population where individuals are in different stages, you presumably want to make this a two-step process:
+
+# produce <- function(ind){
+#  ind$proc_b<-ifelse(ind$age<6,proc_b_infant,ifelse(ind$age<15,proc_b_juvenile,0))  # I think there is some way to set this up better
+#  ind$prod<-rbinom(nrow(ind),1,ind$proc_b)
+#  return(ind)
+# }
+
+
 ```
 
 You set the functions to define the amount of resources the individuals has for herself. If the individual has a positive outcome (1) for a resource dynamic it adds the fixed amount of resource set up earlier into her current amount of resources. Otherwise (0), the amount of resources remains equal.
 
 ```{r}
 #getting resources from production
+
+
+
+#### Comment from Dieter: I think there are similar issues here with your attempt at repeating an action across multiple entries in the same dataframe. I think people like Richard and others use 'apply' functions for this. I tend to use loops because it helps me to keep track. Here though, I think even that is not needed, because the previous outcome of the probability of production is either 0 or 1. So I think this can simply be:
+
+# prod_res <- function(ind){
+#   
+#     ind$res_prod <- ind$res_prod+ind$prod*prod_n
+#   
+#   return(ind)
+# }
+
+
+
+
+
 prod_res <- function(ind){
   if(ind$prod==1)
   {
