@@ -32,42 +32,144 @@ The starting point section consists of the different attempts to start building 
 
 #### First attempt: one life cycle, two resource dynamics.
 
-Setting up the auxiliary variables. The probabilities for survival, reproduction, production, and consumption.
+At first, a population of 1000 individuals will be used for the model. The following variables are recorded for each individual:
 
-```{r}
-#these are made up for now
-#surival
-surv <- 0.75
-#reproduction
-repro <- 0.5
-#production
-prod <- 0.5
-#consumption
-cons <- 0.5
-```
-
-Make a population of a 1000 individuals with the variables that need to be recorded for each individual.
+- `ID`: identity of the individual.
+- `age`: number of years the individuals lives. Each iteration that the individual survives makes her one year older.
+- `age_repro`: age at which the individual has its first descendant.
+- `n_repro`: number of descendants.
+- `prod`: total amount of resources produced by the individual in her life cycle.
+- `cons`: total amount of resources consumed by the individual in her life cycle.
 
 ```{r}
 #make dataframe with life history traits and resource dynamics
-pop <- data.frame(lc_stage=rep(NA,length.out=1000),age=rep(NA,length.out=1000),transition=rep(NA,length.out=1000),age_repro=rep(NA,length.out=1000),n_repro=rep(NA,length.out=1000),prod=rep(NA,length.out=1000),cons=rep(NA,length.out=1000))
+pop <- data.frame(id=1:1000,age=rep(NA,length.out=1000),age_repro=rep(NA,length.out=1000),n_repro=rep(NA,length.out=1000),prod=rep(NA,length.out=1000),cons=rep(NA,length.out=1000))
 #check data frame
 head(pop)
 ```
 
-Set the functions for the resource dynamics.
+You set the auxiliary variables, which are fixed values set at initialisation to define the life-history and resource dynamics that individuals can experience. Regarding life-history dynamics, you define the surviving probability (`surv_p`) and cost (`surv_c`), the reproductive probability (`repro_p`), cost (`repro_c`), and number of descendants per reproduction (`repro_n`). Resource-related auxiliary variables are the probability of production (`prod_p`) and consumption (`cons_p`), with the respective amount of resources associated (`prod_n` and `cons_n`, respectively). An individual can only produce one descendant in case of a reproductive event.
 
 ```{r}
+####values are made up for now
 
+#surival
+#probability of surviving
+surv_p <- 0.75
+#cost of surviving
+surv_c <- 0.25
+
+#reproduction
+#probability
+repro_p <- 0.5
+#cost of reproduction
+repro_c <- 0.25
+#number of descendants per reproduction
+repro_n <- 1
+
+#production
+#probability
+prod_p <- 0.5
+#amount of resources produced
+prod_n <- 1
+
+#consumption
+#probability
+cons <- 0.5
+#amount of resources consumed
+cons_n <- 0.25
 ```
 
-Set the functions for survival and reproduction.
+You set the functions for the state variables related to resource dynamics (i.e. production and consumption). The outcomes of the functions can be positive (1) or negative (0) from binomial distributions that are based on the values of the auxiliary variables.
 
 ```{r}
+#production
+produce <- function(ind){
+  ind$prod <- sample(x=rbinom(1,1,prod_p),size=nrow(ind),prob=prod_p)
+  return(ind)
+}
 
+#consumption
+consume <- function(ind){
+  ind$cons <- sample(x=rbinom(1,1,cons_p),size=nrow(ind),prob=cons_p)
+  return(ind)
+}
 ```
 
+You set the functions to define the amount of resources the individuals has for herself. If the individual has a positive outcome (1) for a resource dynamic it adds the fixed amount of resource set up earlier into her current amount of resources. Otherwise (0), the amount of resources remains equal.
 
+```{r}
+#getting resources from production
+prod_res <- function(ind){
+  if(ind$prod==1)
+  {
+    ind$res_prod <- ind$res_prod+prod_n
+  }
+  else{
+    ind$res_prod <- ind$res_prod
+  }
+  return(ind)
+}
+
+#losing resources from consumption
+cons_res <- function(ind){
+  if(ind$cons==1)
+  {
+    ind$res_cons <- ind$res_cons+cons_n
+  }
+  else{
+    ind$res_cons <- ind$res_cons
+  }
+  return(id)
+}
+```
+
+You set the functions for survival and reproduction (i.e. state variables). The probabilities of each function include the probability of survival/reproduction and the resources available from the different dynamics. A positive outcome is a 1 and a negative one is 0.
+
+```{r}
+#survival
+survive <- function(ind){
+  ind$surv <- sample(x=rbinom(1,1,surv),size=nrow(ind),prob=surv*ind$res_prod*ind$res_cons)
+  return(ind)
+}
+
+#reproduction
+reproduce <- function(ind){
+  ind$repro <- sample(x=rbinom(1,1,repro),size=nrow(ind),prob=repro*ind$res_prod*ind$res_cons)
+  return(ind)
+}
+```
+
+You set the functions to include the resource costs related to survival and reproduction. If the individual has a positive outcome (1) for either life-history trait then the fixed amount of resources are substracted from the amount of resources available. If the outcome is negative (0) then either the individual dies, in the case of survival, or does not produce a descendant, in the case of reproduction.
+
+
+```{r}
+#survival-resource dynamics
+surv_res <- function(ind){
+  if(ind$surv==1)
+  {
+    ind$res_prod <- ind$res_prod-surv_c
+  }
+  else{
+    ind$res_prod <- ind$res_prod
+  }
+  return(ind)
+}
+
+#reproduction-resource dynamics
+repro_res <- function(ind){
+  if(ind$repro==1)
+  {
+    ind$res_prod <- ind$res_prod-repro_c
+    ind$repro_n <- repro_n+1
+  }
+  else{
+    ind$res_prod <- ind$res_prod
+    ind$repro_n <- repro_n
+  }
+  return(id)
+}
+```
 
 
 
