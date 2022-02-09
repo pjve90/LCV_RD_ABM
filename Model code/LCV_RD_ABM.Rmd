@@ -14,7 +14,25 @@ Sys.setlocale("LC_TIME", "C")
 
 ## Outline
 
-The following code is meant to develop an agent-based model to understand how the resource dynamics of female individuals influence the variability of life cycles at the population level. 
+The following code is meant to develop an agent-based model to understand how the resource dynamics of female individuals influence the variability of life cycles at the population level. For this, the following variables are needed in the model, at the individual and population levels:
+
+| Level | Life cycle | Resource dynamic |
+| --- | --- | --- |
+| Individual | Longevity |  Lifetime production variability |
+|  | Lifetime reproductive output | Lifetime resource production |
+|  | Age at # reproduction | Lifetime consumption variability |
+|  | Average interbirth interval |  Lifetime resource consumption |
+|  | Age at life cycle stage transition |  Lifetime storage variability |
+|  |  | Lifetime resource storage |
+|  |  | Lifetime giving variability |
+|  |  | Lifetime resource given |
+|  |  | Lifetime recieving variability |
+|  |  | Lifetime resource recieved |
+| Population | Longevity variability | |
+|  | Lifetime reproductive output variability | |
+|  | Age at # reproduction variability | |
+|  | Average interbirth interval variability | |
+|  | Age at life cycle stage transition variability | |
 
 At first, there is a section called "Starting point", which are the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once less modules work, more modules will be developed and included in the model. The starting point has two life cycle stages (i.e. juvenile, reproductive career), and two resource dynamics (i.e. production, consumption).
 
@@ -30,28 +48,54 @@ The following sections are the different scenarios where the model will be used.
 
 The starting point section consists of the different attempts to start building the model. First, there will be one life cycle stage and the resource dynamics of production and consumption. Second, one with two life cycle stages, production, and consumption. Third, storage will be added, and finally, one with sharing dynamics.
 
-#### First attempt: one life cycle, two resource dynamics.
+#### First attempt: one life cycle stage, two resource dynamics.
 
-At first, a population of 1000 individuals will be used for the model. The following variables are recorded for each individual:
+An agent-based model is developed here with a population of 1000 indvidiuals that have only one life cycle stage and experience two resource dynamics (i.e. production and consumption).
+
+First, a database is set to record the variability of life cycles at the population level. The following variables are used to characterize the life cycle variability:
+
+- `lng_var`: Longevity variance
+- `lro_var`: Lifetime reproductive output variance
+- `age_repro_i_var`: Age at the $i$th reproduction variance. A new variable is made for the age of each reproductiv event.
+- `ibi_var`: Average interbirth interval variance.
+
+Second, a database is set to record the final outcome of life cycles and resource dynamics of each of the 1000 individual in the population. This database is used to calculate the variability of life cycles at the population level. The variables used are:
 
 - `ID`: identity of the individual.
-- `age`: number of years the individuals lives. Each iteration that the individual survives makes her one year older.
-- `age_repro`: age at which the individual has its first descendant.
-- `n_repro`: number of descendants.
+- `age`: number of years the individuals lives.
+- `prod_n`: total number of successful outcomes in resource production by the individual in her life cycle.
 - `prod`: total amount of resources produced by the individual in her life cycle.
 - `cons`: total amount of resources consumed by the individual in her life cycle.
+- `lro`: lifetime reproductive output.
+- `age_repro:i`: age at which the individual has her $i$th descendant. There should be a new one for each reproductive event.
+- `ibi`: average interbirth interval.
+
+Third, a database is set to record the individual dynamics in the population in one iteration (i.e. one year). This database is used to record the development of the different individuals across their life cycle, by recording the changes from one year to another, and estimate the final outcomes of each individual. The variables used are:
+
+- `ID`: identity of the individual.
+- `surv`: outcome from the survival function. The individual can survive (1) or not (0).
+- `age`: number of years the individual has.
+- `prod_o`: outcome from the resource production function. The individual can produce (1) or not (0).
+- `prod_a`: amount of resources produced by the individual in the iteration.
+- `cons`: amount of resources consumed by the individual in the iteration.
+- `repro`: outcome from the reproduction function. The individual can reproduce (1) or not (0).
 
 ```{r}
-#make dataframe with life history traits and resource dynamics
-pop <- data.frame(id=1:1000,age=rep(NA,length.out=1000),age_repro=rep(NA,length.out=1000),n_repro=rep(NA,length.out=1000),prod=rep(NA,length.out=1000),cons=rep(NA,length.out=1000))
+#life cycle variability database
+lcv_pop <- data.frame(lng_var=NA,lro_var=NA,age_repro_i_var=NA,ibi_var=NA)
 #check data frame
-head(pop)
+head(lcv_pop)
 
-##### The functions below seem to store additional data in this data frame (e.g. res_prod=resources produced and available). Maybe that needs to be set up here too?
+#individual final outcome database
+final_indpop <- data.frame(id=1:1000,age=rep(NA,length.out=1000),prod_n=rep(NA,length.out=1000),prod=rep(NA,length.out=1000),cons=rep(NA,length.out=1000),lro=rep(NA,length.out=1000),age_repro_i=rep(NA,length.out=1000),ibi=rep(NA,length.out=1000))
+#check data frame
+head(final_indpop)
 
+#individual iteration database
+it_indpop <- data.frame(id=1000,surv=rep(NA,length.out=1000),age=rep(NA,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(NA,length.out=1000),cons=rep(NA,length.out=1000),repro=rep(NA,length.out=1000))
 ```
 
-You set the auxiliary variables, which are fixed values set at initialisation to define the life-history and resource dynamics that individuals can experience. Regarding life-history dynamics, you define the surviving probability (`surv_p`) and cost (`surv_c`), the reproductive probability (`repro_p`), cost (`repro_c`), and number of descendants per reproduction (`repro_n`). Resource-related auxiliary variables are the probability of production (`prod_p`) and consumption (`cons_p`), with the respective amount of resources associated (`prod_n` and `cons_n`, respectively). An individual can only produce one descendant in case of a reproductive event.
+You set the auxiliary variables, which are fixed values set at initialisation to define the life-history and resource dynamics that individuals can experience. Regarding life-history dynamics, you define the surviving probability (`surv_p`) and cost (`surv_c`), the reproductive probability (`repro_p`), cost (`repro_c`), and number of descendants per reproduction (`repro_n`). Resource-related auxiliary variables are the probability of production (`prod_p`), the amount that can be produced (`prod_n`), and the amount of resources that are consumed (`cons_n`). An individual can only produce one descendant in case of a reproductive event.
 
 ```{r}
 ####values are made up for now
@@ -77,11 +121,16 @@ prod_p <- 0.5
 prod_n <- 1
 
 #consumption
-#probability
-cons <- 0.5
 #amount of resources consumed
 cons_n <- 0.25
 ```
+
+
+
+
+
+
+
 
 You set the functions for the state variables related to resource dynamics (i.e. production and consumption). The outcomes of the functions can be positive (1) or negative (0) from binomial distributions that are based on the values of the auxiliary variables.
 
