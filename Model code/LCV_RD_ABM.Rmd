@@ -140,6 +140,19 @@ survive <- function(it_indpop){
 }
 
 #I think a solution for the "weighting" problem is to make the survival depend on having the resources or not, so if you don't have the resources you definitely die, and if you have them you go through the random option of surviving or not.
+# From Dieter: I think this goes back to the discussion in the TICEL meeting, about the function that links inputs to outputs. To me, for survival, there are two steps: first, assign an individual specific level of survival depending on the resources. So there is a function that links resources to a probability. Maybe the easiest is something similar to what you have: when resources are below a critical threshold, individuals will definitely die; if resources reach that threshold, there is a baseline survival probability; if individuals have more resources, their survival probability increases. That increase probably follows a logarithmic function, with additional resources leading to smaller increases. The second step is that we draw a random number for this individual between 0 and 1 (runif(1,min=0,max=1)) and see whether that number is smaller than the probability to survive. Here is such a suggestion. I am dividing the log benefit by 20 to bring it onto the relevant scale - so if the baseline survival is 0.75, and individual with 100 resources will now have a survival of 0.75 + log(100)/20 = 0.75 + 0.23 = 0.98. With this example, most individuals survive, so if you use this variant without changing anything else, the population will explode.
+
+# survive <- function(it_indpop){
+#  if(it_indpop$prod_a[i] >= surv_c & runif(1,min=0,max=1)<(surv_p+log(it_indpop$prod_a[i]+1)/20) ){
+#  it_indpop$surv[i] <- 1
+#  }
+#  else{
+#  it_indpop$surv[i] <- 0
+#  }
+#  return(it_indpop$surv)
+# }
+
+
 
 #age
 age <- function(it_indpop){
@@ -197,6 +210,9 @@ consume <- function(it_indpop) {
 #Pablo:
 #I think the last option sounds like the best. However, I thought the stage-specific probabilities were set as auxiliary variables, which is why I was not considering them in the function definitions. Is this a good way to do it? Do you think is necessary to solve it for this model, where individuals don't transition to another life cycle stage, or can it be dealt in the next one where individuals have two stages?
 
+# Dieter:
+# Yes, I think for now this works. I was already thinking ahead. You could have an additional setup where there are functions that adjust the probabilities accordingly. The way you have setup it up currently though, where functions are simultaneously applied to all individuals in a vector, makes me think that the second approach I am describing will be necessary. This is because not all individuals will transition at the same time, so there will be a mix of individuals in the data frame and the function needs to consider for each individual separately which stage it is in. Or are you assuming that when individuals transition they move to a new data frame, being killed from the dataframe for stage 1 and being added to the dataframe for stage 2?
+
 ```
 
 The functions for the reproductive dynamics are defined here. First the probability of reproducing is defined, followed by the reproductive costs, and adding the newborn in the population. The reproduction function tells if an individual reproduces (1) or not (0), based on a binomial distribution. The probability in the binomial distribution is defined by the reproduction probability in the auxiliary variables (`repro_p`) and *weighted by the amount of resources produced (`it_indpop$prod_a`)*. 
@@ -212,6 +228,8 @@ reproduce <- function(it_indpop){
   }
   return(it_indpop$repro)
 }
+
+# Dieter: Again, you could set the reproduction probability up similarly to the survival probability, where resources additionally increase the probability that an individual will reproduce.
 
 #reproductive costs
 reproduce_c <- function(it_indpop) {
@@ -319,6 +337,8 @@ head(it_indpop)
 
 
 The functions to feed the second database are defined now that one iteration works. Remember, the second database is meant to record the whole life cycle of each individual in the populations and the resource dynamics she experienced as well. Therefore, the functions should address the id of an individual (`id`), her age (`age`), the amount of succesful outcomes in resource production (`prod_n`), the total amount of resources produced (`prod`), consumed (`cons`), her lifetime reproductive output (`lro`), the age at which she had her $i$th descendant (`age_rero_i`), and her average interbirth interval (`ibi`).
+
+# From Dieter: To understand it better, these functions will be applied each iteration of the previous loop? Are you only interested in the final (potentially stable) population at the end of the 100 iterations?
 
 ```{r}
 #id
