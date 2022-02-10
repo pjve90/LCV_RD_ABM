@@ -130,9 +130,16 @@ The functions for state variables are defined backwards from how the databases w
 ```{r}
 #survival
 survive <- function(it_indpop){
+  if(it_indpop$prod_a[i] >= surv_c){
   it_indpop$surv[i] <- rbinom(1,1,surv_p)#*it_indpop$prod_a[i])
+  }
+  else{
+  it_indpop$surv[i] <- 0
+  }
   return(it_indpop$surv)
 }
+
+#I think a solution for the "weighting" problem is to make the survival depend on having the resources or not, so if you don't have the resources you definitely die, and if you have them you go through the random option of surviving or not.
 
 #age
 age <- function(it_indpop){
@@ -192,27 +199,37 @@ consume <- function(it_indpop) {
 
 ```
 
-The functions for the reproductive dynamics are defined here. First the probability of reproducing is defined, followed by the reproductive costs, and adding the newborn in the population. The reproduction function tells if an individual reproduces (1) or not (0), based on a binomial distribution. The probability in the binomial distribution is defined by the reproduction probability in the auxiliary variables (`repro_p`) and weighted by the amount of resources produced (`it_indpop$prod_a`). 
+The functions for the reproductive dynamics are defined here. First the probability of reproducing is defined, followed by the reproductive costs, and adding the newborn in the population. The reproduction function tells if an individual reproduces (1) or not (0), based on a binomial distribution. The probability in the binomial distribution is defined by the reproduction probability in the auxiliary variables (`repro_p`) and *weighted by the amount of resources produced (`it_indpop$prod_a`)*. 
 
 
 ```{r}
 #reproduction probability
 reproduce <- function(it_indpop){
+  if(it_indpop$prod_a[i] >= repro_c) {
   it_indpop$repro[i] <- rbinom(1,1,repro_p)#*it_indpop$prod_a)
+  }else{
+  it_indpop$repro[i] <- 0
+  }
   return(it_indpop$repro)
 }
 
 #reproductive costs
 reproduce_c <- function(it_indpop) {
+  if(it_indpop$repro[i] == 1){
     it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_c
+  }else{
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]
+  }
     return(it_indpop$prod_a)
 }
 
 #adding the newborn
-new_ind <- function(it_indpop){
-  it_indpop <- rbind(it_indpop,data.frame(id=(max(it_indpop$id)+1):((max(it_indpop$id)+1)+sum(it_indpop[which(it_indpop$repro==1),"repro"])),surv=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),age=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_o=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_a=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),cons=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),repro=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"]))))
-  return(it_indpop)
-}
+#new_ind <- function(it_indpop){
+#  it_indpop <- rbind(it_indpop,data.frame(id=(max(it_indpop$id)+1):((max(it_indpop$id)+1)+sum(it_indpop[which(it_indpop$repro==1),"repro"])),surv=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),age=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_o=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_a=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),cons=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),repro=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"]))))
+#  return(it_indpop)
+#}
+
+#this one did not work out well so I put it directly on the code for one iteration.
 ```
 
 Now the functions are used in the 1000 individuals in the population for one iteration.
@@ -220,6 +237,9 @@ Now the functions are used in the 1000 individuals in the population for one ite
 ```{r}
 #create population
 it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(0,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(1,length.out=1000),cons=rep(NA,length.out=1000),repro=rep(NA,length.out=1000))
+
+#I tried like a set up function instead of writing the whole data frame, but it messed up the id because it was giving everybody an id of 1000 instead of a number between 1 and 1000.
+
 #run one iteration for all the population
 #calculate the survival outcome
 for (i in 1:nrow(it_indpop)){
@@ -250,7 +270,103 @@ for (i in 1:nrow(it_indpop)){
 new_it_indpop <- data.frame(id=(max(it_indpop$id)+1):(max(it_indpop$id)+sum(it_indpop[which(it_indpop$repro==1),"repro"])),surv=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),age=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_o=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_a=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),cons=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),repro=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])))
 #combine original population with newborns
 it_indpop <- rbind(it_indpop,new_it_indpop)
+#check the population by the end of the iteration
+head(it_indpop)
+```
+
+Let's see how to it looks like if you run 100 iterations.
+
+```{r}
+#create population
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(0,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(1,length.out=1000),cons=rep(NA,length.out=1000),repro=rep(NA,length.out=1000))
+
+#run 100 iterations
+for (b in 1:100){
+#calculate the survival outcome
+for (i in 1:nrow(it_indpop)){
+  #survival
+  it_indpop$surv <- survive(it_indpop)
+}
+#remove individuals that died
+it_indpop <- it_indpop[-which(it_indpop$surv==0),]
+#calculate age, survival cost, production, consumption, and reproductive outcome
+for (i in 1:nrow(it_indpop)){
+  #age
+  it_indpop$age <- age(it_indpop)
+  #survival cost
+  it_indpop$prod_a <- survive_c(it_indpop)
+  #production outcome
+  it_indpop$prod_o <- produce(it_indpop)
+  #production amount
+  it_indpop$prod_a <- produce_a(it_indpop)
+  #consumption
+  it_indpop <- consume(it_indpop)
+  #reproduction probability
+  it_indpop$repro <- reproduce(it_indpop)
+  #reproductive cost
+  it_indpop$prod_a <- reproduce_c(it_indpop)
+}
+#add newborns
+#dataframe with newborns
+new_it_indpop <- data.frame(id=(max(it_indpop$id)+1):(max(it_indpop$id)+sum(it_indpop[which(it_indpop$repro==1),"repro"])),surv=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),age=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_o=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_a=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),cons=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),repro=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])))
+#combine original population with newborns
+it_indpop <- rbind(it_indpop,new_it_indpop)
+}
+
+#check the population by the end of the iterations
 head(it_indpop)
 ```
 
 
+The functions to feed the second database are defined now that one iteration works. Remember, the second database is meant to record the whole life cycle of each individual in the populations and the resource dynamics she experienced as well. Therefore, the functions should address the id of an individual (`id`), her age (`age`), the amount of succesful outcomes in resource production (`prod_n`), the total amount of resources produced (`prod`), consumed (`cons`), her lifetime reproductive output (`lro`), the age at which she had her $i$th descendant (`age_rero_i`), and her average interbirth interval (`ibi`).
+
+```{r}
+#id
+id_final <- function(final_indpop){
+  final_indpop$id[i] <- it_indpop$id[i]
+  return(final_indpop$id)
+}
+
+#age
+age_final <- function(final_indpop){
+  final_indpop$age[i] <- it_indpop$age[i]
+  return(final_indpop$age)
+}
+
+#total amount of successulf outcomes in production
+produce_final_o <- function(final_indpop){
+  final_indpop$prod_n[i] <- final_indpop$prod_n[i]+it_indpop$prod_o[i]
+  return(final_indpop$prod_n)
+}
+
+#total amount of resources produced
+produce_final_a <- function(final_indpop){
+  final_indpop$prod[i] <- final_indpop$prod[i]+it_indpop$prod_a[i]
+  return(final_indpop$prod)
+}
+
+#lifetime reproductive output
+lro <- function(final_indpop){
+  final_indpop$lro[i] <- final_indpop$lro[i]+it_indpop$repro[i]
+  return(final_indpop$lro)
+}
+
+#age at ith reproduction
+#age_repro_i <- function(final_indpop){
+ # if(it_indpop$repro[i]==1){
+  #final_indpop$age_repro_i[i] <- it_indpop$age[i]
+
+  #}
+#}
+
+#Not sure how to make a new column with the age at subsequent reproductive events.
+
+#average interbirth interval
+#avg_ibi <- function(final_indpop){
+  #final_indpop$ibi[i] <- (final_indpop$age_repro_i[i]-final_indpop$age_repro_i[i])/final_indpop$lro
+  #return(final_indpop$ibi)
+#}
+
+#It should work depending on how the final_indpop$age_repro_i[i] can refer to the age at last and first reproduction.
+
+````
