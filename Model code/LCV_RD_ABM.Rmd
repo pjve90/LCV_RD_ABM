@@ -105,12 +105,16 @@ The auxiliary variables are defined for the model. Auxiliary variables are fixed
 surv_p <- 0.75
 #cost of surviving
 surv_c <- 0.25
+#age-specific cost of surviving
+surv_c_age <- c(surv_c,surv_c*exp(exp(surv_c)/20*c(1:100))) 
 
 #reproduction
 #probability
 repro_p <- 0.5
 #cost of reproduction
 repro_c <- 0.25
+#age-specific cost of reproduction
+repro_c_age <- c(repro_c,repro_c*exp(exp(repro_c)/20*c(1:100)))
 #number of descendants per reproduction
 repro_n <- 1
 
@@ -125,12 +129,12 @@ prod_n <- 1
 cons <- 0.25
 ```
 
-The functions for state variables are defined backwards from how the databases were defined, starting from the functions for each individual and ending with the functions for the calculations at the population level. First, the functions for survival, die and age are defined, followed by the discount on the amount of resources due to the costs of survival. An individual can either survive (1) or not (0) in the survival function, based on a binomial distribution. The probability of the binomial distribution is based on the survival probability in the auxiliary variables (`surv_p`) and *weighted by the amount of resources produced (`it_indpop$prod_a`)*. Individuals that do not survive, are removed after the survival outcome is known, before ageing.
+The functions for state variables are defined backwards from how the databases were defined, starting from the functions for each individual and ending with the functions for the calculations at the population level. First, the functions for survival probability, and age are defined, followed by the discount on the amount of resources due to the costs of survival. An individual can either survive (1) or not (0) in the survival function, based on a binomial distribution. The probability of the binomial distribution is based on the survival probability in the auxiliary variables (`surv_p`) and *weighted by the amount of resources produced (`it_indpop$prod_a`)*. Individuals that do not survive, are removed after the survival outcome is known, before ageing.
 
 ```{r}
 #survival
 survive <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= surv_c & runif(1,min=0,max=1)<(surv_p+log(it_indpop$prod_a[i]+1)/20)){
+  if(it_indpop$prod_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(surv_p+log(it_indpop$prod_a[i]+1)/20)){
   it_indpop$surv[i] <- 1
   }
   else{
@@ -147,8 +151,11 @@ survive <- function(it_indpop){
 # From Dieter:
 # It might be useful to plot the functions to get an idea of how it influences the baseline probability. For example, should the baseline be the average or should it be the starting point? Should there be a steep incline or just a small change? Should the change be abrupt or gradual across the whole range? It also matters how you measure resources (are they measured in units of 1 or smaller units, what could the maximum be etc.) Here are four options that illustrate these differences based on what you set above that the production of resources is ~0.5 - so small steps and going up to a maximum of 10 resources (40 steps of production with baseline production (0.5) + consumption (0.25) - 40*0.25=10). I think you will probably decide the shape depending on the references you wanted to use? 
 
+#Pablo:
+#If I understand correctly, dividing by 20 is to make the survival probability have values below one, right? I updated the code below then so the baseline production is 1 (0.5 is the probability of producing one resource), the resources vector would have a maximum of 75 resources (100 steps of production with baseline production (1) + consumption (0.25), 100*0.75=75), and I divide by 20, 20_neg, 10, and the dive6.
+
 # 
-resources<-seq(from=0,to=10,length.out=101)
+resources<-seq(from=0,to=75,length.out=101)
 survival_probabilities_20<-rep(0,101)
 for (i in 1:length(resources)){
 if(resources[i]<surv_c){survival_probabilities_20[i]<-0}else{survival_probabilities_20[i]<-surv_p+log(resources[i]+1)/20}
@@ -169,7 +176,8 @@ for (i in 1:length(resources)){
 if(resources[i]<surv_c){survival_probabilities_div6[i]<-0}else{survival_probabilities_div6[i]<-surv_p+(log(resources[i]/2)/6) }
 }
 
-plot(survival_probabilities_20~resources,xlim=c(0,10),ylim=c(0,1))
+plot(survival_probabilities_20~resources,xlim=c(0,75),ylim=c(0,1.3))
+abline(h=1)
 points(survival_probabilities_20_neg~resources,col="red")
 points(survival_probabilities_10~resources,col="blue")
 points(survival_probabilities_div6~resources,col="gold",pch=2)
@@ -179,8 +187,54 @@ points(survival_probabilities_div6~resources,col="gold",pch=2)
 
 # From Dieter: Yes, exponentiating quickly leads to massive changes - e.g. if you start with survival of 0.75, the chance to survive to age 4 is 5%: 0.75*(0.75*0.75)*(0.75*0.75*0.75)*(0.75*0.75*0.75*0.75)
 
+#Pablo: I am trying to plot the survival cost function, so that it increases with age. I think the one dividing by 20 should be smooth enough.
 
+#survival cost only exp
+#age
+ages<-1:100
+#surv cost at age 0
+a <- 0.25 
+#constant exponential growth
+r <- exp(surv_c)
+#survival costs for ages
+surv_costs <- a*exp(r*ages)
 
+#survival cost dividing by 20
+#age
+ages<-1:100
+#surv cost at age 0
+a <- 0.25 
+#constant exponential growth
+r_20 <- exp(surv_c)/20
+#survival costs for ages
+surv_costs_20 <- a*exp(r_20*ages)
+
+#survival cost dividing by 10
+#age
+ages<-1:100
+#surv cost at age 0
+a <- 0.25 
+#constant exponential growth
+r_10 <- exp(surv_c)/10
+#survival costs for ages
+surv_costs_10 <- a*exp(r_10*ages)
+
+#survival cost dividing by div6
+#age
+ages<-1:100
+#surv cost at age 0
+a <- 0.25 
+#constant exponential growth
+r_div6 <- exp(surv_c/2)/6
+#survival costs for ages
+surv_costs_div6 <- a*exp(r_div6*ages)
+
+plot(surv_costs_20~ages,xlim=c(0,100))
+points(surv_costs_10~ages,col="blue")
+points(surv_costs~ages,col="red")
+points(surv_costs_div6~ages,col="gold",pch=2)
+
+####
 
 #age
 age <- function(it_indpop){
@@ -188,9 +242,9 @@ age <- function(it_indpop){
   return(it_indpop$age)
 }
 
-#survival costs
+#discount survival costs
 survive_c <- function(it_indpop) {
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-surv_c
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-surv_c_age[it_indpop$age[i]+1]
     return(it_indpop$prod_a)
   }
 ```
@@ -252,7 +306,7 @@ The functions for the reproductive dynamics are defined here. First the probabil
 ```{r}
 #reproduction probability
 reproduce <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= repro_c & runif(1,min=0,max=1)<(repro_p+log(it_indpop$prod_a[i]+1)/20)) {
+  if(it_indpop$prod_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p+log(it_indpop$prod_a[i]+1)/20)) {
   it_indpop$repro[i] <- 1
   }else{
   it_indpop$repro[i] <- 0
@@ -263,7 +317,7 @@ reproduce <- function(it_indpop){
 #reproductive costs
 reproduce_c <- function(it_indpop) {
   if(it_indpop$repro[i] == 1){
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_c
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_c_age[it_indpop$age[i]+1]
   }else{
     it_indpop$prod_a[i] <- it_indpop$prod_a[i]
   }
@@ -321,7 +375,7 @@ it_indpop <- rbind(it_indpop,new_it_indpop)
 head(it_indpop)
 ```
 
-Let's see how to it looks like if you run 100 iterations.
+Let's see how it looks like if you run 100 iterations.
 
 ```{r}
 #create population
@@ -363,7 +417,6 @@ it_indpop <- rbind(it_indpop,new_it_indpop)
 #check the population by the end of the iterations
 head(it_indpop)
 ```
-
 
 The functions to feed the second database are defined now that one iteration works. Remember, the second database is meant to record the whole life cycle of each individual in the populations and the resource dynamics she experienced as well. Therefore, the functions should address the id of an individual (`id`), her age (`age`), the amount of succesful outcomes in resource production (`prod_n`), the total amount of resources produced (`prod`), consumed (`cons`), her lifetime reproductive output (`lro`), the age at which she had her $i$th descendant (`age_rero_i`), and her average interbirth interval (`ibi`).
 
