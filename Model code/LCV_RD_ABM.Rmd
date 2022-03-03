@@ -416,6 +416,9 @@ it_indpop <- rbind(it_indpop,new_it_indpop)
 
 #check the population by the end of the iterations
 head(it_indpop)
+
+#check the age distribution by the end of the iterations
+hist(it_indpop$age)
 ```
 
 The functions to feed the second database are defined now that one iteration works. Remember, the second database is meant to record the whole life cycle of each individual in the populations and the resource dynamics she experienced as well. Therefore, the functions should address the id of an individual (`id`), her age (`age`), the amount of succesful outcomes in resource production (`prod_n`), the total amount of resources produced (`prod`), consumed (`cons`), her lifetime reproductive output (`lro`), the age at which she had her $i$th descendant (`age_rero_i`), and her average interbirth interval (`ibi`).
