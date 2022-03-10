@@ -10,6 +10,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 Sys.setlocale("LC_TIME", "C")
+#install.packages("tidyverse")
+library(tidyverse)
 ```
 
 ## Outline
@@ -18,21 +20,26 @@ The following code is meant to develop an agent-based model to understand how th
 
 | Level | Life cycle | Resource dynamic |
 | --- | --- | --- |
-| Individual | Longevity |  Lifetime production variability |
+| Individual | Longevity |  Lifetime production events |
 |  | Lifetime reproductive output | Lifetime resource production |
-|  | Age at # reproduction | Lifetime consumption variability |
+|  | Age at # reproduction | Lifetime consumption events |
 |  | Average interbirth interval |  Lifetime resource consumption |
-|  | Age at life cycle stage transition |  Lifetime storage variability |
+|  | Age at life cycle stage transition |  Lifetime storage events |
 |  |  | Lifetime resource storage |
-|  |  | Lifetime giving variability |
+|  |  | Lifetime giving events |
 |  |  | Lifetime resource given |
-|  |  | Lifetime recieving variability |
+|  |  | Lifetime recieving events |
 |  |  | Lifetime resource recieved |
-| Population | Longevity variability | |
-|  | Lifetime reproductive output variability | |
-|  | Age at # reproduction variability | |
-|  | Average interbirth interval variability | |
-|  | Age at life cycle stage transition variability | |
+| Population | Longevity variability | Production events variability |
+|  | Lifetime reproductive output variability | Resources produced variability |
+|  | Age at # reproduction variability | Consumption events variability |
+|  | Average interbirth interval variability | Resources consumed variability |
+|  | Age at life cycle stage transition variability | Storage events variability |
+|  |  | Resources stored variability |
+|  |  | Giving events variability |
+|  |  | Resources given variability |
+|  |  | Recirving events variability |
+|  |  | Resources recieved variability |
 
 At first, there is a section called "Starting point", which are the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once less modules work, more modules will be developed and included in the model. The starting point has one life cycle, and two resource dynamics (i.e. production, consumption), and builds-up from there.
 
@@ -383,7 +390,7 @@ new_it_indpop <- data.frame(id=(max(it_indpop$id)+1):(max(it_indpop$id)+sum(it_i
 #combine original population with newborns
 it_indpop <- rbind(it_indpop,new_it_indpop)
 #merge iteration records
-it_data <- Reduce(function(x,y) merge(x=x,y=y,by="id",all=T),list(it_data,surv_data,repro_data,resource_data))
+it_data <- reduce(list(it_data,surv_data,repro_data,resource_data),full_join,by="id",suffix=c("1","1"))
 
 #check the population by the end of the iteration
 head(it_indpop)
@@ -434,7 +441,7 @@ new_it_indpop <- data.frame(id=(max(it_indpop$id)+1):(max(it_indpop$id)+sum(it_i
 #combine original population with newborns
 it_indpop <- rbind(it_indpop,new_it_indpop)
 #merge iteration records
-it_data <- Reduce(function(x,y) merge(x=x,y=y,by="id",all=T),list(it_data,surv_data,repro_data,resource_data))
+it_data <- reduce(list(it_data,surv_data,repro_data,resource_data),full_join,by="id",suffix=as.character(c(b-1,b)))
 }
 
 #check the population by the end of the iterations
