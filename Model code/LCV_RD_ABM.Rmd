@@ -3,8 +3,8 @@ title: 'Life cycle variation and resource dynamics ABM: Code'
 author: "Pablo J. Varas Enríquez"
 date: "`r format(Sys.time(), '%d/%m/%y')`"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -417,26 +417,105 @@ hist(it_indpop$age)
 Now that there is a record for the survival, reproduction, and resource dynamics of each individual every year, it is possible to create the functions to calculate the different life-history traits and resource-dynamics of interest for each individual:
 
 - Longevity: number of years from birth to death.
-- Lifetime reproductive output: total number of descendants.
+- Lifetime reproductive output (LRO): total number of descendants.
 - Age at first reproduction (AFR): age at which the individual has her first descendant.
 - Age at last reproduction (ALR): age at which the individual has her last descendant.
-- Average interbirth interval: Number of reproductive years per descendant.
+- Average interbirth interval (IBI): Number of reproductive years per descendant.
 $$IBI=\frac{ALR-AFR}{LRO}$$
 
 ```{r}
 #longevity
 longevity <- function(final_ind_data){
   final_ind_data$age[i] <- as.numeric(rowSums(it_data[i,grep("surv",colnames(it_data))],na.rm = T))
+  return(final_ind_data$age)
 }
 
 #LRO
 lro <- function(final_ind_data){
   final_ind_data$lro[i] <- as.numeric(rowSums(it_data[i,grep("repro",colnames(it_data))],na.rm = T))
+  return(final_ind_data$lro)
 }
 
 #AFR
 afr <- function(final_ind_data){
-  final_ind_data$afr[i] <- 
+  if(final_ind_data$lro[i] == 0){
+    final_ind_data$afr[i] <- NA 
+  }else{
+    final_ind_data$afr[i] <-
+    min(cumsum(it_data[i,grep("surv",colnames(it_data))][!is.na(it_data[i,grep("surv",colnames(it_data))])])[it_data[i,grep("repro",colnames(it_data))][!is.na(it_data[i,grep("repro",colnames(it_data))])]==1])
+  }
+  return(final_ind_data$afr)
 }
 
-````
+#ALR
+alr <- function(final_ind_data){
+ if(final_ind_data$lro[i] == 0){
+    final_ind_data$alr[i] <- NA 
+  }else{
+    final_ind_data$alr[i] <-
+    max(cumsum(it_data[i,grep("surv",colnames(it_data))][!is.na(it_data[i,grep("surv",colnames(it_data))])])[it_data[i,grep("repro",colnames(it_data))][!is.na(it_data[i,grep("repro",colnames(it_data))])]==1])
+  }
+  return(final_ind_data$alr)
+}
+
+#IBI
+ibi <- function(final_ind_data){
+  final_ind_data$ibi[i] <- (final_ind_data$alr[i]-final_ind_data$afr[i])/final_ind_data$lro[i]
+  return(final_ind_data$ibi)
+}
+```
+
+The functions for the lifetime resource dynamics of each individual are developed below. The dynamics that would be calculated are:
+
+- Lifetime production events: total number of positive outcomes (1) from the production function during the lifetime of an individual.
+- Lifetime resource production: total amount of resources produced during the lifetime of an individual.
+- Lifetime consumption events: total number of consumption events during the lifetime of an individual. This amount should be the same as the age of an individual since consumption is fixed.
+- Lifetime resource consumption: total amount of resources consumed during the lifetime of an individual.
+- Lifetime resources available: total amount of resources available during the lifetime of an individual.
+
+```{r}
+#production events
+production_ev <- function(final_ind_data){
+  final_ind_data$prod_ev[i] <- as.numeric(rowSums(it_data[i,grep("prod_o",colnames(it_data))],na.rm = T))
+}
+
+#resource production
+production_res <- function(final_ind_data){
+  final_ind_data$prod_res[i] <- final_ind_data$prod_ev[i]*prod_n 
+}
+
+#consumption events
+consumption_ev <- function(final_ind_data){
+  final_ind_data$cons_ev[i] <- final_ind_data$age[i]
+}
+
+#resource consumption
+consumption_res <- function(final_ind_data){
+  final_ind_data$cons_res[i] <- final_ind_data$cons_env[i]*cons
+}
+
+#resources available
+resources_av <- function(final_ind_data){
+  final_ind_data$res_av[i] <- as.numeric(rowSums(it_data[i,grep("prod_a",colnames(it_data))],na.rm=T))
+}
+```
+
+Once the functions to calculate the life-history traits and resource dynamics for each individual, it is possible to use them in the individuals from the population that was simulated for 100 years (`it_data`). The calculations for each individual are recorded in a separate database (`final_ind_data`).
+
+```{r}
+#create dataset
+final_ind_data <- data.frame(id=1:nrow(it_data))
+
+for(i in 1:nrow(it_data)){
+#longevity
+final_ind_data$age <- longevity(final_ind_data)
+#lro
+final_ind_data$lro <- lro(final_ind_data)
+#afr
+final_ind_data$afr <- afr(final_ind_data)
+#alr
+final_ind_data$alr <- alr(final_ind_data)
+#ibi
+final_ind_data$ibi <- ibi(final_ind_data)
+}
+```
