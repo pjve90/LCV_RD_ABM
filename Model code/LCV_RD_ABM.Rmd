@@ -477,27 +477,32 @@ The functions for the lifetime resource dynamics of each individual are develope
 #production events
 production_ev <- function(final_ind_data){
   final_ind_data$prod_ev[i] <- as.numeric(rowSums(it_data[i,grep("prod_o",colnames(it_data))],na.rm = T))
+  return(final_ind_data$prod_ev)
 }
 
 #resource production
 production_res <- function(final_ind_data){
   final_ind_data$prod_res[i] <- final_ind_data$prod_ev[i]*prod_n 
+  return(final_ind_data$prod_res)
 }
 
 #consumption events
 consumption_ev <- function(final_ind_data){
   final_ind_data$cons_ev[i] <- final_ind_data$age[i]
+  return(final_ind_data$cons_ev)
 }
 
 #resource consumption
 consumption_res <- function(final_ind_data){
   final_ind_data$cons_res[i] <- final_ind_data$cons_env[i]*cons
+  return(final_ind_data$cons_res)
 }
 
 #resources available
 resources_av <- function(final_ind_data){
   final_ind_data$res_av[i] <- as.numeric(rowSums(it_data[i,grep("prod_a",colnames(it_data))],na.rm=T))
-}
+  return(final_ind_data$res_av)
+  }
 ```
 
 Once the functions to calculate the life-history traits and resource dynamics for each individual, it is possible to use them in the individuals from the population that was simulated for 100 years (`it_data`). The calculations for each individual are recorded in a separate database (`final_ind_data`).
@@ -507,15 +512,44 @@ Once the functions to calculate the life-history traits and resource dynamics fo
 final_ind_data <- data.frame(id=1:nrow(it_data))
 
 for(i in 1:nrow(it_data)){
-#longevity
+  #life-history traits
+  #longevity
 final_ind_data$age <- longevity(final_ind_data)
-#lro
+  #lro
 final_ind_data$lro <- lro(final_ind_data)
-#afr
+  #afr
 final_ind_data$afr <- afr(final_ind_data)
-#alr
+  #alr
 final_ind_data$alr <- alr(final_ind_data)
-#ibi
+  #ibi
 final_ind_data$ibi <- ibi(final_ind_data)
+  #resource dynamics
+  #production events
+final_ind_data$prod_ev <- production_ev(final_ind_data)
+  #resource production
+final_ind_data$prod_res <- production_res(final_ind_data)
+  #consumption events
+final_ind_data$cons_ev <- consumption_ev(final_ind_data)
+  #resource consumption
+final_ind_data$cons_res <- consumption_res(final_ind_data)
+  #resources available
+final_ind_data$res_av <- resources_av(final_ind_data)
 }
+
+#plot it
+#life-history traits and resources available
+layout(matrix(c(1,1,2,2,3,3,0,4,4,5,5,0),nrow=2,ncol=6,byrow=T))
+plot(final_ind_data$age~final_ind_data$res_av)
+plot(final_ind_data$lro~final_ind_data$res_av)
+plot(final_ind_data$afr~final_ind_data$res_av)
+plot(final_ind_data$alr~final_ind_data$res_av)
+plot(final_ind_data$ibi~final_ind_data$res_av)
+#life-history traits and resource production
+layout(matrix(c(1,1,2,2,3,3,0,4,4,5,5,0),nrow=2,ncol=6,byrow=T))
+plot(final_ind_data$age~final_ind_data$prod_res)
+plot(final_ind_data$lro~final_ind_data$prod_res)
+plot(final_ind_data$afr~final_ind_data$prod_res)
+plot(final_ind_data$alr~final_ind_data$prod_res)
+plot(final_ind_data$ibi~final_ind_data$prod_res)
+
 ```
