@@ -3,8 +3,8 @@ title: 'Life cycle variation and resource dynamics ABM: Code'
 author: "Pablo J. Varas Enríquez"
 date: "`r format(Sys.time(), '%d/%m/%y')`"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 Sys.setlocale("LC_TIME", "C")
 #install.packages("tidyverse")
 library(tidyverse)
+#install.packages("summarytools")
+library(summarytools)
 ```
 
 ## Outline
@@ -30,16 +32,12 @@ The following code is meant to develop an agent-based model to understand how th
 |  |  | Lifetime resource given |
 |  |  | Lifetime recieving events |
 |  |  | Lifetime resource recieved |
-| Population | Longevity variability | Production events variability |
-|  | Lifetime reproductive output variability | Resources produced variability |
-|  | Age at # reproduction variability | Consumption events variability |
-|  | Average interbirth interval variability | Resources consumed variability |
-|  | Age at life cycle stage transition variability | Storage events variability |
-|  |  | Resources stored variability |
-|  |  | Giving events variability |
-|  |  | Resources given variability |
-|  |  | Recirving events variability |
-|  |  | Resources recieved variability |
+| Population | Longevity variability |  |
+|  | Lifetime reproductive output variability |  |
+|  | Age at first reproduction variability |  |
+|  | Age at last reproduction variability  |  |
+|  | Average interbirth interval variability |  |
+|  | Age at life cycle stage transition variability |  |
 
 At first, there is a section called "Starting point", which are the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once less modules work, more modules will be developed and included in the model. The starting point has one life cycle, and two resource dynamics (i.e. production, consumption), and builds-up from there. Here, the values used are not necessarilly realistic since they are intended to help building the different modules.
 
@@ -426,8 +424,8 @@ $$IBI=\frac{ALR-AFR}{LRO}$$
 ```{r}
 #longevity
 longevity <- function(final_ind_data){
-  final_ind_data$age[i] <- as.numeric(rowSums(it_data[i,grep("surv",colnames(it_data))],na.rm = T))
-  return(final_ind_data$age)
+  final_ind_data$lng[i] <- as.numeric(rowSums(it_data[i,grep("surv",colnames(it_data))],na.rm = T))
+  return(final_ind_data$lng)
 }
 
 #LRO
@@ -488,13 +486,13 @@ production_res <- function(final_ind_data){
 
 #consumption events
 consumption_ev <- function(final_ind_data){
-  final_ind_data$cons_ev[i] <- final_ind_data$age[i]
+  final_ind_data$cons_ev[i] <- final_ind_data$lng[i]
   return(final_ind_data$cons_ev)
 }
 
 #resource consumption
 consumption_res <- function(final_ind_data){
-  final_ind_data$cons_res[i] <- final_ind_data$cons_env[i]*cons
+  final_ind_data$cons_res[i] <- final_ind_data$cons_ev[i]*cons
   return(final_ind_data$cons_res)
 }
 
@@ -514,7 +512,7 @@ final_ind_data <- data.frame(id=1:nrow(it_data))
 for(i in 1:nrow(it_data)){
   #life-history traits
   #longevity
-final_ind_data$age <- longevity(final_ind_data)
+final_ind_data$lng <- longevity(final_ind_data)
   #lro
 final_ind_data$lro <- lro(final_ind_data)
   #afr
@@ -537,19 +535,32 @@ final_ind_data$res_av <- resources_av(final_ind_data)
 }
 
 #plot it
-#life-history traits and resources available
-layout(matrix(c(1,1,2,2,3,3,0,4,4,5,5,0),nrow=2,ncol=6,byrow=T))
-plot(final_ind_data$age~final_ind_data$res_av)
-plot(final_ind_data$lro~final_ind_data$res_av)
-plot(final_ind_data$afr~final_ind_data$res_av)
-plot(final_ind_data$alr~final_ind_data$res_av)
-plot(final_ind_data$ibi~final_ind_data$res_av)
-#life-history traits and resource production
-layout(matrix(c(1,1,2,2,3,3,0,4,4,5,5,0),nrow=2,ncol=6,byrow=T))
-plot(final_ind_data$age~final_ind_data$prod_res)
-plot(final_ind_data$lro~final_ind_data$prod_res)
-plot(final_ind_data$afr~final_ind_data$prod_res)
-plot(final_ind_data$alr~final_ind_data$prod_res)
-plot(final_ind_data$ibi~final_ind_data$prod_res)
-
+pairs(~lng+lro+afr+alr+ibi+prod_res+cons_res+res_av,data=final_ind_data,upper.panel=NULL)
 ```
+
+Once the life-history traits and resource dynamics are calculated for each individual, it is possible to estimate the variability of life cycles at the population level. The variables are:
+
+- Longevity variability
+- Lifetime reproductive output variability
+- Age at first reproduction variability
+- Age at last reproduction variability
+- Average interbirth interval variability
+
+Different summary statistics are used to describe the life cycles in the population. The description inclues the mean, variance, standard deviation, coefficient of variation, skewness, kurtosis, minimum/maximum value, and quartiles.
+
+```{r}
+#plot distributions
+layout(matrix(c(1,1,2,2,3,3,0,4,4,5,5,0),nrow=2,ncol=6,byrow=T))
+hist(final_ind_data$lng)
+hist(final_ind_data$lro)
+hist(final_ind_data$afr)
+hist(final_ind_data$alr)
+hist(final_ind_data$ibi)
+#summary statistics
+descr(final_ind_data[,2:6],stats = c("mean","sd","min","q1","med","q3","max","cv","skewness","kurtosis"),order = "p")
+#variance
+data.frame(lng=var(final_ind_data$lng),lro=var(final_ind_data$lro),afr=var(final_ind_data$afr,na.rm=T),alr=var(final_ind_data$alr,na.rm=T),ibi=var(final_ind_data$ibi,na.rm=T),row.names = c("Var"))
+```
+
+
+
