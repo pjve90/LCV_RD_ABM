@@ -39,7 +39,7 @@ The following code is meant to develop an agent-based model to understand how th
 |            | Average interbirth interval variability        |                               |
 |            | Age at life cycle stage transition variability |                               |
 
-At first, there is a section called "Starting point", which are the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once less modules work, more modules will be developed and included in the model. The starting point has one life cycle, and two resource dynamics (i.e. production, consumption), and builds-up from there. Here, the values used are not necessarilly realistic since they are intended to help building the different modules.
+At first, there is a section called "Starting point", which are the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once few modules work, more modules will be developed and included in the model. The starting point has one life cycle, and two resource dynamics (i.e. production, consumption), and builds-up from there. Here, the values used are not necessarily realistic since they are intended to help building the different modules.
 
 The following sections are the different scenarios where the model will be used. The values used in these scenarios are based on cross-cultural research. The scenarios are:
 
@@ -51,7 +51,7 @@ The following sections are the different scenarios where the model will be used.
 
 ### Starting point
 
-The starting point section consists of the development of the different modules that will be used to build the final model. First, it will be the module for individuals in their reproductive career stage and the resource dynamics of production and consumption (i.e. one life cycle stage, two resource dynamics). Second, one with two life cycle stages (i.e. infant, reproductive career), production, consumption, and storage. Third, adult and post-reproductive stages will be added, and finally, with sharing dynamics.
+The starting point section consists of the development of the different modules that will be used to build the final model. First, it will be the module for individuals in their reproductive career stage and the resource dynamics of production and consumption (i.e. one life cycle stage, two resource dynamics). Second, one with two life cycle stages (i.e. infant, reproductive career), production, consumption, and storage. Third, adult and post-reproductive stages will be added, and finally, with the dynamics. Accordingly, the final model will have individuals going through four life stages (infant, adult, reproductive, post-reproductive) and in each experiencing three different resource dynamics (production, sharing, storage).
 
 #### First attempt: one life cycle stage, two resource dynamics.
 
@@ -103,7 +103,11 @@ prod_n <- 1
 cons <- 0.25
 ```
 
+<<<<<<< HEAD
 The functions for state variables are defined to determine the dynamics each individual can experience in one year (i.e. one iteration). The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the probability of surviving (`die_p`) and the logarithm of the amount of resources available (`prod_a`). The influence of the amount of resources available is escaled to avoid an explosive population growth.
+=======
+The functions for state variables are defined to determine the dynamics each individual can experience in one year (i.e. one iteration). The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the probability of surviving (`surv_p`) and the logarithm of the amount of resources available (`prod_a`). The influence of the amount of resources available is scaled to avoid an explosive population growth.
+>>>>>>> b8eb96f2f8c12b5c7a6d33546cea76a18c8f253a
 
 ```{r}
 #survival
@@ -274,7 +278,7 @@ consume <- function(it_indpop) {
 
 ```
 
-The functions for the reproductive dynamics are defined here. First the probability of reproducing is defined, followed by the reproductive costs. The reproduction function tells if an individual reproduces (1) or not (0). An individual reproduces (1) depending if the individual has enough resources to cover the age-specific costs of reproduction (`repro_c_age`)and samples from a uniform distribution a value lower than the sum of the probability of reproducing (`repro_p`) and the logarithm of the amount of resources available (`prod_a`). The influence of the amount of resources available is escaled to avoid an explosive population growth.
+The functions for the reproductive dynamics are defined here. First the probability of reproducing is defined, followed by the reproductive costs. The reproduction function tells if an individual reproduces (1) or not (0). An individual reproduces (1) depending if the individual has enough resources to cover the age-specific costs of reproduction (`repro_c_age`)and samples from a uniform distribution a value lower than the sum of the probability of reproducing (`repro_p`) and the logarithm of the amount of resources available (`prod_a`). The influence of the amount of resources available is scaled to avoid an explosive population growth.
 
 ```{r}
 #reproduction probability
@@ -355,6 +359,8 @@ it_data <- reduce(list(it_data,surv_data,repro_data,resource_data),full_join,by=
 
 #check the population by the end of the iteration
 head(it_indpop)
+#check the recorded data by the end of the iteration
+head(it_data)
 ```
 
 After checking that the functions and databases work for one year, the model can be run for more years. Here we run the simulations for a 100 of years, resembling one generation of a population.
