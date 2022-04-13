@@ -103,11 +103,7 @@ prod_n <- 1
 cons <- 0.25
 ```
 
-<<<<<<< HEAD
 The functions for state variables are defined to determine the dynamics each individual can experience in one year (i.e. one iteration). The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the probability of surviving (`die_p`) and the logarithm of the amount of resources available (`prod_a`). The influence of the amount of resources available is escaled to avoid an explosive population growth.
-=======
-The functions for state variables are defined to determine the dynamics each individual can experience in one year (i.e. one iteration). The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the probability of surviving (`surv_p`) and the logarithm of the amount of resources available (`prod_a`). The influence of the amount of resources available is scaled to avoid an explosive population growth.
->>>>>>> b8eb96f2f8c12b5c7a6d33546cea76a18c8f253a
 
 ```{r}
 #survival
@@ -781,10 +777,33 @@ store_rc <- function(it_indpop) {
   return(it_indpop$store_o)
 }
 
-#adding resource stored
+#adding stored resources
 store_a <- function(it_indpop) {
   it_indpop$store_a[i] <- it_indpop$store_a[i]+it_indpop$store_o[i]*it_indpop$prod_a[i]
   return(it_indpop$store_a)
 }
 ```
 
+The functions for the reproductive dynamics are defined here. This function is onyl for those individuals in the reproductive career stage. First the probability of reproducing is defined, followed by the reproductive costs. The reproduction function tells if an individual reproduces (1) or not (0). An individual reproduces (1) depending if the individual has enough resources to cover the age-specific costs of reproduction (`repro_c_age_rc`)and samples from a uniform distribution a value lower than the sum of the probability of reproducing (`repro_p_rc`) and the logarithm of the amount of resources available (`prod_a`) and stored (`store_a`). The influence of the amount of resources available is scaled to avoid an explosive population growth.
+
+```{r}
+#reproduction probability
+reproduce <- function(it_indpop){
+  if(it_indpop$prod_a[i] >= repro_c_age_rc[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p_rc+log(it_indpop$prod_a[i]+1)/20)) {
+  it_indpop$repro[i] <- 1
+  }else{
+  it_indpop$repro[i] <- 0
+  }
+  return(it_indpop$repro)
+}
+
+#reproductive costs
+reproduce_c <- function(it_indpop) {
+  if(it_indpop$repro[i] == 1){
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_c_age_rc[it_indpop$age[i]+1]
+  }else{
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]
+  }
+    return(it_indpop$prod_a)
+}
+```
