@@ -75,16 +75,16 @@ Regarding resource dynamics, the auxiliary variables are:
 
 ```{r}
 #survival
-#probability of dying
-die_p <- 0.25
+#age-specific probability of dying
+die_p_age <- c(0.11 , 0.08 , 0.06, 0.04, 0.03, seq(0.01, 0.1,length.out=70), seq(0.1,1, length.out=26))
 #cost of surviving
 surv_c <- 0.25
 #age-specific cost of surviving
 surv_c_age <- c(surv_c,surv_c*exp(exp(surv_c)/20*c(1:100))) 
 
 #reproduction
-#probability
-repro_p <- 0.5
+#age-specific fertility probability
+repro_p_age <- c(rep(0.0,15), seq(0.01,0.3, length.out=15), seq(0.3,0.01, length.out=15), rep(0,55))
 #cost of reproduction
 repro_c <- 0.25
 #age-specific cost of reproduction
@@ -108,7 +108,7 @@ The functions for state variables are defined to determine the dynamics each ind
 ```{r}
 #survival
 survive <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)>(die_p+log(it_indpop$prod_a[i]+1)/20)){
+  if(it_indpop$prod_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)>(die_p_age[it_indpop$age[i]+1]+log(it_indpop$prod_a[i]+1)/20)){
   it_indpop$surv[i] <- 1
   }
   else{
@@ -279,7 +279,7 @@ The functions for the reproductive dynamics are defined here. First the probabil
 ```{r}
 #reproduction probability
 reproduce <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p+log(it_indpop$prod_a[i]+1)/20)) {
+  if(it_indpop$prod_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p_age[it_indpop$age[i]+1]+log(it_indpop$prod_a[i]+1)/20)) {
   it_indpop$repro[i] <- 1
   }else{
   it_indpop$repro[i] <- 0
@@ -598,9 +598,6 @@ First, the auxiliary variables are defined for the model. Auxiliary variables ar
 -   Cost of reproduction (`repro_c`) - reproductive career only.
 -   Age-specific cost of reproduction (`repro_c_age`) - reproductive career only.
 -   Number of descendants per reproduction (`repro_n`) - reproductive career only.
--   Life cycle transition probability (`trans_p`) - juvenile only.
--   Age-specific life cycle transition probability (`trans_p_age`) - juvenile only.
--   Life cycle transition cost (`trans_c`) - juvenile only.
 
 Regarding resource dynamics, the auxiliary variables are also stage-specific and are defined as:
 
@@ -613,22 +610,12 @@ Regarding resource dynamics, the auxiliary variables are also stage-specific and
 #juvenile
 
 #survival
-#probability of dying
-die_p_juv <- 0.75
 #age-specific probability of dying
-die_p_age_juv <- surv_p_juv*exp(log(surv_p_juv)/2*c(1:101))
+die_p_age <- c(0.11 , 0.08 , 0.06, 0.04, 0.03, seq(0.01, 0.1,length.out=70), seq(0.1,1, length.out=26))
 #cost of surviving
-surv_c_juv <- 0.25
+surv_c <- 0.25
 #age-specific cost of surviving
-surv_c_age_juv <- c(surv_c_juv,surv_c_juv*exp(exp(surv_c_juv)/20*c(1:100))) 
-
-#transition
-#probability
-trans_p_juv <- 0.5
-#age-specific probability of transition
-trans_p_age_juv <- c(trans_p_juv,trans_p_juv*exp(exp(trans_p_juv)/40*c(1:100)))
-#cost of transition
-trans_c_juv <- 4
+surv_c_age <- c(surv_c,surv_c*exp(exp(surv_c)/20*c(1:100))) 
 
 #production
 #probability
@@ -644,27 +631,15 @@ cons_juv <- 0.25
 #probability of storage
 store_p_juv <- 0.9
 
-#reproductive career
-
-#survival
-#probability of dying
-die_p_rc <- 0.25
-#age-specific proability of dying
-die_p_age_rc <- c(die_p_rc,die_p_rc*exp(exp(die_p_rc)/93*c(1:100)))
-#cost of surviving
-surv_c_rc <- 0.25
-#age-specific cost of surviving
-surv_c_age_rc <- c(surv_c_rc,surv_c_rc*exp(exp(surv_c_rc)/20*c(1:100))) 
-
 #reproduction
-#probability
-repro_p_rc <- 0.5
+#age-specific fertility probability
+repro_p_age <- c(rep(0.0,15), seq(0.01,0.3, length.out=15), seq(0.3,0.01, length.out=15), rep(0,55))
 #cost of reproduction
-repro_c_rc <- 0.25
+repro_c <- 0.25
 #age-specific cost of reproduction
-repro_c_age_rc <- c(repro_c_rc,repro_c_rc*exp(exp(repro_c_rc)/20*c(1:100)))
+repro_c_age <- c(repro_c,repro_c*exp(exp(repro_c)/20*c(1:100)))
 #number of descendants per reproduction
-repro_n_rc <- 1
+repro_n <- 1
 
 #production
 #probability
@@ -681,28 +656,16 @@ cons_rc <- 0.25
 store_p_rc <- 0.75
 ```
 
-Now, the functions for the state variables are defined. First are the functions for life-history dynamics, followed by the ones related to resource dynamics. Each function is defined specifically for each life cycle stage. The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the aage-specific probability of surviving (`die_p`) and the logarithm of the amount of resources stored (`store_a`). The influence of the amount of resources stored is escaled to avoid an explosive population growth.
+Now, the functions for the state variables are defined. First are the functions for life-history dynamics, followed by the ones related to resource dynamics. Each function is defined specifically for each life cycle stage. The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the age-specific probability of surviving (`die_p`) and the logarithm of the amount of resources stored (`store_a`). The influence of the amount of resources stored is escaled to avoid an explosive population growth.
 
 ```{r}
 #survival
-#juvenile
-survive_j <- function(it_indpop){
-  if(it_indpop$store_a[i] >= surv_c_age_juv[it_indpop$age[i]+1] & runif(1,min=0,max=1)>(die_p_age_juv+log(it_indpop$store_a[i]+1)/20)){
-  it_indpop$surv[i] <- 1
-  }
-  else{
-  it_indpop$surv[i] <- 0
-  }
-  return(it_indpop$surv)
-}
-#reproductive career
-survive_rc <- function(it_indpop){
-  if(it_indpop$store_a[i] >= surv_c_age_rc[it_indpop$age[i]+1] & runif(1,min=0,max=1)>(die_p_age_rc+log(it_indpop$store_a[i]+1)/20)){
-  it_indpop$surv[i] <- 1
-  }
-  else{
-  it_indpop$surv[i] <- 0
-  }
+survive <- function(it_indpop){
+  if(it_indpop$store_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)>(die_p_age[it_indpop$age[i]+1]+log(it_indpop$store_a[i]+1)/20)){
+      it_indpop$surv[i] <- 1
+    } else{
+      it_indpop$surv[i] <- 0
+    }
   return(it_indpop$surv)
 }
 
@@ -712,98 +675,194 @@ age <- function(it_indpop){
   return(it_indpop$age)
 }
 
-#discount survival costs
-#juvenile
-survive_c_j <- function(it_indpop) {
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-surv_c_age_juv[it_indpop$age[i]+1]
-    return(it_indpop$store_a)
+#survival costs discount from stored resources
+survive_c <- function(it_indpop){
+    it_indpop$store_a[i] <- it_indpop$store_a[i]-surv_c_age[it_indpop$age[i]+1]
+  return(it_indpop$store_a)
 }
-#reproductive career
-survive_c_rc <- function(it_indpop) {
-    it_indpop$store_a[i] <- it_indpop$store_a[i]-surv_c_age_rc[it_indpop$age[i]+1]
-    return(it_indpop$store_a)
-}
+
 ```
 
 The functions for resource production, consumption, and storage are defined here. First is the probability of producing resources, then the amount of new resources, followed by the discount due to consumption, and the probability of storing the resources available or not. The production and storage functions tell if an individual produces/storage new resources (1) or not (0), based on a binomial distribution. The probability in the binomial distribution is defined by the production and storage probabilities in the auxiliary variables, respectively.
 
 ```{r}
 #production
-#juvenile
-produce_j <- function(it_indpop){
-  it_indpop$prod_o[i] <- rbinom(1,1,prod_p_juv)
-  return(it_indpop$prod_o)
-}
-#reproductive career
-produce_rc <- function(it_indpop){
-  it_indpop$prod_o[i] <- rbinom(1,1,prod_p_rc)
-  return(it_indpop$prod_o)
+produce <- function(it_indpop){
+  if(it_indpop$stage[i]==1){ #juvenile
+    it_indpop$prod_o[i] <- rbinom(1,1,prod_p_juv)
+  } else{ #reproductive career
+    it_indpop$prod_o[i] <- rbinom(1,1,prod_p_rc)
+  }
+    return(it_indpop$prod_o)
 }
 
-#adding resources produced
-#juvenile
-produce_a_j <- function(it_indpop) {
-  it_indpop$prod_a[i] <- it_indpop$prod_a[i]+it_indpop$prod_o[i]*prod_n_juv
-  return(it_indpop$prod_a)
-}
-#reproductive career
-produce_a_rc <- function(it_indpop){
-  it_indpop$prod_a[i] <- it_indpop$prod_a[i]+it_indpop$prod_o[i]*prod_n_rc
-  return(it_indpop$prod_a)
+#adding resources produced to resources available
+produce_a <- function(it_indpop){
+  if(it_indpop$stage[i]==1){ #juvenile
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]+it_indpop$prod_o[i]*prod_n_juv
+  } else{ #reproductive career
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]+it_indpop$prod_o[i]*prod_n_rc
+  }
+    return(it_indpop$prod_a)
 }
 
 #consumption
-#juvenile
-consume_j <- function(it_indpop) {
-  it_indpop$cons[i] <- cons_juv
-  it_indpop$prod_a[i] <- it_indpop$prod_a[i]-cons_juv
+consume <- function(it_indpop){
+  if(it_indpop$stage[i]==1){ #juvenile
+    it_indpop$cons[i] <- cons_juv
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-cons[i]
+  } else{ #reproductive career
+    it_indpop$cons[i] <- cons_rc
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-cons[i]
+  }
   return(it_indpop)
-}
-#reproductive career
-consume_rc <- function(it_indpop) {
-  it_indpop$cons[i] <- cons_rc
-  it_indpop$prod_a[i] <- it_indpop$prod_a[i]-cons_rc
 }
 
 #storage
-#juvenile
-store_j <- function(it_indpop) {
-  it_indpop$store_o[i] <- rbinom(1,1,store_p_juv)
-  return(it_indpop$store_o)
-}
-#reproductive career
-store_rc <- function(it_indpop) {
-  it_indpop$store_o[i] <- rbinom(1,1,store_p_rc)
+store <- function(it_indpop){
+  if(it_indpop$stage[i]==1){ #juvenile
+    it_indpop$store_o[i] <- rbinom(1,1,store_p_juv)
+  } else{ #reproductive career
+    it_indpop$store_o[i] <- rbinom(1,1,store_p_rc)
+  }
   return(it_indpop$store_o)
 }
 
 #adding stored resources
 store_a <- function(it_indpop) {
   it_indpop$store_a[i] <- it_indpop$store_a[i]+it_indpop$store_o[i]*it_indpop$prod_a[i]
-  return(it_indpop$store_a)
+  it_indpop$prod_a[i] <- 0
+  return(it_indpop)
 }
 ```
 
-The functions for the reproductive dynamics are defined here. This function is onyl for those individuals in the reproductive career stage. First the probability of reproducing is defined, followed by the reproductive costs. The reproduction function tells if an individual reproduces (1) or not (0). An individual reproduces (1) depending if the individual has enough resources to cover the age-specific costs of reproduction (`repro_c_age_rc`)and samples from a uniform distribution a value lower than the sum of the probability of reproducing (`repro_p_rc`) and the logarithm of the amount of resources available (`prod_a`) and stored (`store_a`). The influence of the amount of resources available is scaled to avoid an explosive population growth.
+The functions for the reproductive dynamics are defined here. This function is only for those individuals in the reproductive career stage. First the probability of reproducing is defined, followed by the reproductive costs. The reproduction function tells if an individual reproduces (1) or not (0). An individual reproduces (1) depending if the individual has enough resources to cover the age-specific costs of reproduction (`repro_c_age_rc`)and samples from a uniform distribution a value lower than the sum of the probability of reproducing (`repro_p_rc`) and the logarithm of the sum of resources availabledue to production (`prod_a`) and stored (`store_a`). The influence of the amount of resources available is scaled to avoid an explosive population growth.
 
 ```{r}
 #reproduction probability
 reproduce <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= repro_c_age_rc[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p_rc+log(it_indpop$prod_a[i]+1)/20)) {
-  it_indpop$repro[i] <- 1
-  }else{
-  it_indpop$repro[i] <- 0
+  if(it_indpop$stage[i]==1){ #juvenile
+    if(it_indpop$prod_a[i]+it_indpop$store_a[i] >= surv_c_age[it_indpop$age[i]+1]+repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p_age+log(it_indpop$prod_a[i]+it_indpop$store_a[i]+1)/20)){
+      it_indpop$repro[i] <- 1
+    } else{
+      it_indpop$repro[i] <- 0
+    }
+  } else{ #reproductive career
+    if(it_indpop$prod_a[i]+it_indpop$store_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_c_age[it_indpop$age[i]+1]+log(it_indpop$prod_a[i]+it_indpop$store_a[i]+1)/20)) {
+      it_indpop$repro[i] <- 1
+    } else{
+      it_indpop$repro[i] <- 0
+    }
   }
   return(it_indpop$repro)
 }
 
-#reproductive costs
+#age-specific reproductive costs discount
 reproduce_c <- function(it_indpop) {
-  if(it_indpop$repro[i] == 1){
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_c_age_rc[it_indpop$age[i]+1]
+  if(it_indpop$repro[i] == 0){
+    it_indpop$prod_a <- it_indpop$prod_a
+    it_indpop$store_a <- it_indpop$store_a
   }else{
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]
+    if(it_indpop$repro[i] == 1 & it_indpop$prod_a[i]-repro_c_age[it_indpop$age[i]+1]>=0){
+      it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_c_age[it_indpop$age[i]+1]
+    }else{
+      it_indpop$store_a[i] <- it_indpop$prod_a[i]-repro_c_age[it_indpop$age[i]+1]+it_indpop$store_a[i]
+    }
   }
-    return(it_indpop$prod_a)
+  return(it_indpop)
 }
 ```
+
+The function for the life cycle stage transition is defined here. The transition from juvenile to reproductive career stage is defined by the age at first reproduction. The life cycle stage transition would depend on whether the individual reproduces or not in the iteration (`repro`). The costs of transition are included in the reproduction function.
+
+```{r}
+#transition
+transition <- function(it_indpop){
+  if(it_indpop$repro[i] == 0){ #juvenile
+    it_indpop$stage[i] <- 0
+  } else{ #reproductive career
+    it_indpop$stage[i] <- 1
+  }
+  return(it_indpop$stage)
+}
+
+#Dieter:
+
+# We plot the reproductive costs, based on the function you specified
+plot(repro_c_age_rc)
+# We plot the survival costs, based on the function you specified
+points(die_p_age_juv*100,col="blue")
+# We plot the resource availability based on your settings: this assumes that individuals produce 1 resource and consume 0.25 resource every year; when they are juveniles they store 90% of this, while when they are adults they use/loose everything. With that, initially resources go up (0.75 * 0.9 each year), and after that they stay the same. I assumed that growth (resource storage) stops at age 16.
+points(c(cumsum(rep(0.9*0.75,16)),rep(11,84)),col="red")
+# For illustration, we add lines that show that ages at transitions. These are when the resources are larger than the costs. For illustration here, I am taking the larger of the two costs, not the sum of the costs
+abline(v=14,lty=2,lwd=2)
+abline(v=60,lty=2,lwd=2)
+# Add a legend and some labels
+legend(x="topleft", legend=c(pch1="survival costs", pch1="resources",pch1="reproduction costs"), pch=c(1,1,1),col=c("blue","red","black"), box.lty=1, cex=1)
+mtext("Age",side=1,line=3,cex=2)
+mtext("Resources",side=2,line=2,cex=2)
+mtext("Transition to Start Reproduction",side=1,line=-7,at=34,cex=1)
+mtext("Transition to Stop Reproduction",side=1,line=-10,at=81,cex=1)
+```
+
+Now that the life-history and resource dynamics functions are defined. They are used in a population of 1000 individuals only for one year. The population is structured by half of them in a juvenile stage (n=500) and half in their reproductive career stage (n=500). Additionally, two datasets are created to record the dynamics for each individual during one year (`it_indpop`) as well as record them through time (`it_data`). Other datasets are used to feed `it_data`, which are based on the survival outcome (`surv_data`), resource dynamics (`resource_data`), and reproduction (`repro_data`).
+
+```{r}
+#create population
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(15,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),cons=rep(NA,length.out=1000),store_o=rep(NA,length.out=1000),store_a=rep(2,length.out=1000),repro=rep(NA,length.out=1000),stage=c(rep(0,length.out=500),rep(1,length.out=500)))
+#create iteration record
+it_data <- data.frame(id=1:1000)
+
+#run one iteration for all the population
+#calculate the survival outcome
+for (i in 1:nrow(it_indpop)){
+  #survival
+  it_indpop$surv <- survive(it_indpop)
+}
+#record survival outcome
+surv_data <- it_indpop[,c("id","surv")]
+#remove individuals that died
+it_indpop <- it_indpop[-which(it_indpop$surv==0),]
+#calculate age, survival cost, production, consumption, and reproductive outcome
+for (i in 1:nrow(it_indpop)){
+  #age
+  it_indpop$age <- age(it_indpop)
+  #survival cost
+  it_indpop$store_a <- survive_c(it_indpop)
+  #production outcome
+  it_indpop$prod_o <- produce(it_indpop)
+  #production amount
+  it_indpop$prod_a <- produce_a(it_indpop)
+  #consumption
+  it_indpop <- consume(it_indpop)
+  #reproduction probability
+  it_indpop$repro <- reproduce(it_indpop)
+  #reproductive cost
+  it_indpop <- reproduce_c(it_indpop)
+  #transition
+  it_indpop$stage <- transition(it_indpop)
+  #storage outcome
+  it_indpop <- store(it_indpop)
+  #storage amount
+  it_indpop <- store_a(it_indpop)
+}
+#record production outcome and resources available
+resource_data <- it_indpop[,c("id","prod_o","prod_a","cons","store_o","store_a")]
+#record reproduction
+repro_data <- it_indpop[,c("id","repro")]
+#record life cycle stage
+trans_data <- it_indpop[,c("id","stage")]
+#add newborns
+#dataframe with newborns
+new_it_indpop <- data.frame(id=(max(it_indpop$id)+1):(max(it_indpop$id)+sum(it_indpop[which(it_indpop$repro==1),"repro"])),surv=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),age=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_o=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),prod_a=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),cons=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])),repro=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])))
+#combine original population with newborns
+it_indpop <- rbind(it_indpop,new_it_indpop)
+#merge iteration records
+it_data <- reduce(list(it_data,surv_data,repro_data,resource_data),full_join,by="id",suffix=c("1","1"))
+
+#check the population by the end of the iteration
+head(it_indpop)
+#check the recorded data by the end of the iteration
+head(it_data)
+```
+
