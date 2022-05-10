@@ -25,23 +25,27 @@ The following code is meant to develop an agent-based model to understand how th
 | Level      | Life cycle                                     | Resource dynamic              |
 |------------|------------------------------------------------|-------------------------------|
 | Individual | Longevity                                      | Lifetime production events    |
-|            | Lifetime reproductive output                   | Lifetime resource production  |
+|            | Lifetime reproductive output                   | Lifetime receiving events     |
 |            | Age at first reproduction                      | Lifetime consumption events   |
-|            | Age at last reproduction                       | Lifetime resource consumption |
-|            | Average interbirth interval                    | Lifetime storage events       |
-|            | Age at life cycle stage transition             | Lifetime resource storage     |
-|            |                                                | Lifetime giving events        |
-|            |                                                | Lifetime resource given       |
-|            |                                                | Lifetime recieving events     |
-|            |                                                | Lifetime resource recieved    |
-| Population | Longevity variability                          |                               |
-|            | Lifetime reproductive output variability       |                               |
-|            | Age at first reproduction variability          |                               |
-|            | Age at last reproduction variability           |                               |
-|            | Average interbirth interval variability        |                               |
-|            | Age at life cycle stage transition variability |                               |
+|            | Age at last reproduction                       | Lifetime giving events        |
+|            | Age at life cycle stage transition             | Lifetime storage events       |
+|            |                                                | Lifetime resources produced   |
+|            |                                                | Lifetime resources received   |
+|            |                                                | Lifetime resources consumed   |
+|            |                                                | Lifetime resources gave       |
+|            |                                                | Lifetime resources stored     |
+| Population | Longevity variability                          | Average resources produced    |
+|            | Lifetime reproductive output variability       | Average resources received    |
+|            | Age at first reproduction variability          | Average resources consumed    |
+|            | Age at last reproduction variability           | Average resources gave        |
+|            | Age at life cycle stage transition variability | Average resources stored      |
+|            |                                                | Variability resources produced|
+|            |                                                | Variability resources received|
+|            |                                                | Variability resources consumed|
+|            |                                                | Variability resources gave    |
+|            |                                                | Variability resources stored  |
 
-At first, there is a section called "Starting point", which are the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once few modules work, more modules will be developed and included in the model. The starting point has one life cycle, and two resource dynamics (i.e. production, consumption), and builds-up from there. Here, the values used are not necessarily realistic since they are intended to help building the different modules.
+At first, there is a section called "Starting point", which are the exploration of the data used to inform the parameters, as well as the first attempts and checks of the model. Different modules are used to build the initial states of the model, with less life cycle stages and resource dynamics. Once few modules work, more modules will be developed and included in the model. The starting point has one life cycle, and two resource dynamics (i.e. production, consumption), and builds-up from there. Here, the values used are partly based on age-specific survival and fertility estimates from Davison and Gurven (2021), and partly based on not necessarily realistic since they are intended to help building the different modules.
 
 The following sections are the different scenarios where the model will be used. The values used in these scenarios are based on cross-cultural research. The scenarios are:
 
@@ -53,7 +57,7 @@ The following sections are the different scenarios where the model will be used.
 
 ### Starting point
 
-The starting point section consists of the development of the different modules that will be used to build the final model. First, there is a section to explore and check the data that is going to be used to inform the auxiliary and state variables. Second, the development of the module for individuals in their reproductive career stage and the resource dynamics of production and consumption (i.e. one life cycle stage, two resource dynamics). Third, a model with two life cycle stages (i.e. infant, reproductive career), production, consumption, and storage. Fourth, adult and post-reproductive stages will be added. Accordingly, the final model will have individuals going through four life stages (infant, adult, reproductive, post-reproductive) and in each experiencing three different resource dynamics (production, sharing, storage).
+The starting point section consists of the development of the different modules that will be used to build the final model. First, there is a section to explore and check the data that is going to be used to inform the auxiliary and state variables. Second, the development of the module for individuals in their reproductive career stage and the resource dynamics of production and consumption (i.e. one life cycle stage, two resource dynamics). Third, a model with two life cycle stages (i.e. infant, reproductive career), production, consumption, and storage. Fourth, adult and post-reproductive stages will be added. Accordingly, the final model will have individuals going through four life stages (infant, adult, reproductive, post-reproductive) and in each experiencing four different resource dynamics (production, consumption, sharing, storage).
 
 #### Data exploration and check up
 
@@ -61,9 +65,15 @@ The age-specific survival and fertility estimates from Davison and Gurven, 2021 
 
 ```{r}
 #survival estimates
-surv_est <- read.csv("C:/Users/pjvar/Nextcloud/PhD/Chapter 1/LCV_RD_ABM/LCV_RD_ABM/Model code/S2_Table_Age_Specific_Survival.csv",header = T)
+#import data
+surv_est <- read.csv("C:/Users/pablo_varas/Nextcloud/PhD/Chapter 1/LCV_RD_ABM/LCV_RD_ABM/Model code/S2_Table_Age_Specific_Survival.csv",header = T)
+#select human populations
+surv_est <- surv_est[,c("Age","Ache","Agta","Hadza","Hiwi","X.Kung","Aborigine","Gainj","Tsimane","Yanomamo","Herero")]
+
 #fertility estimates
-fert_est <- read.csv("C:/Users/pjvar/Nextcloud/PhD/Chapter 1/LCV_RD_ABM/LCV_RD_ABM/Model code/S3_Table_Age_Specific_Fertility.csv",header = T)
+fert_est <- read.csv("C:/Users/pablo_varas/Nextcloud/PhD/Chapter 1/LCV_RD_ABM/LCV_RD_ABM/Model code/S3_Table_Age_Specific_Fertility.csv",header = T)
+#select human populations
+fert_est <- fert_est[,c("Age","Ache","Agta","Hadza","Hiwi","X.Kung","Aborigine","Gainj","Tsimane","Yanomamo","Herero")]
 
 #summary of estimates
 #survival
@@ -75,51 +85,27 @@ summary(fert_est)
 #make colour palet
 colpal <- brewer.pal(12,"Paired")
 #survival
-plot(surv_est[,2]~Age,surv_est,ylim=c(0,1),type="l")
-lines(surv_est[,3],col=colpal[1])
-lines(surv_est[,4],col=colpal[2])
-lines(surv_est[,5],col=colpal[3])
-lines(surv_est[,6],col=colpal[4])
-lines(surv_est[,7],col=colpal[5])
-lines(surv_est[,8],col=colpal[6])
-lines(surv_est[,9],col=colpal[7])
-lines(surv_est[,10],col=colpal[8])
-lines(surv_est[11],col=colpal[9])
-lines(surv_est[,12],col=colpal[10])
-lines(surv_est[,13],col=colpal[11])
-lines(surv_est[,14],col=colpal[12])
-lines(surv_est[,15],col=colpal[1],lty=2,lwd=1.5)
-lines(surv_est[,16],col=colpal[2],lty=2,lwd=1.5)
-lines(surv_est[,17],col=colpal[3],lty=2,lwd=1.5)
-lines(surv_est[,18],col=colpal[4],lty=2,lwd=1.5)
-lines(surv_est[,19],col=colpal[5],lty=2,lwd=1.5)
-lines(surv_est[,20],col=colpal[6],lty=2,lwd=1.5)
-lines(surv_est[,21],col=colpal[7],lty=2,lwd=1.5)
-lines(surv_est[,22],col=colpal[8],lty=2,lwd=1.5)
+plot(surv_est[,2]~Age,surv_est,ylim=c(0,1),type="l") #Ache
+lines(surv_est[,3],col=colpal[1]) #Agta
+lines(surv_est[,4],col=colpal[2]) #Hadza
+lines(surv_est[,5],col=colpal[3]) #Hiwi
+lines(surv_est[,6],col=colpal[4]) #!Kung
+lines(surv_est[,7],col=colpal[5]) #Aborigine
+lines(surv_est[,8],col=colpal[6]) #Gainj
+lines(surv_est[,9],col=colpal[7]) #Tsimane
+lines(surv_est[,10],col=colpal[8]) #Yanomamo
+lines(surv_est[11],col=colpal[9]) #Herero
 #fertility
-#survival
-plot(fert_est[,2]~Age,fert_est,ylim=c(0,0.25),type="l")
-lines(fert_est[,3],col=colpal[1])
-lines(fert_est[,4],col=colpal[2])
-lines(fert_est[,5],col=colpal[3])
-lines(fert_est[,6],col=colpal[4])
-lines(fert_est[,7],col=colpal[5])
-lines(fert_est[,8],col=colpal[6])
-lines(fert_est[,9],col=colpal[7])
-lines(fert_est[,10],col=colpal[8])
-lines(fert_est[11],col=colpal[9])
-lines(fert_est[,12],col=colpal[10])
-lines(fert_est[,13],col=colpal[11])
-lines(fert_est[,14],col=colpal[12])
-lines(fert_est[,15],col=colpal[1],lty=2,lwd=1.5)
-lines(fert_est[,16],col=colpal[2],lty=2,lwd=1.5)
-lines(fert_est[,17],col=colpal[3],lty=2,lwd=1.5)
-lines(fert_est[,18],col=colpal[4],lty=2,lwd=1.5)
-lines(fert_est[,19],col=colpal[5],lty=2,lwd=1.5)
-lines(fert_est[,20],col=colpal[6],lty=2,lwd=1.5)
-lines(fert_est[,21],col=colpal[7],lty=2,lwd=1.5)
-lines(fert_est[,22],col=colpal[8],lty=2,lwd=1.5)
-
+plot(fert_est[,2]~Age,fert_est,ylim=c(0,0.25),type="l") #Ache
+lines(fert_est[,3],col=colpal[1]) #Agta
+lines(fert_est[,4],col=colpal[2]) #Hadza
+lines(fert_est[,5],col=colpal[3]) #Hiwi
+lines(fert_est[,6],col=colpal[4]) #!Kung
+lines(fert_est[,7],col=colpal[5]) #Aborigine
+lines(fert_est[,8],col=colpal[6]) #Gainj
+lines(fert_est[,9],col=colpal[7]) #Tsimane
+lines(fert_est[,10],col=colpal[8]) #Yanomamo
+lines(fert_est[11],col=colpal[9]) #Herero
 ```
 
 #### First attempt: one life cycle stage, two resource dynamics.
@@ -128,10 +114,10 @@ An agent-based model is developed here with a population of 1000 individuals tha
 
 First, the auxiliary variables are defined for the model. Auxiliary variables are fixed values set at initialisation that define the life-history and resource dynamics that individuals can experience. Regarding life-history dynamics, you define:
 
--   Dying probability (`die_p`).
+-   Age-specific surviving probability (`surv_p_age`).
 -   Survival cost (`surv_c`).
 -   Age-specific cost (`surv_c_age`).
--   Reproduction probability (`repro_p`).
+-   Age-specific reproduction probability (`repro_p_age`).
 -   Cost of reproduction (`repro_c`).
 -   Age-specific cost of reproduction (`repro_c_age`).
 -   Number of descendants per reproduction (`repro_n`).
@@ -144,8 +130,8 @@ Regarding resource dynamics, the auxiliary variables are:
 
 ```{r}
 #survival
-#age-specific probability of dying
-die_p_age <- c(0.11 , 0.08 , 0.06, 0.04, 0.03, seq(0.01, 0.1,length.out=70), seq(0.1,1, length.out=26))
+#age-specific probability of surviving
+surv_p_age <- surv_est
 #cost of surviving
 surv_c <- 0.25
 #age-specific cost of surviving
@@ -153,7 +139,7 @@ surv_c_age <- c(surv_c,surv_c*exp(exp(surv_c)/20*c(1:100)))
 
 #reproduction
 #age-specific fertility probability
-repro_p_age <- c(rep(0.0,15), seq(0.01,0.3, length.out=15), seq(0.3,0.01, length.out=15), rep(0,55))
+repro_p_age <- fert_est
 #cost of reproduction
 repro_c <- 0.25
 #age-specific cost of reproduction
@@ -169,7 +155,7 @@ prod_n <- 1
 
 #consumption
 #amount of resources consumed
-cons <- 0.25
+cons_n <- 0.25
 ```
 
 The functions for state variables are defined to determine the dynamics each individual can experience in one year (i.e. one iteration). The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the probability of surviving (`die_p`) and the logarithm of the amount of resources available (`prod_a`). The influence of the amount of resources available is escaled to avoid an explosive population growth.
@@ -177,7 +163,7 @@ The functions for state variables are defined to determine the dynamics each ind
 ```{r}
 #survival
 survive <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)>(die_p_age[it_indpop$age[i]+1]+log(it_indpop$prod_a[i]+1)/20)){
+  if(it_indpop$prod_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(sample(surv_p_age[it_indpop$age[i]+1,2:11],1)+log(it_indpop$prod_a[i]+1)/20)){
   it_indpop$surv[i] <- 1
   }
   else{
@@ -309,7 +295,7 @@ produce_a <- function(it_indpop) {
 
 #consumption
 consume <- function(it_indpop) {
-  it_indpop$cons[i] <- cons
+  it_indpop$cons[i] <- cons_n
   it_indpop$prod_a[i] <- it_indpop$prod_a[i]-cons
   return(it_indpop)
 }
@@ -348,7 +334,7 @@ The functions for the reproductive dynamics are defined here. First the probabil
 ```{r}
 #reproduction probability
 reproduce <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p_age[it_indpop$age[i]+1]+log(it_indpop$prod_a[i]+1)/20)) {
+  if(it_indpop$prod_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(sample(repro_p_age[it_indpop$age[i]+1,2:11],1)+log(it_indpop$prod_a[i]+1)/20)) {
   it_indpop$repro[i] <- 1
   }else{
   it_indpop$repro[i] <- 0
@@ -375,11 +361,11 @@ reproduce_c <- function(it_indpop) {
 #this one did not work out well so I put it directly on the code for one iteration.
 ```
 
-Now that the life-history and resource dynamics functions are defined. They are used in a population of 1000 individuals only for one year. Additionally, two datasets are created to record the dynamics for each individual during one year (`it_indpop`) as well as record them through time (`it_data`). Other datasets are used to feed `it_data`, which are based on the survival outcome (`surv_data`), resource production (`resource_data`), and reproduction (`repro_data`). Consumption is not recorded through time because it is a fixed value.
+Now that the life-history and resource dynamics functions are defined. They are used in a population of 1000 individuals that are 10 years old, only for one year. Additionally, two datasets are created to record the dynamics for each individual during one year (`it_indpop`) as well as record them through time (`it_data`). Other datasets are used to feed `it_data`, which are based on the survival outcome (`surv_data`), resource production (`resource_data`), and reproduction (`repro_data`). Consumption is not recorded through time because it is a fixed value.
 
 ```{r}
 #create population
-it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(0,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(1,length.out=1000),cons=rep(NA,length.out=1000),repro=rep(NA,length.out=1000))
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(10,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(1,length.out=1000),cons=rep(NA,length.out=1000),repro=rep(NA,length.out=1000))
 #create iteration record
 it_data <- data.frame(id=1:1000)
 
@@ -391,8 +377,8 @@ for (i in 1:nrow(it_indpop)){
 }
 #record survival outcome
 surv_data <- it_indpop[,c("id","surv")]
-#remove individuals that died
-it_indpop <- it_indpop[-which(it_indpop$surv==0),]
+#keep individuals that survived
+it_indpop <- it_indpop[which(it_indpop$surv==1),]
 #calculate age, survival cost, production, consumption, and reproductive outcome
 for (i in 1:nrow(it_indpop)){
   #age
@@ -432,20 +418,20 @@ After checking that the functions and databases work for one year, the model can
 
 ```{r}
 #create population
-it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(0,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(1,length.out=1000),cons=rep(NA,length.out=1000),repro=rep(NA,length.out=1000))
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(10,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(1,length.out=1000),cons=rep(NA,length.out=1000),repro=rep(NA,length.out=1000))
 #create iteration record
 it_data <- data.frame(id=1:1000)
 
 #run 100 iterations
-for (b in 1:100){
+for (b in 1:10){
 for (i in 1:nrow(it_indpop)){
   #survival
   it_indpop$surv <- survive(it_indpop)
 }
 #record survival outcome
 surv_data <- it_indpop[,c("id","surv")]
-#remove individuals that died
-it_indpop <- it_indpop[-which(it_indpop$surv==0),]
+#keep individuals that survived
+it_indpop <- it_indpop[which(it_indpop$surv==1),]
 #calculate age, survival cost, production, consumption, and reproductive outcome
 for (i in 1:nrow(it_indpop)){
   #age
@@ -529,8 +515,8 @@ alr <- function(final_ind_data){
 The functions for the lifetime resource dynamics of each individual are developed below. The dynamics that would be calculated are:
 
 -   Lifetime production events: total number of positive outcomes (1) from the production function during the lifetime of an individual.
--   Lifetime resource production: total amount of resources produced during the lifetime of an individual.
 -   Lifetime consumption events: total number of consumption events during the lifetime of an individual. This amount should be the same as the age of an individual since consumption is fixed.
+-   Lifetime resource production: total amount of resources produced during the lifetime of an individual.
 -   Lifetime resource consumption: total amount of resources consumed during the lifetime of an individual.
 -   Lifetime resources available: total amount of resources available during the lifetime of an individual.
 -   Average resources available: average amount of resources available during the lifetime of an individual.
@@ -543,40 +529,40 @@ production_ev <- function(final_ind_data){
   return(final_ind_data$prod_ev)
 }
 
-#resource production
-production_res <- function(final_ind_data){
-  final_ind_data$prod_res[i] <- final_ind_data$prod_ev[i]*prod_n 
-  return(final_ind_data$prod_res)
-}
-
 #consumption events
 consumption_ev <- function(final_ind_data){
   final_ind_data$cons_ev[i] <- final_ind_data$lng[i]
   return(final_ind_data$cons_ev)
 }
 
+#resource production
+production_res <- function(final_ind_data){
+  final_ind_data$prod_res[i] <- final_ind_data$prod_ev[i]*prod_n 
+  return(final_ind_data$prod_res)
+}
+
 #resource consumption
 consumption_res <- function(final_ind_data){
-  final_ind_data$cons_res[i] <- final_ind_data$cons_ev[i]*cons
+  final_ind_data$cons_res[i] <- final_ind_data$cons_ev[i]*cons_n
   return(final_ind_data$cons_res)
 }
 
-#lifetime resources available
-l_resources_av <- function(final_ind_data){
-  final_ind_data$l_res_av[i] <- as.numeric(rowSums(it_data[i,grep("prod_a",colnames(it_data))],na.rm=T))
-  return(final_ind_data$l_res_av)
+#resources available
+available_res <- function(final_ind_data){
+  final_ind_data$avai_res[i] <- as.numeric(rowSums(it_data[i,grep("prod_a",colnames(it_data))],na.rm=T))
+  return(final_ind_data$avai_res)
 }
   
 #average resources available
-a_resources_av <- function(final_ind_data){
-  final_ind_data$a_res_av[i] <- mean(as.numeric(it_data[i,grep("prod_a",colnames(it_data))]),na.rm = T)
-  return(final_ind_data$a_res_av)
+available_av <- function(final_ind_data){
+  final_ind_data$avai_av[i] <- mean(as.numeric(it_data[i,grep("prod_a",colnames(it_data))]),na.rm = T)
+  return(final_ind_data$avai_av)
 }
 
 #variance resources available
-v_resources_av <- function(final_ind_data){
-  final_ind_data$v_res_av[i] <- var(as.numeric(it_data[i,grep("prod_a",colnames(it_data))]),na.rm = T)
-  return(final_ind_data$v_res_av)
+available_var <- function(final_ind_data){
+  final_ind_data$avai_var[i] <- var(as.numeric(it_data[i,grep("prod_a",colnames(it_data))]),na.rm = T)
+  return(final_ind_data$avai_var)
   }
 ```
 
@@ -599,18 +585,18 @@ final_ind_data$alr <- alr(final_ind_data)
   #resource dynamics
   #production events
 final_ind_data$prod_ev <- production_ev(final_ind_data)
-  #resource production
-final_ind_data$prod_res <- production_res(final_ind_data)
   #consumption events
 final_ind_data$cons_ev <- consumption_ev(final_ind_data)
+  #resource production
+final_ind_data$prod_res <- production_res(final_ind_data)
   #resource consumption
 final_ind_data$cons_res <- consumption_res(final_ind_data)
-  #lifetime resources available
-final_ind_data$l_res_av <- l_resources_av(final_ind_data)
+  #resources available
+final_ind_data$avai_res <- available_res(final_ind_data)
   #average resources available
-final_ind_data$a_res_av <- a_resources_av(final_ind_data)
+final_ind_data$avai_av <- available_av(final_ind_data)
   #variance resources available
-final_ind_data$v_res_av <- v_resources_av(final_ind_data)
+final_ind_data$avai_var <- available_var(final_ind_data)
 }
 
 #plot it
@@ -623,16 +609,16 @@ hist(final_ind_data$alr)
 #plot distributions of resource dynamics
 layout(matrix(c(1,1,2,2,3,3,4,4,0,5,5,6,6,7,7,0),nrow=2,byrow=TRUE))
 hist(final_ind_data$prod_ev)
-hist(final_ind_data$prod_res)
 hist(final_ind_data$cons_ev)
+hist(final_ind_data$prod_res)
 hist(final_ind_data$cons_res)
-hist(final_ind_data$l_res_av)
-hist(final_ind_data$a_res_av)
-hist(final_ind_data$v_res_av)
+hist(final_ind_data$avai_res)
+hist(final_ind_data$avai_av)
+hist(final_ind_data$avai_var)
 #pairwise relationship 
-pairs(~lng+lro+afr+alr+prod_ev+prod_res+cons_ev+cons_res+l_res_av+a_res_av+v_res_av,data=final_ind_data)
+pairs(~lng+lro+afr+alr+prod_ev+cons_ev+prod_res+cons_res+avai_res+avai_av+avai_var,data=final_ind_data)
 #pairwise relationship of life-history traits with resource availability measurements
-pairs(~lng+lro+afr+alr+l_res_av+a_res_av+v_res_av,data=final_ind_data)
+pairs(~lng+lro+afr+alr+avai_res+avai_av+avai_var,data=final_ind_data)
 ```
 
 *Not so sure about calculating the summary statistics*
@@ -659,11 +645,10 @@ An agent-based model is developed here with a population of 1000 individuals tha
 
 First, the auxiliary variables are defined for the model. Auxiliary variables are fixed values set at initialisation that define the life-history and resource dynamics that individuals can experience. Regarding life-history dynamics, they are stage-specific and defined as:
 
--   Dying probability (`die_p`).
--   Age-specific dying probability (`die_p_age`)
+-   Age-specific surviving probability (`surv_p_age`)
 -   Survival cost (`surv_c`).
 -   Age-specific survival cost (`surv_c_age`).
--   Reproduction probability (`repro_p`) - reproductive career only.
+-   Age-specific reproduction probability (`repro_p_age`) - reproductive career only.
 -   Cost of reproduction (`repro_c`) - reproductive career only.
 -   Age-specific cost of reproduction (`repro_c_age`) - reproductive career only.
 -   Number of descendants per reproduction (`repro_n`) - reproductive career only.
@@ -676,15 +661,25 @@ Regarding resource dynamics, the auxiliary variables are also stage-specific and
 -   Probability of storage (`store_p`).
 
 ```{r}
-#juvenile
-
 #survival
-#age-specific probability of dying
-die_p_age <- c(0.11 , 0.08 , 0.06, 0.04, 0.03, seq(0.01, 0.1,length.out=70), seq(0.1,1, length.out=26))
+#age-specific probability of surviving
+surv_p_age <- surv_est
 #cost of surviving
 surv_c <- 0.25
 #age-specific cost of surviving
 surv_c_age <- c(surv_c,surv_c*exp(exp(surv_c)/20*c(1:100))) 
+
+#reproduction
+#age-specific fertility probability
+repro_p_age <- fert_est
+#cost of reproduction
+repro_c <- 0.25
+#age-specific cost of reproduction
+repro_c_age <- c(repro_c,repro_c*exp(exp(repro_c)/20*c(1:100)))
+#number of descendants per reproduction
+repro_n <- 1
+
+#juvenile
 
 #production
 #probability
@@ -700,15 +695,7 @@ cons_juv <- 0.25
 #probability of storage
 store_p_juv <- 0.9
 
-#reproduction
-#age-specific fertility probability
-repro_p_age <- c(rep(0.0,15), seq(0.01,0.3, length.out=15), seq(0.3,0.01, length.out=15), rep(0,55))
-#cost of reproduction
-repro_c <- 0.25
-#age-specific cost of reproduction
-repro_c_age <- c(repro_c,repro_c*exp(exp(repro_c)/20*c(1:100)))
-#number of descendants per reproduction
-repro_n <- 1
+#reproductive career
 
 #production
 #probability
@@ -730,7 +717,7 @@ Now, the functions for the state variables are defined. First are the functions 
 ```{r}
 #survival
 survive <- function(it_indpop){
-  if(it_indpop$store_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)>(die_p_age[it_indpop$age[i]+1]+log(it_indpop$store_a[i]+1)/20)){
+  if(it_indpop$store_a[i] >= surv_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(sample(surv_p_age[it_indpop$age[i]+1,2:11],1)+log(it_indpop$store_a[i]+1)/20)){
       it_indpop$surv[i] <- 1
     } else{
       it_indpop$surv[i] <- 0
@@ -811,13 +798,13 @@ The functions for the reproductive dynamics are defined here. This function is o
 #reproduction probability
 reproduce <- function(it_indpop){
   if(it_indpop$stage[i]==0){ #juvenile
-    if(it_indpop$prod_a[i]+it_indpop$store_a[i] >= surv_c_age[it_indpop$age[i]+1]+repro_c_age[12] & runif(1,min=0,max=1)<(repro_p_age[it_indpop$age[i]+1]+log(it_indpop$prod_a[i]+it_indpop$store_a[i]+1)/20)){
+    if(it_indpop$prod_a[i]+it_indpop$store_a[i] >= surv_c_age[it_indpop$age[i]+1]+repro_c_age[12] & runif(1,min=0,max=1)<(sample(repro_p_age[it_indpop$age[i]+1,2:11],1)+log(it_indpop$prod_a[i]+it_indpop$store_a[i]+1)/20)){
       it_indpop$repro[i] <- 1
     } else{
       it_indpop$repro[i] <- 0
     }
   } else{ #reproductive career
-    if(it_indpop$prod_a[i]+it_indpop$store_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(repro_p_age[it_indpop$age[i]+1]+log(it_indpop$prod_a[i]+it_indpop$store_a[i]+1)/20)) {
+    if(it_indpop$prod_a[i]+it_indpop$store_a[i] >= repro_c_age[it_indpop$age[i]+1] & runif(1,min=0,max=1)<(sample(repro_p_age[it_indpop$age[i]+1,2:11],1)+log(it_indpop$prod_a[i]+it_indpop$store_a[i]+1)/20)) {
       it_indpop$repro[i] <- 1
     } else{
       it_indpop$repro[i] <- 0
@@ -882,7 +869,7 @@ Now that the life-history and resource dynamics functions are defined. They are 
 
 ```{r}
 #create population
-it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(15,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),cons=rep(NA,length.out=1000),store_o=rep(NA,length.out=1000),store_a=rep(1,length.out=1000),repro=rep(NA,length.out=1000),stage=c(rep(0,length.out=500),rep(1,length.out=500)))
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(10,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),cons=rep(NA,length.out=1000),store_o=rep(NA,length.out=1000),store_a=rep(1,length.out=1000),repro=rep(NA,length.out=1000),stage=c(rep(0,length.out=500),rep(1,length.out=500)))
 #create iteration record
 it_data <- data.frame(id=1:1000)
 
@@ -963,7 +950,7 @@ After checking that the functions and databases work for one year, the model can
 
 ```{r}
 #create population
-it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(15,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),cons=rep(NA,length.out=1000),store_o=rep(NA,length.out=1000),store_a=rep(1,length.out=1000),repro=rep(NA,length.out=1000),stage=c(rep(0,length.out=500),rep(1,length.out=500)))
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(10,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),cons=rep(NA,length.out=1000),store_o=rep(NA,length.out=1000),store_a=rep(1,length.out=1000),repro=rep(NA,length.out=1000),stage=c(rep(0,length.out=500),rep(1,length.out=500)))
 #create iteration record
 it_data <- data.frame(id=1:1000)
 
