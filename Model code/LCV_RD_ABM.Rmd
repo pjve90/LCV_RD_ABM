@@ -66,12 +66,12 @@ The age-specific survival and fertility estimates from Davison and Gurven, 2021 
 ```{r}
 #survival estimates
 #import data
-surv_est <- read.csv("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/S2_Table_Age_Specific_Survival.csv?token=GHSAT0AAAAAABWW7XYAIITHLALDXWX2DABOYWWQUDA", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+surv_est <- read.csv("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/S2_Table_Age_Specific_Survival.csv?token=GHSAT0AAAAAABWW7XYAA6FSMXU7OHKWOD6MYW6LNIQ", header = TRUE, sep = ",", stringsAsFactors = FALSE)
 #select human populations
 surv_est <- surv_est[,c("Age","Ache","Agta","Hadza","Hiwi","X.Kung","Aborigine","Gainj","Tsimane","Yanomamo","Herero")]
 
 #fertility estimates
-fert_est <- read.csv("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/S3_Table_Age_Specific_Fertility.csv?token=GHSAT0AAAAAABWW7XYBIATNTZ7V46EOBEDWYWWQUOA",header = T)
+fert_est <- read.csv("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/S3_Table_Age_Specific_Fertility.csv?token=GHSAT0AAAAAABWW7XYB3TGDRGR5PYPO6MKGYW6LNKA",header = T)
 #select human populations
 fert_est <- fert_est[,c("Age","Ache","Agta","Hadza","Hiwi","X.Kung","Aborigine","Gainj","Tsimane","Yanomamo","Herero")]
 
@@ -213,6 +213,16 @@ reproduce_c <- function(it_indpop) {
   return(it_indpop)
 }
 
+#lifetime reproductive output
+reproduce_n <- function(it_indpop){
+  if(it_indpop$repro[i] == 0){
+    it_indpop$lro <- it_indpop$lro
+  } else{
+    it_indpop$lro <- it_indpop$lro + 1
+  }
+  return(it_indpop$lro)
+}
+
 #add newborns
 newborns <- function(new_it_indpop){
   if(sum(it_indpop$repro) > 0){
@@ -259,6 +269,8 @@ for (i in 1:nrow(it_indpop)){
   it_indpop$repro <- reproduce(it_indpop)
   #reproductive cost
   it_indpop <- reproduce_c(it_indpop)
+  #lifetime reproductive output
+  it_indpop$lro <- reproduce_n(it_indpop)
 }
 #record production outcome and resources available
 resource_data <- it_indpop[,c("id","prod_o","prod_a")]
@@ -321,6 +333,8 @@ for (i in 1:nrow(it_indpop)){
   it_indpop$repro <- reproduce(it_indpop)
   #reproductive cost
   it_indpop <- reproduce_c(it_indpop)
+  #lifetime reproductive output
+  it_indpop$lro <- reproduce_n(it_indpop)
 }
 #record production outcome and resources available
 resource_data <- it_indpop[,c("id","prod_o","prod_a")]
@@ -529,14 +543,14 @@ repro_n <- 1
 #production
 #probability
 #juvenile
-prod_p_j <- 0.5
+prod_p_j <- 0.75
 #reproductive career
-prod_p_rc <- 0.75
+prod_p_rc <- 0.85
 #amount of resources produced
 #juvenile
-prod_n_j <- 0.25
+prod_n_j <- 0.5
 #reproductive career
-prod_n_rc <- 0.5
+prod_n_rc <- 1
 ```
 
 Now, the functions for the state variables are defined. First are the functions for life-history dynamics, followed by the ones related to resource dynamics. Each function is defined specifically for each life cycle stage. The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the age-specific probability of surviving (`die_p`) and the logarithm of the amount of resources stored (`store_a`). The influence of the amount of resources stored is escaled to avoid an explosive population growth.
@@ -573,7 +587,7 @@ The functions for resource production, consumption, and storage are defined here
 #production
 produce <- function(it_indpop){
   if(it_indpop$stage[i]==0){ #juvenile
-    it_indpop$prod_o[i] <- rbinom(1,1,prod_p_juv)
+    it_indpop$prod_o[i] <- rbinom(1,1,prod_p_j)
   } else { #reproductive career
       it_indpop$prod_o[i] <- rbinom(1,1,prod_p_rc)
   }
@@ -583,7 +597,7 @@ produce <- function(it_indpop){
 #adding resources produced to resources available
 produce_a <- function(it_indpop){
     if(it_indpop$stage[i]==0){ #juvenile
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]+it_indpop$prod_o[i]*prod_n_juv
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]+it_indpop$prod_o[i]*prod_n_j
   } else{ #reproductive career
       it_indpop$prod_a[i] <- it_indpop$prod_a[i]+it_indpop$prod_o[i]*prod_n_rc
   }
@@ -625,6 +639,15 @@ reproduce_c <- function(it_indpop) {
   return(it_indpop)
 }
 
+#lifetime reproductive output
+reproduce_n <- function(it_indpop){
+  if(it_indpop$repro[i] == 0){
+    it_indpop$lro <- it_indpop$lro
+  } else{
+    it_indpop$lro <- it_indpop$lro + 1
+  }
+  return(it_indpop$lro)
+}
 #add newborns
 newborns <- function(new_it_indpop){
   if(sum(it_indpop$repro) > 0){
@@ -663,7 +686,8 @@ Now that the life-history and resource dynamics functions are defined. They are 
 
 ```{r}
 #create population
-it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(10,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),store_a=c(rep(surv_c_age[1],length.out=500),rep(surv_c_age[11],length.out=500)),repro=rep(NA,length.out=1000),stage=c(rep(1,length.out=500),rep(3,length.out=500)))
+#it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(10,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),store_a=c(rep(surv_c_age[1],length.out=500),rep(surv_c_age[11],length.out=500)),repro=rep(NA,length.out=1000),stage=c(rep(1,length.out=500),rep(3,length.out=500)))
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(0,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),store_a=rep(surv_c_age[1],length.out=1000),repro=rep(NA,length.out=1000),stage=c(rep(0,length.out=1000)))
 
 #create iteration record
 it_data <- data.frame(id=1:1000)
@@ -701,6 +725,8 @@ for (i in 1:nrow(it_indpop)){
   it_indpop$repro <- reproduce(it_indpop)
   #reproductive cost
   it_indpop <- reproduce_c(it_indpop)
+  #lifetime reproductive output
+  it_indpop$lro <- reproduce_n(it_indpop)
   #transition
   it_indpop$stage <- transition(it_indpop)
 }
@@ -743,7 +769,8 @@ After checking that the functions and databases work for one year, the model can
 
 ```{r}
 #create population
-it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(10,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),store_a=c(rep(surv_c_age[1],length.out=500),rep(surv_c_age[11],length.out=500)),repro=rep(NA,length.out=1000),stage=c(rep(1,length.out=500),rep(3,length.out=500)))
+#it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=c(rep(0,length.out=500),rep(10,length.out=500)),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),store_a=c(rep(surv_c_age[1],length.out=500),rep(surv_c_age[11],length.out=500)),repro=rep(NA,length.out=1000),stage=c(rep(1,length.out=500),rep(3,length.out=500)))
+it_indpop <- data.frame(id=1:1000,surv=rep(NA,length.out=1000),age=rep(0,length.out=1000),prod_o=rep(NA,length.out=1000),prod_a=rep(0,length.out=1000),store_a=rep(surv_c_age[1],length.out=1000),repro=rep(NA,length.out=1000),stage=c(rep(0,length.out=1000)))
 
 #create iteration record
 it_data <- data.frame(id=1:1000)
@@ -782,6 +809,8 @@ for (i in 1:nrow(it_indpop)){
   it_indpop$repro <- reproduce(it_indpop)
   #reproductive cost
   it_indpop <- reproduce_c(it_indpop)
+  #lifetime reproductive output
+  it_indpop$lro <- reproduce_n(it_indpop)
   #transition
   it_indpop$stage <- transition(it_indpop)
 }
@@ -1234,6 +1263,16 @@ reproduce_c <- function(it_indpop) {
   return(it_indpop)
 }
 
+#lifetime reproductive output
+reproduce_n <- function(it_indpop){
+  if(it_indpop$repro[i] == 0){
+    it_indpop$lro <- it_indpop$lro
+  } else{
+    it_indpop$lro <- it_indpop$lro + 1
+  }
+  return(it_indpop$lro)
+}
+
 #add newborns
 newborns <- function(new_it_indpop){
   if(sum(it_indpop$repro) > 0){
@@ -1324,6 +1363,8 @@ for (i in 1:nrow(it_indpop)){
   it_indpop$repro <- reproduce(it_indpop)
   #reproductive cost
   it_indpop <- reproduce_c(it_indpop)
+  #lifetime reproductive output
+  it_indpop$lro <- reproduce_n(it_indpop)
   #transition
   it_indpop$stage <- transition(it_indpop)
 }
@@ -1405,6 +1446,8 @@ for (i in 1:nrow(it_indpop)){
   it_indpop$repro <- reproduce(it_indpop)
   #reproductive cost
   it_indpop <- reproduce_c(it_indpop)
+  #lifetime reproductive output
+  it_indpop$lro <- reproduce_n(it_indpop)
   #transition
   it_indpop$stage <- transition(it_indpop)
 }
