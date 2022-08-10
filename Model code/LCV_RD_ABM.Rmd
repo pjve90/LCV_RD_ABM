@@ -521,12 +521,6 @@ repro_n <- 1
 
 #production
 #probability
-prod_p <- 0.75
-#amount of resources produced
-prod_n <- 2
-
-#production
-#probability
 #juvenile
 prod_p_j <- 0.75
 #reproductive career
@@ -536,6 +530,11 @@ prod_p_rc <- 0.85
 prod_n_j <- 1
 #reproductive career
 prod_n_rc <- 2
+
+store_age <- as.vector(rep(NA,length.out=100))
+for(i in 1:length(store_age)){
+  store_age[i] <- surv_thresh + prod_n_rc - repro_thresh
+}
 ```
 
 Now, the functions for the state variables are defined. First are the functions for life-history dynamics, followed by the ones related to resource dynamics. Each function is defined specifically for each life cycle stage. The functions for survival and age are defined first, followed by the discount on the amount of resources available due to the costs of survival. An individual can either survive (1) or not (0) in the survival function. An individual can survive (1) depending if the individual has enough resources to cover the age-specific costs of survival (`surv_c_age`) and samples from a uniform distribution a value lower than the sum of the age-specific probability of surviving (`die_p`) and the logarithm of the amount of resources stored (`store_a`). The influence of the amount of resources stored is escaled to avoid an explosive population growth.
@@ -638,7 +637,7 @@ The function for the life cycle stage transition is defined here. The transition
 ```{r}
 #transition
 transition <- function(it_indpop){
-    if(it_indpop$stage[i]==1 & it_indpop$store_a[i] >= repro_thresh){ #transition juvenile to reproductive career
+    if(it_indpop$stage[i]==1 & it_indpop$store_a[i] >= surv_thresh + repro_thresh){ #transition juvenile to reproductive career
       it_indpop$store_a[i] <- it_indpop$store_a[i]-repro_thresh
       it_indpop$repro[i] <- 1
       it_indpop$stage[i] <- 2
