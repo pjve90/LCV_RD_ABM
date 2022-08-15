@@ -96,8 +96,8 @@ Variables that are calculated new in each iteration:
         \item Resources produced: Amount of resources produced by the individual. The amount is fixed to each life cycle stage. Therefore, the individual whether produce resources (1) or not (0) based on a Bernoulli distribution with a stage-specific probability specified at initialisation:
 \begin{equation}
     y_{i,t}=\begin{cases}
-    y_s,& Bernoulli(P_s)=1\\
-    0,& Bernoulli(P_s)=0
+    y_s,& \text{Bernoulli}(P_s)=1\\
+    0,& \text{Bernoulli}(P_s)=0
 \end{cases}
 \end{equation}
         Where $y_{i,t}$ is the amount of resources produced by individual $i$ at time $t$, $y_{s}$ the amount of resources that can be produced at stage $s$, and $P_{s}$ the probability of resource production at stage $s$.
@@ -134,27 +134,24 @@ Variables that are modified from one iteration to the next:
 The individual dynamics are constrained by the following auxiliary variables. These variables are stage-specific, set at the initialisation and apply to all individuals in dependence on their state variables.
 
 \begin{itemize}
-    \item Survival cost: Amount of resources necessary to cover the costs of survival. \item Reproductive cost: Amount of resources necessary to cover the costs of reproduction. The reproductive cost is ten times the survival cost, considering that women can reproduce at age 10 \citep{davison2021human}. The cost is calculated as follows:
-\begin{equation}
-mc=10*pc    
-\end{equation}
-    Where $mc$ is the reproductive cost and $pc$ is the survival cost. 
+    \item Survival cost: Amount of resources necessary to cover the costs of survival.
+    \item Reproductive cost: Amount of resources necessary to cover the costs of reproduction.
     \item Number of descendants per reproduction: A female individual produce only one descendant per reproductive event.
-    \item Produce: Probability of producing resources ($P_s$. The probability is used to determine the probability of the binomial distribution of the state variable ``Resources produced".
-    \item Resource production: 
+    \item Produce: Stage-specific probability of producing resources ($P_s$) that is used in the state variable ``Resources produced".
+    \item Resource production: Stage-specific amount of resources an individual can get.
     \item Receive: Probability of receiving resources from another individual(s). The probability is based on a distribution starting in zero and a maximum value based on \cite{gurven2004give}.
     \item Give: Probability of giving resources to another individual(s). The probability is based on a distribution starting in zero and a maximum value based on \cite{gurven2004give}.
 \end{itemize}
 
 \subsubsection{Scale}
 
-Each iteration in the model represents one year. The probability  of producing is Bernoulli, with the values of happening ($1$) or not ($0$). The times that resources are received or gave away can be a minimum of zero (i.e. no receiving/giving) and a maximum based on cross-cultural values. The amount of resources an individual produces, receives, and gives are stage-specific. Reproductive effort is evaluated after the resource dynamics, followed by the evaluation for stage transition. Finally, the amount or resources available are stored and passed from one year to the next, being evaluated for survival at the beginning of the iteration.
+Each iteration in the model represents one year. The probability  of producing is Bernoulli, with the values of happening ($1$) or not ($0$). The times that resources are received or gave away can be a minimum of zero (i.e. no receiving/giving) and a maximum based on cross-cultural values. The amount of resources an individual produces, receives, and gives are stage-specific. Reproductive effort is evaluated after the resource dynamics, followed by the evaluation for stage transition. Finally, the amount or resources available are stored and passed from one year to the next, being evaluated for survival at the beginning of the next iteration.
 
 \subsection{Process overview and scheduling}
 
-Every sub model described in the following process is stage-specific. In the juvenile stage, individuals go through survive, produce, receive, and give sub models for each year until they reach sexual maturity, transitioning to the adult stage. In the adult stage, individuals go through surviving, producing, receiving, and giving sub models until they have their first descendant or reach menopause. If an adult transition to a reproductive-career stage, it goes through surviving, producing, receiving, and giving sub models and also through a reproduction sub model until it reaches menopause. Once in a post-reproductive stage, the individual goes through the surviving, producing, receiving, and giving sub models of the stage. In each year, the individual increase its age and updates the amount of resources it has. During each transition, the individual updates its stage variable and also transitions with the resources it has stored from the earlier stage.
+Every dynamic described in the following process is stage-specific. In the juvenile stage, individuals go through survive, produce, receive, and give models for each year until they reach sexual maturity, transitioning to the adult stage. In the adult stage, individuals go through surviving, producing, receiving, and giving models until they have their first descendant or reach menopause. If an adult transition to a reproductive-career stage, it goes through surviving, producing, receiving, and giving models and also through a reproduction model until it reaches menopause. Once in a post-reproductive stage, the individual goes through the surviving, producing, receiving, and giving models of the stage. In each year, the individual increase her age and updates the amount of resources she stores. During each transition, the individual updates her stage variable and also transitions with the resources she has stored from the earlier stage.
 \\\\
-The scheduling of the process starts with the survival sub model so only individuals who survive can age and go through the rest of the sub models in the iteration. The resource-related sub models start with those who may increase the amount of resources available (production and receiving), followed by those who decrease the amount of resources (giving). The reproduction sub model follows the resource-related ones in order to see the influence of resource dynamics in the reproductive output and timing. The schedule ends with the transition sub model to evaluate if the individual moves to the next life cycle stage or not.
+The scheduling of the process starts with the survival model so only individuals who survive can age and go through the rest of the models in the iteration. The resource-related models start with those who may increase the amount of resources available (production and receiving), followed by those who decrease the amount of resources (giving). The reproduction model follows the resource-related ones in order to see the influence of resource dynamics in the reproductive output and timing. The schedule ends with the transition model to evaluate if the individual moves to the next life cycle stage or not.
 
 \subsection{Design concepts}
 
@@ -223,6 +220,22 @@ The model analysis consists on running simulations where the resource dynamics a
 The model will be modified to set the different scenarios of interest to understand how resource dynamics and habitat quality influence the variability of life cycles within a female human population. The probabilities of resource production and transfers will be modified with different combinations of higher and lower values than the baseline model developed here. Additionally, the amount of resources that can be produced will be set with higher values than the ones in the baseline to compare rich and poor environments. See Table \ref{tab:1} for a summary of the different scenarios that will be set, and the expected predictions.
 
 \section{Tables and Figures}
+
+\begin{table}[H]
+    \centering
+    \caption{Summary of the study design. \emph{Question} is where are the research questions driving the development of the model. \emph{Hypothesis} is where are the predictions answering the research questions. \emph{Analysis plan} is where the tests used to answer the research question are described. \emph{Interpretation} is a description of possible different outcomes, and their interpretation in relation to the hypothesis. \emph{Contested theory} is a description on how the possible outcomes could prove wrong or show incomplete current theories.}
+    \begin{adjustbox}{width=\textwidth}
+    \begin{tabular}{p{4cm}p{4cm}p{4cm}p{4cm}p{4cm} }
+    \hline
+    Question & Hypothesis & Analysis plan & Interpretation & Contested Theory \\ 
+    \hline
+    How does the life cycle of an individual varies by different resource dynamics? & An individual life cycle should vary more by the dynamics of resource production and consumption, while sharing and storing dynamics have a buffering effect & Multi-variate and multi-level models based on the different resource dynamic combinations and key components of the life cycle of an individual & An individual that experiences higher amount of resources and more successful random decisions is likely to live longer and reproduce more by expanding their time in the reproductive career stage. An individual that experiences less resources and successful random decisions is likely to life shorter and reproduce less by shrinking their reproductive career stage. Sharing and storing dynamics should decrease the impact in both cases. & The results would synthesis the theories developed from the embodied and inter-generational transfer models, by accounting for embodied capital (i.e. storing dynamics) and resource transfers (i.e. resource transfers)\\  
+    How does the variability of life cycles within a population varies under different resource dynamics scenarios? & The variability of life cycles within a population is lower if there is high sharing and storing dynamics, while populations that have higher production and consumption should have higher variability & Multi-variate and multi-level models based on the different resource dynamic combinations and distributions of the key components of the life cycle built from the population & Populations with high production and consumption, and low sharing and storing dynamics, should have wider distributions of the different components of the life cycle than those population where individuals experience higher sharing and storing dynamics & The results would fill a gap in the understanding on how resource dynamics might limit the variability within a population, instead of characterizing the scenarios under which the female human life cycle could have evolved.\\  
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \label{tab:1}
+\end{table}
 
 \begin{table}[H]
     \centering
