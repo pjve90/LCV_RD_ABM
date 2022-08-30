@@ -144,7 +144,7 @@ The functions for state variables are defined to determine the dynamics each ind
 
 ```{r}
 survive <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= surv_thresh){
+  if(it_indpop$prod_a[i] >= surv_thresh[b]){
       it_indpop$surv[i] <- 1
       } else{
       it_indpop$surv[i] <- 0
@@ -160,7 +160,7 @@ age <- function(it_indpop){
 
 #survival costs discount from resources
 survive_c <- function(it_indpop){
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-surv_thresh
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-surv_thresh[b]
   return(it_indpop$prod_a)
 }
 ```
@@ -170,7 +170,7 @@ The functions for resource production and consumption are defined here. First is
 ```{r}
 #production
 produce <- function(it_indpop){
-  it_indpop$prod_o[i] <- rbinom(1,1,prod_p)
+  it_indpop$prod_o[i] <- rbinom(1,1,prod_p[b])
   return(it_indpop$prod_o)
 }
 
@@ -186,7 +186,7 @@ The functions for the reproductive dynamics are defined here. First the probabil
 ```{r}
 #reproduction probability
 reproduce <- function(it_indpop){
-  if(it_indpop$prod_a[i] >= repro_thresh) {
+  if(it_indpop$prod_a[i] >= repro_thresh[b]) {
       it_indpop$repro[i] <- 1
     } else{
       it_indpop$repro[i] <- 0
@@ -197,7 +197,7 @@ reproduce <- function(it_indpop){
 #reproductive cost discount from resources
 reproduce_c <- function(it_indpop) {
   if(it_indpop$repro[i] == 1){
-    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_thresh
+    it_indpop$prod_a[i] <- it_indpop$prod_a[i]-repro_thresh[b]
     }
   return(it_indpop$prod_a)
 }
@@ -1763,21 +1763,255 @@ final_ind_data$lng <- longevity(final_ind_data)
 #pairs(~lng+lro+asm+afr+alr+meno+prod_var+cons_var+store_var+avai_var,data=final_ind_data)
 ```
 
-
 ```{r}
-surv_c_age <- as.vector(rep(NA,length.out=91))
-for(i in 1:length(surv_c_age)){surv_c_age[i]<-(1-mean(as.numeric(surv_est[i,2:11])))*100}
+#define survival effort
+surv_effort <- c(0.1,seq(0.25,1,0.25))
+#define the proportion between survival and reproductive effort
+proportion <- c(0.5,seq(1,10,1))
+#combinations of survival effort and proportion
+comb <- expand.grid(surv_effort,proportion)
+#define reproductive effort
+repro_effort <- apply(comb,1,prod)
+#define the reproductive threshold
+repro_thresh <- sapply(comb[,1],function(x) x*10)
+#define the amount of resources you can produce
+prod_stage <- c(1,2)
 
-repro_c_age <- as.vector(rep(NA,length.out=91))
-for(i in 1:length(repro_c_age)){repro_c_age[i]<-(1-mean(as.numeric(fert_est[i,2:11])))*100}
+#check the life cycles with the combinations of survival and reproductive effort
+for(b in 1:nrow(comb)){
+ data <- data.frame(stored_res=c(0.5,rep(0,length.out=100)),prod_age=rep(0,length.out=101),repro_ev=rep(0,length.out=101))
+ for(i in 1:nrow(data)){
+   if(i == 1){
+     data$prod_age[i] <- prod_stage[1]
+     data$stored_res[i] <- data$stored_res[i]-comb[b,1]+data$prod_age[i]
+   }else{
+     if(sum(data$repro_ev) == 0 & data$stored_res[i-1] < repro_thresh[b]){
+       data$prod_age[i] <- prod_stage[1]
+       data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
+     }else{
+       if(data$stored_res[i-1] < repro_thresh[b]){
+       data$prod_age[i] <- prod_stage[2]  
+       data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
+       }else{
+       data$repro_ev[i] <- 1
+       data$prod_age[i] <- prod_stage[2]
+       data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
+       }
+     }
+   }
+ }
+ plot(data$stored_res~c(1:101),xlab=b)
+ points(data$prod_age,pch=16)
+ abline(v=which(data$repro_ev==1))
+}
 
-total_c_age <- as.vector(rep(NA,length.out=91))
-for(i in 1:length(total_c_age)){total_c_age[i]<-sum(surv_c_age[i],repro_c_age[i])}
+#check the combinations that gave more realistic outputs
+comb[c(23,28,33,38,43,48,53),]
+#arrange plots
+layout(matrix(c(1,1,2,2,3,3,4,4,0,5,5,6,6,7,7,0), nrow=2, byrow=TRUE))
+#comb[23,], surv_effort=0.5,repro_effort=2
+data <- data.frame(stored_res23=c(0.5,rep(0,length.out=100)),prod_age23=rep(0,length.out=101),repro_ev23=rep(0,length.out=101))
+#calculate
+ for(i in 1:ncol(data_store)){
+   if(i == 1){
+     data$prod_age23[i] <- prod_stage[1]
+     data$stored_res23[i] <- data$stored_res23[i]-comb[23,1]+data$prod_age23[i]
+   }else{
+     if(sum(data$repro_ev23) == 0 & data$stored_res23[i-1] < repro_thresh[23]){
+       data$prod_age23[i] <- prod_stage[1]
+       data$stored_res23[i] <- data$stored_res23[i-1]-comb[23,1]+data$prod_age23[i]
+     }else{
+       if(data$stored_res23[i-1] < repro_thresh[23]){
+       data$prod_age23[i] <- prod_stage[2]  
+       data$stored_res23[i] <- data$stored_res23[i-1]-comb[23,1]+data$prod_age23[i]
+       }else{
+       data$repro_ev23[i] <- 1
+       data$prod_age23[i] <- prod_stage[2]
+       data$stored_res23[i] <- data$stored_res23[i-1]-comb[23,1]+data$prod_age23[i]-repro_effort[23]
+       }
+     }
+   }
+ }
+#plot it
+plot(data$stored_res23~c(1:101),xlab="surv_effort=0.5,repro_effort=2",ylim=c(0,7))
+ points(data$prod_age23,pch=16)
+ abline(v=which(data$repro_ev23==1),lty=2) #each reproductive event
+ abline(v=10,col="red") #age 10
+#comb[28,], surv_effort=0.5,repro_effort=2.5
+data <- cbind(data,data.frame(stored_res28=c(0.5,rep(0,length.out=100)),prod_age28=rep(0,length.out=101),repro_ev28=rep(0,length.out=101)))
+ #calculate
+ for(i in 1:nrow(data)){
+   if(i == 1){
+     data$prod_age28[i] <- prod_stage[1]
+     data$stored_res28[i] <- data$stored_res28[i]-comb[28,1]+data$prod_age28[i]
+   }else{
+     if(sum(data$repro_ev28) == 0 & data$stored_res28[i-1] < repro_thresh[28]){
+       data$prod_age28[i] <- prod_stage[1]
+       data$stored_res28[i] <- data$stored_res28[i-1]-comb[28,1]+data$prod_age28[i]
+     }else{
+       if(data$stored_res28[i-1] < repro_thresh[28]){
+       data$prod_age28[i] <- prod_stage[2]  
+       data$stored_res28[i] <- data$stored_res28[i-1]-comb[28,1]+data$prod_age28[i]
+       }else{
+       data$repro_ev28[i] <- 1
+       data$prod_age28[i] <- prod_stage[2]
+       data$stored_res28[i] <- data$stored_res28[i-1]-comb[28,1]+data$prod_age28[i]-repro_effort[28]
+       }
+     }
+   }
+ }
+#plot it
+plot(data$stored_res28~c(1:101),xlab="surv_effort=0.5,repro_effort=2.5",ylim=c(0,7))
+ points(data$prod_age28,pch=16)
+ abline(v=which(data$repro_ev28==1),lty=2) #each reproductive event
+ abline(v=10,col="red") #age 10
+#comb[33,], surv_effort=0.5,repro_effort=3
+data <- cbind(data,data.frame(stored_res33=c(0.5,rep(0,length.out=100)),prod_age33=rep(0,length.out=101),repro_ev33=rep(0,length.out=101)))
+ #calculate
+ for(i in 1:nrow(data)){
+   if(i == 1){
+     data$prod_age33[i] <- prod_stage[1]
+     data$stored_res33[i] <- data$stored_res33[i]-comb[33,1]+data$prod_age33[i]
+   }else{
+     if(sum(data$repro_ev33) == 0 & data$stored_res33[i-1] < repro_thresh[33]){
+       data$prod_age33[i] <- prod_stage[1]
+       data$stored_res33[i] <- data$stored_res33[i-1]-comb[33,1]+data$prod_age33[i]
+     }else{
+       if(data$stored_res33[i-1] < repro_thresh[33]){
+       data$prod_age33[i] <- prod_stage[2]  
+       data$stored_res33[i] <- data$stored_res33[i-1]-comb[33,1]+data$prod_age33[i]
+       }else{
+       data$repro_ev33[i] <- 1
+       data$prod_age33[i] <- prod_stage[2]
+       data$stored_res33[i] <- data$stored_res33[i-1]-comb[33,1]+data$prod_age33[i]-repro_effort[33]
+       }
+     }
+   }
+ }
+#plot it
+plot(data$stored_res33~c(1:101),xlab="surv_effort=0.5,repro_effort=3",ylim=c(0,7))
+ points(data$prod_age33,pch=16)
+ abline(v=which(data$repro_ev33==1),lty=2) #each reproductive event
+ abline(v=10,col="red") #age 10
+#comb[38,], surv_effort=0.5,repro_effort=3.5
+data <- cbind(data,data.frame(stored_res38=c(0.5,rep(0,length.out=100)),prod_age38=rep(0,length.out=101),repro_ev38=rep(0,length.out=101)))
+ #calculate
+ for(i in 1:nrow(data)){
+   if(i == 1){
+     data$prod_age38[i] <- prod_stage[1]
+     data$stored_res38[i] <- data$stored_res38[i]-comb[38,1]+data$prod_age38[i]
+   }else{
+     if(sum(data$repro_ev38) == 0 & data$stored_res38[i-1] < repro_thresh[38]){
+       data$prod_age38[i] <- prod_stage[1]
+       data$stored_res38[i] <- data$stored_res38[i-1]-comb[38,1]+data$prod_age38[i]
+     }else{
+       if(data$stored_res38[i-1] < repro_thresh[38]){
+       data$prod_age38[i] <- prod_stage[2]  
+       data$stored_res38[i] <- data$stored_res38[i-1]-comb[38,1]+data$prod_age38[i]
+       }else{
+       data$repro_ev38[i] <- 1
+       data$prod_age38[i] <- prod_stage[2]
+       data$stored_res38[i] <- data$stored_res38[i-1]-comb[38,1]+data$prod_age38[i]-repro_effort[38]
+       }
+     }
+   }
+ }
+#plot it
+plot(data$stored_res38~c(1:101),xlab="surv_effort=0.5,repro_effort=3.5",ylim=c(0,7))
+ points(data$prod_age38,pch=16)
+ abline(v=which(data$repro_ev38==1),lty=2) #each reproductive event
+ abline(v=10,col="red") #age 10
+#comb[43,], surv_effort=0.5,repro_effort=4
+data <- cbind(data,data.frame(stored_res43=c(0.5,rep(0,length.out=100)),prod_age43=rep(0,length.out=101),repro_ev43=rep(0,length.out=101)))
+ #calculate
+ for(i in 1:nrow(data)){
+   if(i == 1){
+     data$prod_age43[i] <- prod_stage[1]
+     data$stored_res43[i] <- data$stored_res43[i]-comb[43,1]+data$prod_age43[i]
+   }else{
+     if(sum(data$repro_ev43) == 0 & data$stored_res43[i-1] < repro_thresh[43]){
+       data$prod_age43[i] <- prod_stage[1]
+       data$stored_res43[i] <- data$stored_res43[i-1]-comb[43,1]+data$prod_age43[i]
+     }else{
+       if(data$stored_res43[i-1] < repro_thresh[43]){
+       data$prod_age43[i] <- prod_stage[2]  
+       data$stored_res43[i] <- data$stored_res43[i-1]-comb[43,1]+data$prod_age43[i]
+       }else{
+       data$repro_ev43[i] <- 1
+       data$prod_age43[i] <- prod_stage[2]
+       data$stored_res43[i] <- data$stored_res43[i-1]-comb[43,1]+data$prod_age43[i]-repro_effort[43]
+       }
+     }
+   }
+ }
+#plot it
+plot(data$stored_res43~c(1:101),xlab="surv_effort=0.5,repro_effort=4",ylim=c(0,7))
+ points(data$prod_age43,pch=16)
+ abline(v=which(data$repro_ev43==1),lty=2) #each reproductive event
+ abline(v=10,col="red") #age 10
+#comb[48,], surv_effort=0.5,repro_effort=4.5
+data <- cbind(data,data.frame(stored_res48=c(0.5,rep(0,length.out=100)),prod_age48=rep(0,length.out=101),repro_ev48=rep(0,length.out=101)))
+  #calculate
+ for(i in 1:nrow(data)){
+   if(i == 1){
+     data$prod_age48[i] <- prod_stage[1]
+     data$stored_res48[i] <- data$stored_res48[i]-comb[48,1]+data$prod_age48[i]
+   }else{
+     if(sum(data$repro_ev48) == 0 & data$stored_res48[i-1] < repro_thresh[48]){
+       data$prod_age48[i] <- prod_stage[1]
+       data$stored_res48[i] <- data$stored_res48[i-1]-comb[48,1]+data$prod_age48[i]
+     }else{
+       if(data$stored_res48[i-1] < repro_thresh[48]){
+       data$prod_age48[i] <- prod_stage[2]  
+       data$stored_res48[i] <- data$stored_res48[i-1]-comb[48,1]+data$prod_age48[i]
+       }else{
+       data$repro_ev48[i] <- 1
+       data$prod_age48[i] <- prod_stage[2]
+       data$stored_res48[i] <- data$stored_res48[i-1]-comb[48,1]+data$prod_age48[i]-repro_effort[48]
+       }
+     }
+   }
+ }
+#plot it
+plot(data$stored_res48~c(1:101),xlab="surv_effort=0.5,repro_effort=4.5",ylim=c(0,7))
+ points(data$prod_age48,pch=16)
+ abline(v=which(data$repro_ev48==1),lty=2) #each reproductive event
+ abline(v=10,col="red") #age 10
+#comb[53,], surv_effort=0.5,repro_effort=5
+data <- cbind(data,data.frame(stored_res53=c(0.5,rep(0,length.out=100)),prod_age53=rep(0,length.out=101),repro_ev53=rep(0,length.out=101)))
+ #calculate
+ for(i in 1:nrow(data)){
+   if(i == 1){
+     data$prod_age53[i] <- prod_stage[1]
+     data$stored_res53[i] <- data$stored_res53[i]-comb[53,1]+data$prod_age53[i]
+   }else{
+     if(sum(data$repro_ev53) == 0 & data$stored_res53[i-1] < repro_thresh[53]){
+       data$prod_age53[i] <- prod_stage[1]
+       data$stored_res53[i] <- data$stored_res53[i-1]-comb[53,1]+data$prod_age53[i]
+     }else{
+       if(data$stored_res53[i-1] < repro_thresh[53]){
+       data$prod_age53[i] <- prod_stage[2]  
+       data$stored_res53[i] <- data$stored_res53[i-1]-comb[53,1]+data$prod_age53[i]
+       }else{
+       data$repro_ev53[i] <- 1
+       data$prod_age53[i] <- prod_stage[2]
+       data$stored_res53[i] <- data$stored_res53[i-1]-comb[53,1]+data$prod_age53[i]-repro_effort[53]
+       }
+     }
+   }
+ }
+#plot it
+plot(data$stored_res53~c(1:101),xlab="surv_effort=0.5,repro_effort=5",ylim=c(0,7))
+ points(data$prod_age53,pch=16)
+ abline(v=which(data$repro_ev53==1),lty=2) #each reproductive event
+ abline(v=10,col="red") #age 10
+#compare stored resources
+data[,c(1,4,7,10,13,16,19)]
+#compare produced resources
+data[,c(2,5,8,11,14,17,20)]
+#compare reproductive events
+data[,c(3,6,9,12,15,18,21)]
 
-plot(lng~lro,data=final_ind_data,xlab="Lifetime reproductive output",ylab="Longevity",pch=19)
-par(mfrow=c(2,2))
-plot(lng~avai_res,data=final_ind_data,xlab="Resources available",ylab="Longevity",pch=19)
-plot(lng~avai_var,data=final_ind_data,xlab="Variability of resources",ylab="Longevity",pch=19)
-plot(lro~avai_res,data=final_ind_data,xlab="Resources available",ylab="Lifetime Reproductive Output",pch=19)
-plot(lro~avai_var,data=final_ind_data,xlab="Variability of resources",ylab="Lifetime Reproductive Output",pch=19)
+
 ```
+
