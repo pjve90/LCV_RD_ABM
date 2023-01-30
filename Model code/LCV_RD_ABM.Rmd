@@ -2044,42 +2044,39 @@ for(b in 1:nrow(comb)){
      data$prod_age[i] <- prod_stage[1]
      data$stored_res[i] <- data$stored_res[i]-comb[b,1]+data$prod_age[i]
    }else{
-     #juvenile stage
-     if(data$stage[i]==1 & data$stored_res[i-1] < repro_thresh[b]){ 
-       data$prod_age[i] <- prod_stage[data$stage[i]]
-       data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
-     }else{
-       #adult stage
-       if(data$stage[i-1]==1 & data$stored_res[i-1] >= repro_thresh[b]){
-       data$repro_ev[i] <- 0
-       data$prod_age[i] <- prod_stage[data$stage[i]]
-       data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
-       data$stage[i] <- 2
-       }else{
-         #reproductive career
-         if(data$stage[i-1] == 2 & data$stored_res[i-1] >= repro_thresh[b]){
+     #age at sexual maturity (transition to adult stage)
+     if(data$stage[i-1]==1 & data$stored_res[i-1] >= repro_thresh[b]){
+     data$repro_ev[i] <- 0
+     data$prod_age[i] <- prod_stage[data$stage[i-1]]
+     data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
+     data$stage[i] <- 2
+     } else{
+        #age at first reproduction (transition to reproductive career)
+        if(data$stage[i-1] == 2 & data$stored_res[i-1] >= repro_thresh[b]){
+        data$repro_ev[i] <- 1
+        data$prod_age[i] <- prod_stage[data$stage[i-1]]
+        data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
+        data$stage[i] <- 3
+        } else{
+           #reproductive function...increase of reproductive threshold by adding the reproductive effort multiplied by the number of descendants
+           if(data$stage[i-1] == 3 & data$stored_res[i-1] >= repro_thresh[b]+(repro_effort[b]*sum(data$repro_ev[1:i]))){
            data$repro_ev[i] <- 1
-           data$prod_age[i] <- prod_stage[data$stage[i]]
+           data$prod_age[i] <- prod_stage[data$stage[i-1]]
            data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
            data$stage[i] <- 3
-         } else{
-           #post-reproductive career
-           if(data$stage[i-1] == 3 & sum(data$repro_ev[i-10:i]) == 0){
-           data$prod_age[i] <- prod_stage[data$stage[i]]
-           data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
-           data$stage[i] <- 4
-            }else{
-              data$prod_age[i] <- prod_stage[data$stage[i]]
-              data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
+           } else{
+                data$prod_age[i] <- prod_stage[data$stage[i-1]]
+                data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
+                data$stage[i] <- data$stage[i-1]
+              }
+             } 
      }
     }
    }
-  }
- }
-}  
  plot(data$stored_res~c(1:101),xlab=b)
  points(data$prod_age,pch=16)
  abline(v=which(data$repro_ev==1))
+ abline(v=10,col="red",lty=2)
 }
 
 #no transition to post-reproductive
@@ -2101,7 +2098,7 @@ prod_stage <- c(1,2,2,1)
 
 #check the life cycles with the combinations of survival and reproductive effort
 for(b in 1:nrow(comb)){
- data <- data.frame(stored_res=c(0.5,rep(0,length.out=100)),prod_age=rep(0,length.out=101),repro_ev=rep(0,length.out=101),stage=rep(1,length.out=101))
+ data <- data.frame(stored_res=c(0.5,rep(0,length.out=100)),prod_age=rep(0,length.out=101),repro_ev=rep(0,length.out=101),stage=rep(1,length.out=101),alb=rep(0,length.out=101))
  for(i in 1:nrow(data)){
    #first time step
    if(i == 1){
@@ -2118,27 +2115,30 @@ for(b in 1:nrow(comb)){
         #age at first reproduction (transition to reproductive career)
         if(data$stage[i-1] == 2 & data$stored_res[i-1] >= repro_thresh[b]){
         data$repro_ev[i] <- 1
+        data$alb[i] <- 0
         data$prod_age[i] <- prod_stage[data$stage[i-1]]
         data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
         data$stage[i] <- 3
         } else{
            #reproductive function...increase of reproductive threshold by adding the reproductive effort multiplied by the number of descendants
-           if(data$stage[i-1] == 3 & data$stored_res[i-1] >= repro_thresh[b]+(repro_effort[b]*sum(data$repro_ev))){
+           if(data$stage[i-1] == 3 & data$stored_res[i-1] >= repro_thresh[b]+(repro_effort[b]*sum(data$repro_ev[1:i]))){
            data$repro_ev[i] <- 1
+           data$alb[i] <- 0
            data$prod_age[i] <- prod_stage[data$stage[i-1]]
            data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
            data$stage[i] <- 3
            } else{
              #age at menopause (transition to post-reproductive career)
-#             if(data$stage[i-1] == 3 & data$stored_res[i-1] <= repro_thresh[b]+(repro_effort[b]*sum(data$repro_ev))){
-#             data$prod_age[i] <- prod_stage[data$stage[i-1]]
-#             data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
-#             data$stage[i] <- 4
-#             } else{
+            if(data$stage[i-1] == 3 & data$stored_res[i-1] <= repro_thresh[b]+(repro_effort[b]*sum(data$repro_ev[1:b])) & data$alb[i-1] >= 10){
+            data$prod_age[i] <- prod_stage[data$stage[i-1]]
+            data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
+            data$stage[i] <- 4
+            } else{
                 data$prod_age[i] <- prod_stage[data$stage[i-1]]
                 data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
                 data$stage[i] <- data$stage[i-1]
- #              }  
+                data$alb[i] <- data$alb[i-1]+1
+               }  
               }
              } 
      }
@@ -2147,6 +2147,76 @@ for(b in 1:nrow(comb)){
  plot(data$stored_res~c(1:101),xlab=b)
  points(data$prod_age,pch=16)
  abline(v=which(data$repro_ev==1))
+ abline(v=10,col="red",lty=2)
+}
+
+#let's try by adding parental investment
+
+#define survival effort
+surv_effort <- c(0.1,seq(0.25,1,0.25))
+#define the proportion between survival and reproductive effort
+proportion <- c(0.5,seq(1,10,1))
+#combinations of survival effort and proportion
+comb <- expand.grid(surv_effort,proportion)
+#define reproductive effort
+repro_effort <- apply(comb,1,prod)
+#define the reproductive threshold
+repro_thresh <- sapply(comb[,1],function(x) x*10)
+#define the amount of resources you can produce
+prod_stage <- c(1,2,2,1)
+
+#check the life cycles with the combinations of survival and reproductive effort
+for(b in 1:nrow(comb)){
+ data <- data.frame(stored_res=c(0.5,rep(0,length.out=100)),prod_age=rep(0,length.out=101),repro_ev=rep(0,length.out=101),stage=rep(1,length.out=101),alb=rep(0,length.out=101))
+ for(i in 1:nrow(data)){
+   #first time step
+   if(i == 1){
+     data$prod_age[i] <- prod_stage[1]
+     data$stored_res[i] <- data$stored_res[i]-comb[b,1]+data$prod_age[i]
+   }else{
+     #age at sexual maturity (transition to adult stage)
+     if(data$stage[i-1]==1 & data$stored_res[i-1] >= repro_thresh[b]){
+     data$repro_ev[i] <- 0
+     data$prod_age[i] <- prod_stage[data$stage[i-1]]
+     data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
+     data$stage[i] <- 2
+     } else{
+        #age at first reproduction (transition to reproductive career)
+        if(data$stage[i-1] == 2 & data$stored_res[i-1] >= repro_thresh[b]){
+        data$repro_ev[i] <- 1
+        data$alb[i] <- 0
+        data$prod_age[i] <- prod_stage[data$stage[i-1]]
+        data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
+        data$stage[i] <- 3
+        } else{
+           #reproductive function...increase of reproductive threshold by adding the reproductive effort multiplied by the number of descendants
+           if(data$stage[i-1] == 3 & data$stored_res[i-1] >= repro_thresh[b]+(repro_effort[b]*sum(data$repro_ev[1:i]))){
+           data$repro_ev[i] <- 1
+           data$alb[i] <- 0
+           data$prod_age[i] <- prod_stage[data$stage[i-1]]
+           data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-repro_effort[b]
+           data$stage[i] <- 3
+           } else{
+             #age at menopause (transition to post-reproductive career)
+            if(data$stage[i-1] == 3 & data$stored_res[i-1] <= repro_thresh[b]+(repro_effort[b]*sum(data$repro_ev[1:b])) & data$alb[i-1] >= 10){
+            data$prod_age[i] <- prod_stage[data$stage[i-1]]
+            data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]
+            data$stage[i] <- 4
+            } else{
+                data$prod_age[i] <- prod_stage[data$stage[i-1]]
+                data$stored_res[i] <- data$stored_res[i-1]-comb[b,1]+data$prod_age[i]-(comb[b,1]*sum(data$repro_ev[1:b])) #adding parental investment
+                data$stage[i] <- data$stage[i-1]
+                data$alb[i] <- data$alb[i-1]+1
+               }  
+              }
+             } 
+     }
+    }
+   }
+ plot(data$stored_res~c(1:101),xlab=b)
+ points(data$prod_age,pch=16)
+ abline(v=which(data$repro_ev==1))
+ abline(v=10,col="red",lty=2)
 }
 
 ```
