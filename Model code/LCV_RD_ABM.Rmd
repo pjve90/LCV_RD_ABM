@@ -2221,3 +2221,43 @@ for(b in 1:nrow(comb)){
 
 ```
 
+
+### Maternal investment 
+
+Maternal investment will follow a need-based dynamic, where mother will share resources with their descendants so they can have enough resources to cover the survival costs. The mother will share first resources to cover the need of the one with the largest gap between her resources available and survival cost, and follow the second one, and so on, until either the mother runs out of resource surplus or all the descendants have enough resources available to cover the survival costs.
+
+```{r}
+#Identify if the mother has surplus of resources
+mom_surplus <- function(it_indpop){
+  if(it_indpop$res_a[i] > surv_effort){
+        it_indpop$mom_surplus[i] <- 1
+    } else{
+        it_indpop$mom_surplus[i] <- 0
+    }
+  return(it_indpop$mom_surplus)
+}
+
+#Identify the amount of surplus
+it_indpop$mom_surplus_a[i] <- (it_indpop$res_a[i] - surv_effort)*it_indpop$mom_surplus[i]
+
+#Identify if the descendants need resources
+desc_need <- function(it_indpop){
+  if(it_indpop$mom_id[i] == it_indpop$id[i] & it_indpop$res_a[i] < surv_effort){
+    it_indpop$desc_need[i] <- 1
+  } else{
+    it_indpop$desc_need[i] <- 0
+  }
+}
+
+#Identify the amount of need for each descendant
+it_indpop$desc_need_a[i] <- (it_indpop$res_a[i] - surv_effort)*it_indpop$desc_need[i]
+
+#Order the descendants by need
+
+
+#Mother invest in her descendants
+
+
+#Update the amount of resources available
+
+```
