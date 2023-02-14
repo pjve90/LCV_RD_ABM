@@ -28,7 +28,7 @@ N <- 100
 num_blocks <- 4
 block_sizes <- c(25, 25, 25, 25)
 
-#creat a data frame for individuals and their IDs
+#create a data frame for individuals and their IDs
 indiv <- data.frame(
 			ID = 1:N, 
 			block_assignments = rep(1:4, each=25)
@@ -45,10 +45,10 @@ max_deg <- food_returns
 # e.g., think of block 1 as kids and they are very unlike to share
 # row 2 could be young adults and they're likely to share most with children and elderly (i.e., elements 1 and 4 in that row)
 # Need to play around with the probabilities
-block_probs <- matrix(c(0.0001, 0.0001, 0.0001, 0.0001,
-                        0.2, 0.05, 0.05, 0.05,
-                        0.2, 0.05, 0.05, 0.05,
-                        0.2, 0.0001, 0.0001, 0.0001),
+block_probs <- matrix(c(0.001, 0.05, 0.05, 0.05,
+                        0.001, 0.01, 0.01, 0.01,
+                        0.001, 0.01, 0.02, 0.03,
+                        0.001, 0.03, 0.01, 0.02),
                       nrow = num_blocks, ncol = num_blocks)
 block_probs
 
@@ -58,7 +58,10 @@ network <- simulate_SBM_max_degree(N, block_sizes, block_probs, max_deg, indiv$b
 # Look to see who's sending and receiving ties
 indiv$out_degree <- rowSums(network)
 indiv$in_degree <- colSums(network)
-
+#check how it looks like
+indiv
+#plot it!
+#prepare data
 data <- reshape(indiv, 
         direction = "long",
         varying = list(names(indiv)[3:4]),
@@ -67,11 +70,10 @@ data <- reshape(indiv,
         timevar = "degree",
         times = c("outdegree", "indegree")
        )
-
 # Take a quick look at the distributions of in and out-degree
   ggplot(data, aes(fill=factor(degree), y=value, x=factor(block_assignments))) + 
     geom_violin(position="dodge", alpha=0.5) +
-    scale_fill_manual(values=c("darkseagreen3", "deepskyblue4"), name="fill")
+    scale_fill_manual(values=c("darkseagreen3", "deepskyblue4"), name="fill") +
     theme_bw()  +
     xlab("Age Class") +
     ylab("Number of Ties") +
@@ -80,13 +82,14 @@ data <- reshape(indiv,
 # Given eventual changing block assignments (e.g., individuals age), should probably create a unique ID for individuals and match on that
 g <- graph_from_adjacency_matrix(network)
 V(g)$ID <- indiv$ID
-V(g)$age_class <- indiv$block_assignments[match(V(g)$ID, indiv$ID)]
-V(g)$colour[V(g)$age_class == 1] <- "darkseagreen3"
-V(g)$colour[V(g)$age_class == 2] <- "goldenrod3"
-V(g)$colour[V(g)$age_class == 3] <- "deepskyblue4"
-V(g)$colour[V(g)$age_class == 4] <- "darkorchid4"
+V(g)$stage_class <- indiv$block_assignments[match(V(g)$ID, indiv$ID)]
+V(g)$colour[V(g)$stage_class == 1] <- "darkseagreen3" #juvenile
+V(g)$colour[V(g)$stage_class == 2] <- "goldenrod3" #young adult
+V(g)$colour[V(g)$stage_class == 3] <- "deepskyblue4" #reproductive career
+V(g)$colour[V(g)$stage_class == 4] <- "darkorchid4" #post-reproductive
 
 # Lets plot to see what the network looks like
-# We'll colour by age class 
+# We'll colour by stage class 
 plot(g, edge.arrow.size=0.15, vertex.size=5,
       vertex.label = NA, vertex.color = V(g)$colour, edge.curved=0.4, layout = layout_nicely)
+
