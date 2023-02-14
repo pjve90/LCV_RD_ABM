@@ -4,6 +4,7 @@
 
 ###########################################################################################################
 # Load packages
+#install.packages("igraph")
 library(igraph)
 
 # Load function
@@ -26,6 +27,7 @@ N <- 100
 num_blocks <- 4
 block_sizes <- c(25, 25, 25, 25)
 
+#creat a data frame for individuals and their IDs
 indiv <- data.frame(
 			ID = 1:N, 
 			block_assignments = rep(1:4, each=25)
@@ -42,17 +44,14 @@ max_deg <- food_returns
 # e.g., think of block 1 as kids and they are very unlike to share
 # row 2 could be young adults and they're likely to share most with children and elderly (i.e., elements 1 and 4 in that row)
 # Need to play around with the probabilities
-block_probs <- matrix(c(0.1, 0.6, 0.2, 0.1,
-                        0.4, 0.05, 0.05, 0.4,
-                        0.8, 0.1, 0.01, 0.8,
-                        0.1, 0.5, 0.4, 0.1),
+block_probs <- matrix(c(0.0001, 0.0001, 0.0001, 0.0001,
+                        0.2, 0.05, 0.05, 0.05,
+                        0.2, 0.05, 0.05, 0.05,
+                        0.2, 0.0001, 0.0001, 0.0001),
                       nrow = num_blocks, ncol = num_blocks)
 block_probs
 
 # Generate the network
-<<<<<<< HEAD
-network <- simulate_SBM_max_degree(N, block_sizes, block_probs, max_deg, block_assignments)
-=======
 network <- simulate_SBM_max_degree(N, block_sizes, block_probs, max_deg, indiv$block_assignments)
 
 # Given eventual changing block assignments (e.g., individuals age), should probably create a unique ID for individuals and match on that
@@ -63,7 +62,6 @@ V(g)$colour[V(g)$age_class == 1] <- "darkseagreen3"
 V(g)$colour[V(g)$age_class == 2] <- "goldenrod3"
 V(g)$colour[V(g)$age_class == 3] <- "deepskyblue4"
 V(g)$colour[V(g)$age_class == 4] <- "darkorchid4"
->>>>>>> 6a3215209819179f773048d43538958c07e10a3c
 
 # Lets plot to see what the network looks like
 # We'll colour by age class 
