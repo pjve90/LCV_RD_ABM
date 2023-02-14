@@ -2269,6 +2269,6 @@ mat_invest <- function(it_indpop){
   }
 }
 
-#Update the amount of resources available
+#doing the loop for maternal investment
 
 ```
