@@ -5,6 +5,7 @@
 ###########################################################################################################
 # Load packages
 library(igraph)
+library(ggplot2)
 
 # Load function
 simulate_SBM_max_degree <- function(n, block_sizes, block_probs, max_deg, block_assignments) {
@@ -50,6 +51,28 @@ block_probs <- matrix(c(0.1, 0.6, 0.2, 0.1,
 
 # Generate the network
 network <- simulate_SBM_max_degree(N, block_sizes, block_probs, max_deg, indiv$block_assignments)
+
+# Look to see who's sending and receiving ties
+indiv$out_degree <- rowSums(network)
+indiv$in_degree <- colSums(network)
+
+data <- reshape(indiv, 
+        direction = "long",
+        varying = list(names(indiv)[3:4]),
+        v.names = "value",
+        idvar = c("ID", "block_assignments"),
+        timevar = "degree",
+        times = c("outdegree", "indegree")
+       )
+
+# Take a quick look at the distributions of in and out-degree
+  ggplot(data, aes(fill=factor(degree), y=value, x=factor(block_assignments))) + 
+    geom_violin(position="dodge", alpha=0.5) +
+    scale_fill_manual(values=c("darkseagreen3", "deepskyblue4"), name="fill")
+    theme_bw()  +
+    xlab("Age Class") +
+    ylab("Number of Ties") +
+    ylim(0,25)
 
 # Given eventual changing block assignments (e.g., individuals age), should probably create a unique ID for individuals and match on that
 g <- graph_from_adjacency_matrix(network)
