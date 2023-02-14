@@ -2242,7 +2242,7 @@ it_indpop$mom_surplus_a[i] <- (it_indpop$res_a[i] - surv_effort)*it_indpop$mom_s
 
 #Identify if the descendants need resources
 desc_need <- function(it_indpop){
-  if(it_indpop$mom_id[i] == it_indpop$id[i] & it_indpop$stage[i]==1 & it_indpop$res_a[i] < surv_effort){ #if your mother is alive, you are a juvenile, and don't have enough resources to cover the costs of survival
+  if(it_indpop$mom_id[i] %in% it_indpop$id & it_indpop$stage[i]==1 & it_indpop$res_a[i] < surv_effort){ #if your mother is alive, you are a juvenile, and don't have enough resources to cover the costs of survival
     it_indpop$desc_need[i] <- 1
   } else{
     it_indpop$desc_need[i] <- 0
@@ -2262,12 +2262,15 @@ it_descpop[order(-it_descpop[,"desc_need"],it_descpop[,"mom_id"])]
 mat_invest <- function(it_indpop){
   if(it_indpop$id[i] %in% it_descpop$mom_id & it_indpop$mom_surplus_a[i] > 0){#if the mother id is the same as her descendants and has a surplus above zero
     it_descpop_momsub <- it_descpop[it_indpop$id[i] == it_descpop$mom_id, ] #subset the descendants
-    it_indpop$mom_surplus_a[i] <- it_indpop$mom_surplus_a[i] - it_descpop_momsub$desc_need_a[1] #discount the maternal investment for the mother
-    it_descpop_momsub$res_a[1]  <- it_descpop_momsub$res_a[1] + it_descpop_momsub$desc_need_a[1] #add the maternal investment for the descendant
-    it_indpop$res_a[it_indpop$id == it_descpop_momsub$id[1]] <- it_descpop_momsub$res_a[1] #update the resources available of the descendant in the original database
-    it_descpop_momsub <- it_descpop_momsub[-1,] #delete the first descendant
+for(desc in 1:nrow(it_descpop_momsub)){
+    if(it_indpop$mom_surplus_a[i] < it_descpop_momsub$desc_need_a[desc]) {break}
+    it_indpop$mom_surplus_a[i] <- it_indpop$mom_surplus_a[i] - it_descpop_momsub$desc_need_a[desc] #discount the maternal investment for the mother
+    it_descpop_momsub$res_a[desc]  <- it_descpop_momsub$res_a[desc] + it_descpop_momsub$desc_need_a[desc] #add the maternal investment for the descendant
+    it_indpop$res_a[it_indpop$id == it_descpop_momsub$id[desc]] <- it_descpop_momsub$res_a[1] #update the resources available of the descendant in the original database
+					}
   }
 }
+
 
 #Update the amount of resources available
 
