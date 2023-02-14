@@ -23,16 +23,16 @@ simulate_SBM_max_degree <- function(n, block_sizes, block_probs, max_deg, block_
 
 ###########################################################################################################
 
-# Specify the number of nodes and the number of blocks
-N <- 100
-num_blocks <- 4
-block_sizes <- c(25, 25, 25, 25)
-
 #create a data frame for individuals and their IDs
 indiv <- data.frame(
 			ID = 1:N, 
 			block_assignments = rep(1:4, each=25)
 				)
+
+# Specify the number of nodes and the number of blocks
+N <- 100
+num_blocks <- 4
+block_sizes <- c(25, 25, 25, 25)
 
 # Define maximum out-degree for each node
 # Here we create a vector of max outdegrees for each block
@@ -43,7 +43,7 @@ max_deg <- food_returns
 # Specify the probability of a connection between each pair of blocks
 # This is the probability of each block sharing with each other block
 # e.g., think of block 1 as kids and they are very unlike to share
-# row 2 could be young adults and they're likely to share most with children and elderly (i.e., elements 1 and 4 in that row)
+# column 2 could be young adults and they're likely to share most with children and elderly (i.e., elements 1 and 4 in that row)
 # Need to play around with the probabilities
 block_probs <- matrix(c(0.001, 0.05, 0.05, 0.05,
                         0.001, 0.01, 0.01, 0.01,
@@ -54,6 +54,9 @@ block_probs
 
 # Generate the network
 network <- simulate_SBM_max_degree(N, block_sizes, block_probs, max_deg, indiv$block_assignments)
+
+#number of ties observed in the network 
+sum(network)
 
 # Look to see who's sending and receiving ties
 indiv$out_degree <- rowSums(network)
@@ -70,6 +73,9 @@ data <- reshape(indiv,
         timevar = "degree",
         times = c("outdegree", "indegree")
        )
+
+y_limit_max <- range(data$value)[2]
+
 # Take a quick look at the distributions of in and out-degree
   ggplot(data, aes(fill=factor(degree), y=value, x=factor(block_assignments))) + 
     geom_violin(position="dodge", alpha=0.5) +
@@ -77,7 +83,7 @@ data <- reshape(indiv,
     theme_bw()  +
     xlab("Age Class") +
     ylab("Number of Ties") +
-    ylim(0,25)
+    ylim(0,y_limit_max)
 
 # Given eventual changing block assignments (e.g., individuals age), should probably create a unique ID for individuals and match on that
 g <- graph_from_adjacency_matrix(network)
@@ -88,8 +94,14 @@ V(g)$colour[V(g)$stage_class == 2] <- "goldenrod3" #young adult
 V(g)$colour[V(g)$stage_class == 3] <- "deepskyblue4" #reproductive career
 V(g)$colour[V(g)$stage_class == 4] <- "darkorchid4" #post-reproductive
 
+edge_density(g)
+reciprocity(g)
+transitivity(g)
+centralization.degree(g, "out")
+centralization.degree(g, "in")
+
 # Lets plot to see what the network looks like
 # We'll colour by stage class 
-plot(g, edge.arrow.size=0.15, vertex.size=5,
-      vertex.label = NA, vertex.color = V(g)$colour, edge.curved=0.4, layout = layout_nicely)
+plot(g, edge.arrow.size=0.02, vertex.size=5,
+      vertex.label = NA, vertex.color = V(g)$colour, edge.curved=0.4, layout = layout_circle)
 
