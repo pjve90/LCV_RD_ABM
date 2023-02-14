@@ -41,9 +41,10 @@ block_probs <- matrix(c(0.00001, 0.0001, 0.0001, 0.0001,
                         0.2, 0.1, 0.01, 0.1,
                         0.1, 0.0, 0.0, 0.0001),
                       nrow = num_blocks, ncol = num_blocks)
+block_probs
 
 # Generate the network
-network <- simulate_SBM_max_degree(n, block_sizes, block_probs, max_deg, block_assignments)
+network <- simulate_SBM_max_degree(N, block_sizes, block_probs, max_deg, block_assignments)
 
 # Lets plot to see what the network looks like
 # We'll colour by age class 
