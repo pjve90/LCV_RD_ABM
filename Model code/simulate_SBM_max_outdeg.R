@@ -775,3 +775,254 @@ centralization.degree(g_real, "in")
 # We'll colour by stage class 
 plot(g_real, edge.arrow.size=0.5, vertex.size=5,
 vertex.label = NA, vertex.color = V(g_real)$colour, edge.curved=0.4, layout = layout_nicely)
+
+#### Resource transfers more realistic: low probability ----
+
+# Specify the number of nodes and the number of blocks
+N <- 100
+num_blocks <- 4
+block_sizes <- c(25, 25, 25, 25)
+
+# Given eventual changing block assignments (e.g., individuals age), should probably create a unique ID for individuals and match on that
+#create a data frame for individuals and their IDs
+indiv_reallow <- data.frame(
+  ID = 1:N, 
+  block_assignments = rep(1:4, each=25)
+)
+
+# Define maximum out-degree for each node
+# Here we create a vector of max outdegrees for each block
+# But you can just supply the vector of food return counts
+food_returns <- c(rep(3, 25), rep(20, 25), rep(20, 25), rep(15, 25))
+max_deg <- food_returns
+
+# set up a block matrix where juveniles are the ones that receive more but share the less (i.e. downward transfers) 
+block_probs_reallow <- matrix(c(0.0001, 0.0008, 0.0008, 0.0008,
+                             0.0001, 0.0001, 0.0001, 0.0001,
+                             0.0001, 0.0002, 0.0002, 0.0003,
+                             0.0001, 0.0003, 0.0003, 0.0002),
+                           nrow = num_blocks, ncol = num_blocks)
+block_probs_reallow
+
+##### Generate the network ----
+
+network <- simulate_SBM_max_degree(N, block_sizes, block_probs_reallow, max_deg, indiv_reallow$block_assignments)
+
+#number of ties observed in the network 
+sum(network)
+
+# Look to see who's sending and receiving ties
+indiv_reallow$out_degree <- rowSums(network)
+indiv_reallow$in_degree <- colSums(network)
+#check how it looks like
+indiv_reallow
+
+#plot it!
+#prepare data
+data <- reshape(indiv_reallow, 
+                direction = "long",
+                varying = list(names(indiv_reallow)[3:4]),
+                v.names = "value",
+                idvar = c("ID", "block_assignments"),
+                timevar = "degree",
+                times = c("outdegree", "indegree")
+)
+
+y_limit_max <- range(data$value)[2]
+# Take a quick look at the distributions of in and out-degree
+ggplot(data, aes(fill=factor(degree), y=value, x=factor(block_assignments))) + 
+  geom_violin(position="dodge", alpha=0.5) +
+  scale_fill_manual(values=c("darkseagreen3", "deepskyblue4"), name="fill") +
+  theme_bw()  +
+  xlab("Life cycle stage") +
+  ylab("Number of Ties") +
+  ylim(0,y_limit_max)
+
+#prepare network plot
+g_reallow <- graph_from_adjacency_matrix(network)
+V(g_reallow)$ID <- indiv_reallow$ID
+V(g_reallow)$stage_class <- indiv_reallow$block_assignments[match(V(g_reallow)$ID, indiv_reallow$ID)]
+V(g_reallow)$colour[V(g_reallow)$stage_class == 1] <- "darkseagreen3" #juvenile
+V(g_reallow)$colour[V(g_reallow)$stage_class == 2] <- "goldenrod3" #adult
+V(g_reallow)$colour[V(g_reallow)$stage_class == 3] <- "deepskyblue4" #reproductive career
+V(g_reallow)$colour[V(g_reallow)$stage_class == 4] <- "darkorchid4" #post-reproductive
+        
+#check network properties
+edge_density(g_reallow)
+reciprocity(g_reallow)
+transitivity(g_reallow)
+centralization.degree(g_reallow, "out")
+centralization.degree(g_reallow, "in")
+      
+# Lets plot to see what the network looks like
+# We'll colour by stage class 
+plot(g_reallow, edge.arrow.size=0.5, vertex.size=5,
+vertex.label = NA, vertex.color = V(g_reallow)$colour, edge.curved=0.4, layout = layout_nicely)
+      
+#### Resource transfers more realistic: lower max out-degree  ----
+
+# Specify the number of nodes and the number of blocks
+N <- 100
+num_blocks <- 4
+block_sizes <- c(25, 25, 25, 25)
+
+# Given eventual changing block assignments (e.g., individuals age), should probably create a unique ID for individuals and match on that
+#create a data frame for individuals and their IDs
+indiv_reallow <- data.frame(
+  ID = 1:N, 
+  block_assignments = rep(1:4, each=25)
+)
+
+# Define maximum out-degree for each node
+# Here we create a vector of max outdegrees for each block
+# But you can just supply the vector of food return counts
+food_returns <- c(rep(3, 25), rep(15, 25), rep(15, 25), rep(10, 25))
+max_deg <- food_returns
+
+# set up a block matrix where juveniles are the ones that receive more but share the less (i.e. downward transfers) 
+block_probs_reallow <- matrix(c(0.001, 0.008, 0.008, 0.008,
+                                0.001, 0.001, 0.001, 0.001,
+                                0.001, 0.002, 0.002, 0.003,
+                                0.001, 0.003, 0.003, 0.002),
+                              nrow = num_blocks, ncol = num_blocks)
+block_probs_reallow
+
+##### Generate the network ----
+
+network <- simulate_SBM_max_degree(N, block_sizes, block_probs_reallow, max_deg, indiv_reallow$block_assignments)
+
+#number of ties observed in the network 
+sum(network)
+
+# Look to see who's sending and receiving ties
+indiv_reallow$out_degree <- rowSums(network)
+indiv_reallow$in_degree <- colSums(network)
+#check how it looks like
+indiv_reallow
+
+#plot it!
+#prepare data
+data <- reshape(indiv_reallow, 
+                direction = "long",
+                varying = list(names(indiv_reallow)[3:4]),
+                v.names = "value",
+                idvar = c("ID", "block_assignments"),
+                timevar = "degree",
+                times = c("outdegree", "indegree")
+)
+
+y_limit_max <- range(data$value)[2]
+# Take a quick look at the distributions of in and out-degree
+ggplot(data, aes(fill=factor(degree), y=value, x=factor(block_assignments))) + 
+  geom_violin(position="dodge", alpha=0.5) +
+  scale_fill_manual(values=c("darkseagreen3", "deepskyblue4"), name="fill") +
+  theme_bw()  +
+  xlab("Life cycle stage") +
+  ylab("Number of Ties") +
+  ylim(0,y_limit_max)
+
+#prepare network plot
+g_reallow <- graph_from_adjacency_matrix(network)
+V(g_reallow)$ID <- indiv_reallow$ID
+V(g_reallow)$stage_class <- indiv_reallow$block_assignments[match(V(g_reallow)$ID, indiv_reallow$ID)]
+V(g_reallow)$colour[V(g_reallow)$stage_class == 1] <- "darkseagreen3" #juvenile
+V(g_reallow)$colour[V(g_reallow)$stage_class == 2] <- "goldenrod3" #adult
+V(g_reallow)$colour[V(g_reallow)$stage_class == 3] <- "deepskyblue4" #reproductive career
+V(g_reallow)$colour[V(g_reallow)$stage_class == 4] <- "darkorchid4" #post-reproductive
+        
+#check network properties
+edge_density(g_reallow)
+reciprocity(g_reallow)
+transitivity(g_reallow)
+centralization.degree(g_reallow, "out")
+centralization.degree(g_reallow, "in")
+      
+# Lets plot to see what the network looks like
+# We'll colour by stage class 
+plot(g_reallow, edge.arrow.size=0.5, vertex.size=5,
+vertex.label = NA, vertex.color = V(g_reallow)$colour, edge.curved=0.4, layout = layout_nicely)
+      
+#### Resource transfers more realistic: lower max out-degree  ----
+
+# Specify the number of nodes and the number of blocks
+N <- 100
+num_blocks <- 4
+block_sizes <- c(25, 25, 25, 25)
+
+# Given eventual changing block assignments (e.g., individuals age), should probably create a unique ID for individuals and match on that
+#create a data frame for individuals and their IDs
+indiv_reallow <- data.frame(
+  ID = 1:N, 
+  block_assignments = rep(1:4, each=25)
+)
+
+# Define maximum out-degree for each node
+# Here we create a vector of max outdegrees for each block
+# But you can just supply the vector of food return counts
+food_returns <- c(rep(3, 25), rep(15, 25), rep(15, 25), rep(10, 25))
+max_deg <- food_returns
+
+# set up a block matrix where juveniles are the ones that receive more but share the less (i.e. downward transfers) 
+block_probs_reallow <- matrix(c(0.0001, 0.0008, 0.0008, 0.0008,
+                                0.0001, 0.0001, 0.0001, 0.0001,
+                                0.0001, 0.0002, 0.0002, 0.0003,
+                                0.0001, 0.0003, 0.0003, 0.0002),
+                              nrow = num_blocks, ncol = num_blocks)
+block_probs_reallow
+
+##### Generate the network ----
+
+network <- simulate_SBM_max_degree(N, block_sizes, block_probs_reallow, max_deg, indiv_reallow$block_assignments)
+
+#number of ties observed in the network 
+sum(network)
+
+# Look to see who's sending and receiving ties
+indiv_reallow$out_degree <- rowSums(network)
+indiv_reallow$in_degree <- colSums(network)
+#check how it looks like
+indiv_reallow
+
+#plot it!
+#prepare data
+data <- reshape(indiv_reallow, 
+                direction = "long",
+                varying = list(names(indiv_reallow)[3:4]),
+                v.names = "value",
+                idvar = c("ID", "block_assignments"),
+                timevar = "degree",
+                times = c("outdegree", "indegree")
+)
+
+y_limit_max <- range(data$value)[2]
+# Take a quick look at the distributions of in and out-degree
+ggplot(data, aes(fill=factor(degree), y=value, x=factor(block_assignments))) + 
+  geom_violin(position="dodge", alpha=0.5) +
+  scale_fill_manual(values=c("darkseagreen3", "deepskyblue4"), name="fill") +
+  theme_bw()  +
+  xlab("Life cycle stage") +
+  ylab("Number of Ties") +
+  ylim(0,y_limit_max)
+
+#prepare network plot
+g_reallow <- graph_from_adjacency_matrix(network)
+V(g_reallow)$ID <- indiv_reallow$ID
+V(g_reallow)$stage_class <- indiv_reallow$block_assignments[match(V(g_reallow)$ID, indiv_reallow$ID)]
+V(g_reallow)$colour[V(g_reallow)$stage_class == 1] <- "darkseagreen3" #juvenile
+V(g_reallow)$colour[V(g_reallow)$stage_class == 2] <- "goldenrod3" #adult
+V(g_reallow)$colour[V(g_reallow)$stage_class == 3] <- "deepskyblue4" #reproductive career
+V(g_reallow)$colour[V(g_reallow)$stage_class == 4] <- "darkorchid4" #post-reproductive
+        
+#check network properties
+edge_density(g_reallow)
+reciprocity(g_reallow)
+transitivity(g_reallow)
+centralization.degree(g_reallow, "out")
+centralization.degree(g_reallow, "in")
+      
+# Lets plot to see what the network looks like
+# We'll colour by stage class 
+plot(g_reallow, edge.arrow.size=0.5, vertex.size=5,
+vertex.label = NA, vertex.color = V(g_reallow)$colour, edge.curved=0.4, layout = layout_nicely)
+      
+      
