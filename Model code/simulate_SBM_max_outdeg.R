@@ -959,14 +959,15 @@ indiv_reallowmax <- data.frame(
 # Define maximum out-degree for each node
 # Here we create a vector of max outdegrees for each block
 # But you can just supply the vector of food return counts
-food_returns <- c(rep(3, 25), rep(15, 25), rep(15, 25), rep(10, 25))
+
+food_returns <- c(rpois(25, 0.2), rpois(25, 1.5), rpois(25, 2), rpois(25, 0.7))
 max_deg <- food_returns
 
 # set up a block matrix where juveniles are the ones that receive more but share the less (i.e. downward transfers) 
-block_probs_reallowmax <- matrix(c(0.0001, 0.0008, 0.0008, 0.0008,
-                                0.0001, 0.0001, 0.0001, 0.0001,
-                                0.0001, 0.0002, 0.0002, 0.0003,
-                                0.0001, 0.0003, 0.0003, 0.0002),
+block_probs_reallowmax <- matrix(c(0.0000000000000000000000000000000000000000001, 0.0000000000000000000000000000000000000000008, 0.0000000000000000000000000000000000000000008, 0.0000000000000000000000000000000000000000008,
+                                0.0000000000000000000000000000000000000000001, 0.0000000000000000000000000000000000000000001, 0.0000000000000000000000000000000000000000001, 0.0000000000000000000000000000000000000000001,
+                                0.0000000000000000000000000000000000000000001, 0.0000000000000000000000000000000000000000002, 0.0000000000000000000000000000000000000000002, 0.0000000000000000000000000000000000000000003,
+                                0.0000000000000000000000000000000000000000001, 0.0000000000000000000000000000000000000000003, 0.0000000000000000000000000000000000000000003, 0.0000000000000000000000000000000000000000002),
                               nrow = num_blocks, ncol = num_blocks)
 block_probs_reallowmax
 
@@ -1022,7 +1023,7 @@ centralization.degree(g_reallowmax, "in")
       
 # Lets plot to see what the network looks like
 # We'll colour by stage class 
-plot(g_reallowmax, edge.arrow.size=0.5, vertex.size=5,
+plot(g_reallowmax, edge.arrow.size=0.1, vertex.size=5,
 vertex.label = NA, vertex.color = V(g_reallowmax)$colour, edge.curved=0.4, layout = layout_nicely)
       
       
