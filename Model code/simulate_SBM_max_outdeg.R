@@ -1023,7 +1023,7 @@ centralization.degree(g_reallowmax, "in")
       
 # Lets plot to see what the network looks like
 # We'll colour by stage class 
-plot(g_reallowmax, edge.arrow.size=0.1, vertex.size=5,
+plot(g_reallowmax, edge.arrow.size=0.5, vertex.size=5,
 vertex.label = NA, vertex.color = V(g_reallowmax)$colour, edge.curved=0.4, layout = layout_nicely)
       
       

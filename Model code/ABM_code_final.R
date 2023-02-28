@@ -5,17 +5,18 @@
 install.packages("tidyverse")
 library(tidyverse)
 
-## Auxiliary variables ----
-
 ### Resource dynamics ----
 
 #Habitat quality
-#stage-specific amount of resources that can be produced
-prod_n <- c(1,2,2,1) #juvenile, adult, reproductive career, post-reproductive
+source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/habitat_quality.R?token=GHSAT0AAAAAAB5C6IJOMCE44OBQPKQB65L4Y76D2DQ")
 
 #Production
 #stage-specific probabilities of production
-prod_prob <- c(0.5,0.8,0.75,0.6)  #juvenile, adult, reproductive career, post-reproductive
+source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/production_prob.R?token=GHSAT0AAAAAAB5C6IJORPEBWDQGTXPUB4E6Y76FKPQ")
+#production function
+source()
+#production amount
+source()
 
 #Resource transfers
 #block matrix with stage-specific probabilities of resources transfers
