@@ -1,24 +1,40 @@
 # Life cycle variation and resource dynamics ABM: Code ----
 
-#Load packages
-#tidyverse
-install.packages("tidyverse")
-library(tidyverse)
-
-### Resource dynamics ----
+## Resource dynamics ----
 
 #Habitat quality
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/habitat_quality.R?token=GHSAT0AAAAAAB5C6IJOMCE44OBQPKQB65L4Y76D2DQ")
+source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/habitat_quality.R?token=GHSAT0AAAAAAB5C6IJP4LPU5FW5TFDKNVNUY77EEBQ")
 
 #Production
 #stage-specific probabilities of production
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/production_prob.R?token=GHSAT0AAAAAAB5C6IJORPEBWDQGTXPUB4E6Y76FKPQ")
+source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/production_prob.R?token=GHSAT0AAAAAAB5C6IJOW6AVVENY37LYDMQAY77EEGQ")
 #production function
-source()
+source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/production_fx.R?token=GHSAT0AAAAAAB5C6IJOSYCPF5WEIB7RJOZUY77EEMA")
 #production amount
+source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/production_amount.R?token=GHSAT0AAAAAAB5C6IJPPWOGQQYX7E5W6JK4Y77EEQQ")
+
+## Maternal investment ----
+
+#Identify if the mother has surplus of resources
 source()
 
-#Resource transfers
+#Identify the amount of surplus
+source()
+
+#Identify if the descendants need resources
+source()
+
+#Identify the amount of need for each descendant
+source()
+
+#Order the descendants by need and mother id
+source()
+
+#Mother invest in her descendants
+source()
+
+## Resource transfers ----
+
 #block matrix with stage-specific probabilities of resources transfers
 #each column is the stage-specific probabilities (juvenile, adult, reproductive career, post-reproductive)
 block_matrix <- matrix(c(0.001, 0.008, 0.008, 0.008,
