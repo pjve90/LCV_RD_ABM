@@ -1,6 +1,6 @@
 # Life cycle variation and resource dynamics ABM: Code ----
 
-## Resource dynamics ----
+## Resource production ----
 
 #Habitat quality
 source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/habitat_quality.R?token=GHSAT0AAAAAAB5C6IJP4LPU5FW5TFDKNVNUY77EEBQ")
@@ -35,33 +35,51 @@ source()
 
 ## Resource transfers ----
 
-#block matrix with stage-specific probabilities of resources transfers
-#each column is the stage-specific probabilities (juvenile, adult, reproductive career, post-reproductive)
-block_matrix <- matrix(c(0.001, 0.008, 0.008, 0.008,
-                         0.001, 0.001, 0.001, 0.001,
-                         0.001, 0.002, 0.002, 0.003,
-                         0.001, 0.003, 0.003, 0.002),
-                         nrow = num_blocks, ncol = num_blocks)
-block_matrix
+# Specify the number of nodes and the number of blocks
+source()
 
-### Life cycle ----
+#Define the block matrix
+source()
 
-#Survival cost
-surv_cost <- 1
+#Define the surplus for transfers (max out degree in the network)
+source()
 
-#Reproductive cost
-repro_cost <- 4
+#Generate the network
+source()
+
+#Record the resources transferred
+source() 
+
+## Reproduction ----
 
 #Number of descendants per reproduction
-repro_n <- 1
+source()
 
-#Sexual maturity
-sex_mat <- surv_cost + repro_cost * 10
+#Reproductive threshold
+source()
 
-## State variables ----
+#Reproductive cost
+source()
 
-### Resource dynamics ----
+#Reproduction
+source()
 
+#Discount of reproductive cost
+source()
 
-### Life cycle ----
+#Lifetime reproductive output
+source()
+
+#Add newborns
+source()
+
+## Transition ----
+
+#Transition
+source()
+
+## Survival ----
+
+#Survival
+source()
 
