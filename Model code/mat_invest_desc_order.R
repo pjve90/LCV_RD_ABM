@@ -1,4 +1,4 @@
-#' Preparing descedants for maternal investment.
+#' Preparing descendants for maternal investment.
 #'
 #' \code{desc_order} rearrange the descendants for the resource dynamics of maternal investment.
 #' 
@@ -9,6 +9,6 @@ desc_order <- function(it_indpop){
   it_descpop <- it_indpop[it_indpop$desc_need == 1,]
   #order the descendants by need and mother id
   it_descpop[order(-it_descpop[,"desc_need"],it_descpop[,"mom_id"])]
-  return(it_indpop$desc_order)
+  return(it_descpop)
 }
 

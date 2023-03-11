@@ -15,4 +15,5 @@ mat_invest <- function(it_indpop){
       }
     }
   }
+  return(it_indpop)
 }
