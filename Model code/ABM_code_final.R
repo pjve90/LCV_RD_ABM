@@ -19,30 +19,30 @@ prod_prob <- c(0.5,0.8,0.75,0.6)
 names(prod_prob) <- c("juvenile","adult","reproductive career", "post-reproductive")
 
 #Production function
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/production_fx.R?token=GHSAT0AAAAAAB5C6IJP7OVLDTQ47RB3B2JSZAMNEFA")
+source("production_fx.R")
 
 #Production amount
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/production_amount.R?token=GHSAT0AAAAAAB5C6IJOWV645R37WB7RDO24ZAMQDMA")
+source("production_amount.R")
 
 ## Maternal investment ----
 
 #Identify if the mother has surplus of resources
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/mat_invest_mom_surp_identify.R?token=GHSAT0AAAAAAB5C6IJPNYXCAMEJOMQOA6G2ZAMNE3A")
+source("mat_invest_mom_surp_identify.R")
 
 #Identify the amount of surplus of the mother
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/mat_invest_mom_surp_amount.R?token=GHSAT0AAAAAAB5C6IJPSKBSAVNCSCSCMOD2ZAMNFDQ")
+source("mat_invest_mom_surp_amount.R")
 
 #Identify if the descendants need resources
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/mat_invest_desc_need_identify.R?token=GHSAT0AAAAAAB5C6IJODS7JEK3OE42R5WQCZAMNFLQ")
+source("mat_invest_desc_need_identify.R")
 
 #Identify the amount of need for each descendant
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/mat_invest_desc_need_amount.R?token=GHSAT0AAAAAAB5C6IJO5IKJETEVDQMLHGVIZAMNFVA")
+source("mat_invest_desc_need_amount.R")
 
 #Order the descendants by need and mother id
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/mat_invest_desc_order.R?token=GHSAT0AAAAAAB5C6IJPDZXJHSUXITIQUHXGZAMNF5A")
+source("mat_invest_desc_order.R")
 
 #Mother invest in her descendants
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/mat_invest_fx.R?token=GHSAT0AAAAAAB5C6IJOICVAPJXBZMKAJL2MZAMNGGA")
+source("mat_invest_fx.R")
 
 ## Resource transfers ----
 
@@ -59,13 +59,13 @@ block_probs <- matrix(c(1e-10, 8e-10, 8e-10, 8e-10,
                       nrow = num_blocks, ncol = num_blocks)
 
 #Define the surplus for transfers (max out degree in the network)
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/transfers_surplus_sbm.R?token=GHSAT0AAAAAAB5C6IJOVVLMHPJUKOVKPTJWZAMNHCQ")
+source("transfers_surplus_sbm.R")
 
 #Generate the network
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/transfers_sbm_fx.R?token=GHSAT0AAAAAAB5C6IJOTLIYIORRFC4SN26YZAMNHQA")
+source("transfers_sbm_fx.R")
 
 #Record the resources transferred
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/transfers_amount.R?token=GHSAT0AAAAAAB5C6IJPG2T63PCMGJJCXY6IZAMNH2A") 
+source("transfers_amount.R") 
 
 ## Reproduction ----
 
@@ -79,24 +79,24 @@ repro_thresh <- surv_cost*10
 repro_cost <- surv_cost
 
 #Reproduction
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/reproduction_reproduce_fx.R?token=GHSAT0AAAAAAB5C6IJOEFYKZJMK7GOWHX66ZAMNJRA")
+source("reproduction_reproduce_fx.R")
 
 #Discount of reproductive cost
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/reproduction_discount.R?token=GHSAT0AAAAAAB5C6IJPGAWTF5IVP7TZC7ZOZAMNJXQ")
+source("reproduction_discount.R")
 
 #Lifetime reproductive output
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/reproduction_lro.R?token=GHSAT0AAAAAAB5C6IJP2AGT55O4MWTU7D4GZAMNJ6Q")
+source("reproduction_lro.R")
 
 #Add newborns
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/reproduction_newborn.R?token=GHSAT0AAAAAAB5C6IJO3TAXKZYPIDOV754WZAMNKHQ")
+source("reproduction_newborn.R")
 
 ## Transition ----
 
 #Time since last birth
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/transition_tlr.R?token=GHSAT0AAAAAAB5C6IJPVKRFUXAFE3FECBTGZAMNKSA")
+source("transition_tlr.R")
 
 #Transition
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/transition_fx.R?token=GHSAT0AAAAAAB5C6IJPA3TGXKPUHKX2PGLSZAMNKYA")
+source("transition_fx.R")
 
 ## Survival ----
 
@@ -104,15 +104,17 @@ source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/tr
 surv_cost <- 1
 
 #Survival
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/survival_survive_fx.R?token=GHSAT0AAAAAAB5C6IJODQ6WPQYVNHP3ZJRYZAMNUQA")
+source("survival_survive_fx.R")
 
 #Discount of survival cost
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/survival_discount.R?token=GHSAT0AAAAAAB5C6IJPYWOFKVFIDB5C5HXIZAMNUVA")
+source("survival_discount.R")
 
 #Age
-source("https://raw.githubusercontent.com/pjve90/LCV_RD_ABM/main/Model%20code/survival_age.R?token=GHSAT0AAAAAAB5C6IJORB67LEXIEATX7OP6ZAMNU3A")
+source("survival_age.R")
 
-## Initial population ----
+## Run one iteration ----
+
+### Initial population ----
 
 #create population
 it_indpop <- data.frame(id=1:100, #id
@@ -123,10 +125,9 @@ it_indpop <- data.frame(id=1:100, #id
                         mom_id=rep(NA,length.out=100), #mom id
                         mom_surplus=rep(NA,length.out=100), #identify mom surplus
                         mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
-                        desc_need=rep(NA,length.out=100), #identify descendant need
+                        desc_need=rep(0,length.out=100), #identify descendant need
                         desc_need_a=rep(NA,length.out=100), #descendant need amount
                         max_deg=rep(NA,length.out=100), #surplus for resource transfers
-                        out_degree=rep(NA,length.out=100), #amount of resources given away
                         in_degree=rep(NA,length.out=100), #amount of resources received
                         out_degree=rep(NA,length.out=100), #amount of resources given away
                         repro=rep(NA,length.out=100), #reproduction output
@@ -146,97 +147,309 @@ it_descpop <- data.frame(id=1:nrow(it_indpop))
 
 ### Run one iteration for all the population ----
 
-#record the maximum id
-max_id <- max(it_indpop$id)
-
-#production
-for (i in 1:nrow(it_indpop)){
-  #production outcome
-  it_indpop$prod_o <- produce(it_indpop)
-  #production amount
-  it_indpop <- produce_a(it_indpop)
-}
-#record production outcome and amount
-resource_data <- it_indpop[,c("id","prod_o","prod_a")]
-
-#maternal investment
-for (i in 1:nrow(it_indpop)){
-  #identify mom surplus
-  it_indpop$mom_surplus <- mom_surplus(it_indpop)
-  #mom surplus amount
-  it_indpop$mom_surplus_a <- mom_surplus_a(it_indpop)
-  #identify descendant need
-  it_indpop$desc_need <- desc_need(it_indpop)
-  #descendant need amount
-  it_indpop$desc_need_a <- desc_need_a(it_indpop)
-  #order descendants
-  #desc_order(it_indpop)
+  #record the maximum id
+  max_id <- max(it_indpop$id)
+  
+  #production
+  for (i in 1:nrow(it_indpop)){
+    #production outcome
+    it_indpop$prod_o <- produce(it_indpop)
+    #production amount
+    it_indpop <- produce_a(it_indpop)
+  }
+  #record production outcome and amount
+  resource_data <- it_indpop[,c("id","prod_o","prod_a")]
+  
   #maternal investment
-  it_indpop <- mat_invest(it_indpop)
-}
-#record maternal investment
-mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
-
-#resource transfers
-for (i in 1:nrow(it_indpop)){
-  #define surplus
-  it_indpop$max_deg <- max_deg(it_indpop)
-}
-#generate network
-network <- simulate_SBM_max_degree(N,block_sizes,block_probs,it_indpop$max_deg,it_indpop$stage)
-for (i in 1:nrow(it_indpop)){
-  #record resource transfers
-  it_indpop <- transfers(it_indpop)
-}
-#record resource transfers and stored resources
-transfers_data <- it_indpop[,c("id","out_degree","in_degree","store_a")]
-
-#reproduction
-for (i in 1:nrow(it_indpop)){
-  #reproduction probability
-  it_indpop$repro <- reproduce(it_indpop)
-  #reproductive cost
-   it_indpop$store_a <- reproduce_c(it_indpop)
-  #lifetime reproductive output
-   it_indpop$lro <- lro(it_indpop)
-}
-#record reproduction
-repro_data <- it_indpop[,c("id","repro","lro")]
-#add newborns
-new_it_indpop <- newborns(new_it_indpop)
-
-#transition
-for (i in 1:nrow(it_indpop)){
-  #time since last reproduction
-  it_indpop$tlr <- tlr(it_indpop)
-  # life cycle transition
-  it_indpop$stage <- transition(it_indpop)
-}
-#record time since last reproduction and transition
-transition_data <- it_indpop[,c("id","tlr","stage")]
-
-#survival
-for (i in 1:nrow(it_indpop)){
+  for (i in 1:nrow(it_indpop)){
+    #identify mom surplus
+    it_indpop$mom_surplus <- mom_surplus(it_indpop)
+    #mom surplus amount
+    it_indpop$mom_surplus_a <- mom_surplus_a(it_indpop)
+    #identify descendant need
+    it_indpop$desc_need <- desc_need(it_indpop)
+    #descendant need amount
+    it_indpop$desc_need_a <- desc_need_a(it_indpop)
+    #order descendants
+    it_descpop <- desc_order(it_indpop)
+    #maternal investment
+    it_indpop <- mat_invest(it_indpop)
+  }
+  #record maternal investment
+  mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
+  
+  #resource transfers
+  for (i in 1:nrow(it_indpop)){
+    #define surplus
+    it_indpop$max_deg <- max_deg(it_indpop)
+  }
+  #generate network
+  network <- simulate_SBM_max_degree(nrow(it_indpop),as.vector(table(it_indpop$stage)),block_probs,it_indpop$max_deg,it_indpop$stage)
+  for (i in 1:nrow(it_indpop)){
+    #record resource transfers
+    it_indpop <- transfers(it_indpop)
+  }
+  #record resource transfers and stored resources
+  transfers_data <- it_indpop[,c("id","out_degree","in_degree","store_a")]
+  
+  #reproduction
+  for (i in 1:nrow(it_indpop)){
+    #reproduction probability
+    it_indpop$repro <- reproduce(it_indpop)
+    #reproductive cost
+    it_indpop$store_a <- reproduce_c(it_indpop)
+    #lifetime reproductive output
+    it_indpop$lro <- lro(it_indpop)
+  }
+  #record reproduction
+  repro_data <- it_indpop[,c("id","repro","lro")]
+  #add newborns
+  new_it_indpop <- newborns(new_it_indpop)
+  
+  #transition
+  for (i in 1:nrow(it_indpop)){
+    #time since last reproduction
+    it_indpop$tlr <- tlr(it_indpop)
+    # life cycle transition
+    it_indpop$stage <- transition(it_indpop)
+  }
+  #record time since last reproduction and transition
+  transition_data <- it_indpop[,c("id","tlr","stage")]
+  
   #survival
-  it_indpop$surv <- survive(it_indpop)
-  #survival cost
-  it_indpop$store_a <- survive_c(it_indpop)
-  #age
-  it_indpop$age <- age(it_indpop)
-}
-#record survival and age
-surv_data <- it_indpop[,c("id","surv","age","store_a")]
-
-#combine original population with newborns
-it_indpop <- rbind(it_indpop,new_it_indpop)
-#remove NA in id
-it_indpop <- it_indpop[!is.na(it_indpop$id),]
-
-#merge iteration records
-it_data <- reduce(list(it_data,surv_data,repro_data,resource_data,trans_data),full_join,by="id",suffix=c("0","1"))
+  for (i in 1:nrow(it_indpop)){
+    #survival
+    it_indpop$surv <- survive(it_indpop)
+    #survival cost
+    it_indpop$store_a <- survive_c(it_indpop)
+    #age
+    it_indpop$age <- age(it_indpop)
+  }
+  #record survival and age
+  surv_data <- it_indpop[,c("id","surv","age")]
+  
+  #combine original population with newborns
+  it_indpop <- rbind(it_indpop,new_it_indpop)
+  #remove NA in id
+  it_indpop <- it_indpop[!is.na(it_indpop$id),]
+  
+  #merge iteration records
+  it_data <- reduce(list(it_data,
+                         resource_data,
+                         mat_invest_data,
+                         transfers_data,
+                         repro_data,
+                         transfers_data,
+                         surv_data
+  ),full_join,by="id",suffix=c("0","1"))
 
 #check the population by the end of the iteration
 head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_data)
+
+## Run 100 iterations ----
+
+### Initial population ----
+
+#create population
+it_indpop <- data.frame(id=1:100, #id
+                        stage=c(rep(1,length.out=25),rep(2,length.out=25),rep(3,length.out=25),rep(4,length.out=25)), #life cycle stage
+                        store_a=rep(surv_cost,length.out=100), #stored resources
+                        prod_o=rep(NA,length.out=100), #production output
+                        prod_a=rep(0,length.out=100), #production amount
+                        mom_id=rep(NA,length.out=100), #mom id
+                        mom_surplus=rep(NA,length.out=100), #identify mom surplus
+                        mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
+                        desc_need=rep(0,length.out=100), #identify descendant need
+                        desc_need_a=rep(NA,length.out=100), #descendant need amount
+                        max_deg=rep(NA,length.out=100), #surplus for resource transfers
+                        in_degree=rep(NA,length.out=100), #amount of resources received
+                        out_degree=rep(NA,length.out=100), #amount of resources given away
+                        repro=rep(NA,length.out=100), #reproduction output
+                        lro=rep(0,length.out=100), #lifetime reproductive output
+                        tlr=rep(0,length.out=100), #time since last reproduction
+                        surv=rep(NA,length.out=100), #survival output
+                        age=c(rep(0,length.out=25),rep(10,length.out=25),rep(15,length.out=25),rep(45,length.out=25)) #age
+)
+#assign mom id in initial population
+it_indpop$mom_id[it_indpop$stage==1] <- it_indpop$id[it_indpop$stage==3]
+#check mom id
+it_indpop$mom_id
+
+#create data frame to record the dynamics in each iteration
+it_data <- data.frame(id=1:nrow(it_indpop))
+it_descpop <- data.frame(id=1:nrow(it_indpop))
+
+### Run 100 iterations for all the population ----
+
+for (b in 1:100){
+  
+  #record the maximum id
+  max_id <- max(it_indpop$id)
+  
+  #production
+  for (i in 1:nrow(it_indpop)){
+    #production outcome
+    it_indpop$prod_o <- produce(it_indpop)
+    #production amount
+    it_indpop <- produce_a(it_indpop)
+  }
+  #record production outcome and amount
+  resource_data <- it_indpop[,c("id","prod_o","prod_a")]
+  
+  #maternal investment
+  for (i in 1:nrow(it_indpop)){
+    #identify mom surplus
+    it_indpop$mom_surplus <- mom_surplus(it_indpop)
+    #mom surplus amount
+    it_indpop$mom_surplus_a <- mom_surplus_a(it_indpop)
+    #identify descendant need
+    it_indpop$desc_need <- desc_need(it_indpop)
+    #descendant need amount
+    it_indpop$desc_need_a <- desc_need_a(it_indpop)
+    #order descendants
+    it_descpop <- desc_order(it_indpop)
+    #maternal investment
+    it_indpop <- mat_invest(it_indpop)
+  }
+  #record maternal investment
+  mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
+  
+  #resource transfers
+  for (i in 1:nrow(it_indpop)){
+    #define surplus
+    it_indpop$max_deg <- max_deg(it_indpop)
+  }
+  #generate network
+  network <- simulate_SBM_max_degree(nrow(it_indpop),as.vector(table(it_indpop$stage)),block_probs,it_indpop$max_deg,it_indpop$stage)
+  for (i in 1:nrow(it_indpop)){
+    #record resource transfers
+    it_indpop <- transfers(it_indpop)
+  }
+  #record resource transfers and stored resources
+  transfers_data <- it_indpop[,c("id","out_degree","in_degree","store_a")]
+  
+  #reproduction
+  for (i in 1:nrow(it_indpop)){
+    #reproduction probability
+    it_indpop$repro <- reproduce(it_indpop)
+    #reproductive cost
+    it_indpop$store_a <- reproduce_c(it_indpop)
+    #lifetime reproductive output
+    it_indpop$lro <- lro(it_indpop)
+  }
+  #record reproduction
+  repro_data <- it_indpop[,c("id","repro","lro")]
+  #add newborns
+  new_it_indpop <- newborns(new_it_indpop)
+  
+  #transition
+  for (i in 1:nrow(it_indpop)){
+    #time since last reproduction
+    it_indpop$tlr <- tlr(it_indpop)
+    # life cycle transition
+    it_indpop$stage <- transition(it_indpop)
+  }
+  #record time since last reproduction and transition
+  transition_data <- it_indpop[,c("id","tlr","stage")]
+  
+  #survival
+  for (i in 1:nrow(it_indpop)){
+    #survival
+    it_indpop$surv <- survive(it_indpop)
+    #survival cost
+    it_indpop$store_a <- survive_c(it_indpop)
+    #age
+    it_indpop$age <- age(it_indpop)
+  }
+  #record survival and age
+  surv_data <- it_indpop[,c("id","surv","age")]
+  
+  #combine original population with newborns
+  it_indpop <- rbind(it_indpop,new_it_indpop)
+  #remove NA in id
+  it_indpop <- it_indpop[!is.na(it_indpop$id),]
+  
+  #merge iteration records
+  it_data <- reduce(list(it_data,
+                         resource_data,
+                         mat_invest_data,
+                         transfers_data,
+                         repro_data,
+                         transfers_data,
+                         surv_data
+  ),full_join,by="id",suffix=c("b-1","b"))
+}
+
+#check the population by the end of the iteration
+head(it_indpop)
+#check the recorded data by the end of the iteration
+head(it_data)
+
+## Life history traits ----
+
+#longevity
+source("life_history_lng.R")
+
+#lifetime reproductive output
+source("life_history_lro.R")
+
+#age at sexual maturity
+source("life_history_asm.R")
+
+#age at first reproduction
+source("life_history_afr.R")
+
+#age at last reproduction
+source("life_history_alr.R")
+
+#age at menopause
+source("life_history_meno.R")
+
+## Resource dynamics ----
+
+### Storage ----
+
+#total amount of stored resources
+
+
+#average amount of stored resources
+
+
+#variability of stored resources
+
+
+### Production ----
+
+#total amount of production
+
+
+#average amount of production
+
+
+#variability of amount of production
+
+### Resource transfers ----
+
+#### Given away ----
+
+#total amount of resources given away
+
+
+#average amount of resources given away
+
+
+#variability of amount of resources given away
+
+
+#### Received ----
+
+#total amount of resources received
+
+
+#average amount of resources received
+
+
+#variability of amount of resources received
 

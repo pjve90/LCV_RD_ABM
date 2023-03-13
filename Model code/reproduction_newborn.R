@@ -14,10 +14,9 @@ newborns <- function(new_it_indpop){
                             mom_id=it_indpop$id[it_indpop$repro==1], #mom id
                             mom_surplus=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #identify mom surplus
                             mom_surplus_a=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #mom surplus amount
-                            desc_need=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #identify descendant need
+                            desc_need=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #identify descendant need
                             desc_need_a=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #descendant need amount
                             max_deg=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #surplus for resource transfers
-                            out_degree=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #amount of resources given away
                             in_degree=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #amount of resources received
                             out_degree=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #amount of resources given away
                             repro=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #reproduction output
