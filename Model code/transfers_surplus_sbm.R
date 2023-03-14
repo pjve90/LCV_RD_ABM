@@ -6,5 +6,6 @@
 
 max_deg <- function(it_indpop){
   it_indpop$max_deg[i] <- it_indpop$store_a[i]-surv_cost
+  it_indpop$max_deg[it_indpop$max_deg < 0] <- 0
   return(it_indpop$max_deg)
 }
