@@ -51,9 +51,7 @@ source("mat_invest_fx.R")
 ## Resource transfers ----
 
 # Specify the number of nodes and the number of blocks
-N <- nrow(it_indpop)
 num_blocks <- length(levels(as.factor(it_indpop$stage)))
-block_sizes <- as.vector(table(it_indpop$stage))
 
 #Define the block matrix
 block_probs <- matrix(c(1e-10, 8e-10, 8e-10, 8e-10,
@@ -188,7 +186,12 @@ for (i in 1:nrow(it_indpop)){
   it_indpop$max_deg <- max_deg(it_indpop)
 }
 #generate network
-network <- simulate_SBM_max_degree(nrow(it_indpop),as.vector(table(it_indpop$stage)),block_probs,it_indpop$max_deg,it_indpop$stage)
+network <- simulate_SBM_max_degree(nrow(it_indpop), #number of individuals
+                                   as.vector(table(it_indpop$stage)), #number of individuals per life cycle stage
+                                   block_probs, #block matrix
+                                   it_indpop$max_deg, #maximum out degree per individual
+                                   it_indpop$stage #life cycle stage of each individual
+                                   )
 for (i in 1:nrow(it_indpop)){
  #record resource transfers
   it_indpop <- transfers(it_indpop)
