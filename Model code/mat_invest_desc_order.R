@@ -9,7 +9,7 @@ desc_order <- function(it_indpop){
   #subset of descendants
   it_descpop <- it_indpop[it_indpop$desc_need == 1,]
   #order the descendants by need and mother id
-  it_descpop[order(-it_descpop[,"desc_need"],it_descpop[,"mom_id"])]
+  it_descpop[order(-it_descpop[,"desc_need"],it_descpop[,"mom_id"]),]
   } else{
   it_descpop <- data.frame(id=NA, #id
                                 stage=NA, #life cycle stage
