@@ -22,7 +22,7 @@ newborns <- function(new_it_indpop){
                             repro=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #reproduction output
                             lro=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #lifetime reproductive output
                             tlr=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #time since last reproduction
-                            surv=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #survival output
+                            surv=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #survival output
                             age=c(rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"]))) #age
     )
     it_indpop <- rbind(it_indpop,new_it_indpop) #combine original population with newborns
@@ -40,7 +40,6 @@ newborns <- function(new_it_indpop){
                                 max_deg=NA, #surplus for resource transfers
                                 out_degree=NA, #amount of resources given away
                                 in_degree=NA, #amount of resources received
-                                out_degree=NA, #amount of resources given away
                                 repro=NA, #reproduction output
                                 lro=NA, #lifetime reproductive output
                                 tlr=NA, #time since last reproduction

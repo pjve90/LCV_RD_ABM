@@ -15,7 +15,7 @@ library(tidyverse)
 ## Resource production ----
 
 #Habitat quality
-habitat <- c(1,2,2,1)
+habitat <- c(2,4,4,2)
 names(habitat) <- c("juvenile","adult","reproductive career", "post-reproductive")
 
 #Stage-specific probabilities of production
@@ -151,7 +151,7 @@ it_descpop <- data.frame(id=1:nrow(it_indpop))
 
 #record the maximum id
 max_id <- max(it_indpop$id)
-  
+
 #production
 for (i in 1:nrow(it_indpop)){
   #production outcome
@@ -160,6 +160,7 @@ for (i in 1:nrow(it_indpop)){
   it_indpop <- produce_a(it_indpop)
 }
 #record production outcome and amount
+#separate data
 resource_data <- it_indpop[,c("id","prod_o","prod_a")]
 
 #maternal investment
@@ -178,8 +179,9 @@ for (i in 1:nrow(it_indpop)){
   it_indpop <- mat_invest(it_indpop)
 }
 #record maternal investment
+#separate data
 mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
-  
+
 #resource transfers
 for (i in 1:nrow(it_indpop)){
   #define surplus
@@ -198,7 +200,7 @@ for (i in 1:nrow(it_indpop)){
 }
 #record resource transfers and stored resources
 transfers_data <- it_indpop[,c("id","out_degree","in_degree","store_a")]
- 
+
 #reproduction
 for (i in 1:nrow(it_indpop)){
   #reproduction probability
@@ -241,14 +243,20 @@ it_indpop <- rbind(it_indpop,new_it_indpop)
 it_indpop <- it_indpop[!is.na(it_indpop$id),]
 
 #merge iteration records
-it_data <- reduce(list(it_data,
-                       resource_data,
-                       mat_invest_data,
-                       transfers_data,
-                       repro_data,
-                       transfers_data,
-                       surv_data
-),full_join,by="id",suffix=c("0","1"))
+it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
+  it_data,
+  resource_data,
+  mat_invest_data,
+  transfers_data,
+  repro_data,
+  transition_data,
+  surv_data
+))
+#record iteration
+it_data$year <- rep(1,length.out=nrow(x))
+
+#remove individual who died
+it_indpop <- it_indpop[!it_indpop$surv==0,]
 
 #check the population by the end of the iteration
 head(it_indpop)
@@ -379,20 +387,43 @@ for (b in 1:100){
   it_indpop <- it_indpop[!is.na(it_indpop$id),]
   
   #merge iteration records
-  it_data <- reduce(list(it_data,
-                         resource_data,
-                         mat_invest_data,
-                         transfers_data,
-                         repro_data,
-                         transfers_data,
-                         surv_data
-  ),full_join,by="id",suffix=c("b-1","b"))
+  if(b==1){
+  it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
+    resource_data,
+    mat_invest_data,
+    transfers_data,
+    repro_data,
+    transition_data,
+    surv_data
+  ))
+  #record iteration
+  it_data$year <- rep(b,length.out=nrow(it_data))
+  }else{
+    it_data2 <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
+      resource_data,
+      mat_invest_data,
+      transfers_data,
+      repro_data,
+      transition_data,
+      surv_data
+    ))
+    #record iteration
+    it_data2$year <- rep(b,length.out=nrow(it_data2))
+    #merge with previous iteration records
+    it_dataf <- rbind(it_data,it_data2)
+    it_dataf <- it_dataf[order(it_dataf$id),]
+    #update it_data for rbind
+    it_data <- it_dataf
+  }
+  #remove individuals that died
+  it_indpop <- it_indpop[!it_indpop$surv==0,]
+
 }
 
 #check the population by the end of the iteration
 head(it_indpop)
 #check the recorded data by the end of the iteration
-head(it_data)
+head(it_dataf)
 
 ## Life history traits ----
 
