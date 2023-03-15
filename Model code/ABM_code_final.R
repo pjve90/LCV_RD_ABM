@@ -51,7 +51,7 @@ source("mat_invest_fx.R")
 ## Resource transfers ----
 
 # Specify the number of nodes and the number of blocks
-N <- nrow(it_indpop)
+#N <- nrow(it_indpop)
 num_blocks <- length(levels(as.factor(it_indpop$stage)))
 block_sizes <- as.vector(table(it_indpop$stage))
 
@@ -76,11 +76,11 @@ source("transfers_amount.R")
 #Number of descendants per reproduction
 n_desc <- 1
 
-#Reproductive threshold
-repro_thresh <- surv_cost*10
-
 #Reproductive cost
-repro_cost <- surv_cost
+repro_cost <- 1
+
+#Reproductive threshold
+repro_thresh <- repro_cost*10
 
 #Reproduction
 source("reproduction_reproduce_fx.R")
@@ -105,7 +105,7 @@ source("transition_fx.R")
 ## Survival ----
 
 #Survival cost
-surv_cost <- 1
+surv_cost <- repro_cost
 
 #Survival
 source("survival_survive_fx.R")
