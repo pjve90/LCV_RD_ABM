@@ -15,11 +15,11 @@ library(tidyverse)
 ## Resource production ----
 
 #Habitat quality
-habitat <- c(1,4,4,2)
+habitat <- c(1,4,4,1)
 names(habitat) <- c("juvenile","adult","reproductive career", "post-reproductive")
 
 #Stage-specific probabilities of production
-prod_prob <- c(0.5,0.8,0.75,0.6)
+prod_prob <- c(0.1,0.5,0.5,0.1)
 names(prod_prob) <- c("juvenile","adult","reproductive career", "post-reproductive")
 
 #Production function
@@ -75,10 +75,10 @@ source("transfers_amount.R")
 n_desc <- 1
 
 #Reproductive threshold
-repro_thresh <- surv_cost*20
+repro_thresh <- surv_cost*10
 
 #Reproductive cost
-repro_cost <- surv_cost*20
+repro_cost <- surv_cost*5
 
 #Reproduction
 source("reproduction_reproduce_fx.R")
@@ -289,6 +289,28 @@ it_indpop <- data.frame(id=1:100, #id
                         surv=rep(NA,length.out=100), #survival output
                         age=c(rep(0,length.out=25),rep(10,length.out=25),rep(15,length.out=25),rep(45,length.out=25)) #age
 )
+
+it_indpop <- data.frame(id=1:100, #id
+                        stage=rep(2,length.out=100), #life cycle stage
+                        store_a=rep(surv_cost,length.out=100), #stored resources
+                        prod_o=rep(NA,length.out=100), #production output
+                        prod_a=rep(0,length.out=100), #production amount
+                        mom_id=rep(NA,length.out=100), #mom id
+                        mom_surplus=rep(NA,length.out=100), #identify mom surplus
+                        mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
+                        desc_need=rep(0,length.out=100), #identify descendant need
+                        desc_need_a=rep(NA,length.out=100), #descendant need amount
+                        max_deg=rep(NA,length.out=100), #surplus for resource transfers
+                        in_degree=rep(NA,length.out=100), #amount of resources received
+                        out_degree=rep(NA,length.out=100), #amount of resources given away
+                        repro=rep(NA,length.out=100), #reproduction output
+                        lro=rep(0,length.out=100), #lifetime reproductive output
+                        tlr=rep(0,length.out=100), #time since last reproduction
+                        surv=rep(NA,length.out=100), #survival output
+                        age=rep(10,length.out=25) #age
+)
+
+
 #assign mom id in initial population
 it_indpop$mom_id[it_indpop$stage==1] <- it_indpop$id[it_indpop$stage==3]
 #check mom id
@@ -300,7 +322,7 @@ it_descpop <- data.frame(id=1:nrow(it_indpop))
 
 ### Run 100 iterations for all the population ----
 
-for (b in 1:50){
+for (b in 1:100){
   
   #record the maximum id
   max_id <- max(it_indpop$id)
