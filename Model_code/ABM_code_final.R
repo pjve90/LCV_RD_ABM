@@ -15,7 +15,7 @@ library(tidyverse)
 ## Resource production ----
 
 #Habitat quality
-habitat <- c(2,4,4,2)
+habitat <- c(1,4,4,2)
 names(habitat) <- c("juvenile","adult","reproductive career", "post-reproductive")
 
 #Stage-specific probabilities of production
@@ -75,10 +75,10 @@ source("transfers_amount.R")
 n_desc <- 1
 
 #Reproductive threshold
-repro_thresh <- surv_cost*10
+repro_thresh <- surv_cost*20
 
 #Reproductive cost
-repro_cost <- surv_cost
+repro_cost <- surv_cost*20
 
 #Reproduction
 source("reproduction_reproduce_fx.R")
@@ -220,10 +220,12 @@ for (i in 1:nrow(it_indpop)){
   #time since last reproduction
   it_indpop$tlr <- tlr(it_indpop)
   # life cycle transition
-  it_indpop$stage <- transition(it_indpop)
+  it_indpop <- transition(it_indpop)
 }
 #record time since last reproduction and transition
 transition_data <- it_indpop[,c("id","tlr","stage")]
+#record reproduction again to update in case of transition to reproductive career
+repro_data <- it_indpop[,c("id","repro","lro")]
 
 #survival
 for (i in 1:nrow(it_indpop)){
@@ -253,7 +255,7 @@ it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
   surv_data
 ))
 #record iteration
-it_data$year <- rep(1,length.out=nrow(x))
+it_data$year <- rep(1,length.out=nrow(it_data))
 
 #remove individual who died
 it_indpop <- it_indpop[!it_indpop$surv==0,]
@@ -282,7 +284,7 @@ it_indpop <- data.frame(id=1:100, #id
                         in_degree=rep(NA,length.out=100), #amount of resources received
                         out_degree=rep(NA,length.out=100), #amount of resources given away
                         repro=rep(NA,length.out=100), #reproduction output
-                        lro=rep(0,length.out=100), #lifetime reproductive output
+                        lro=c(rep(0,length.out=50),rep(1,length.out=25),rep(0,length.out=25)), #lifetime reproductive output
                         tlr=rep(0,length.out=100), #time since last reproduction
                         surv=rep(NA,length.out=100), #survival output
                         age=c(rep(0,length.out=25),rep(10,length.out=25),rep(15,length.out=25),rep(45,length.out=25)) #age
@@ -298,7 +300,7 @@ it_descpop <- data.frame(id=1:nrow(it_indpop))
 
 ### Run 100 iterations for all the population ----
 
-for (b in 1:100){
+for (b in 1:50){
   
   #record the maximum id
   max_id <- max(it_indpop$id)
@@ -364,10 +366,12 @@ for (b in 1:100){
     #time since last reproduction
     it_indpop$tlr <- tlr(it_indpop)
     # life cycle transition
-    it_indpop$stage <- transition(it_indpop)
+    it_indpop <- transition(it_indpop)
   }
-  #record time since last reproduction and transition
+  #record time since last reproduction, life cycle stage, reproduction, and lro
   transition_data <- it_indpop[,c("id","tlr","stage")]
+  #record reproduction again to update in case of transition to reproductive career
+  repro_data <- it_indpop[,c("id","repro","lro")]
   
   #survival
   for (i in 1:nrow(it_indpop)){
@@ -448,15 +452,15 @@ source("life_history_meno.R")
 ### Calculate life history traits ----
 
 #create dataset
-final_ind_data <- data.frame(id=1:nrow(it_data))
+final_ind_data <- data.frame(id=1:max(it_dataf$id))
 
 #calculate life history traits
-for(i in 1:nrow(it_data)){
+for(i in 1:max(it_dataf$id)){
   #life-history traits
   #longevity
   final_ind_data$lng <- longevity(final_ind_data)
   #lro
-  final_ind_data$lro <- lro(final_ind_data)
+  final_ind_data$lro <- lifetime_reproductive_output(final_ind_data)
   #asm
   final_ind_data$asm <- asm(final_ind_data)
   #afr
@@ -469,24 +473,6 @@ for(i in 1:nrow(it_data)){
 
 #check the dataset
 head(final_ind_data)
-
-#longevity
-source("life_history_lng.R")
-
-#lifetime reproductive output
-source("life_history_lro.R")
-
-#age at sexual maturity
-source("life_history_asm.R")
-
-#age at first reproduction
-source("life_history_afr.R")
-
-#age at last reproduction
-source("life_history_alr.R")
-
-#age at menopause
-source("life_history_meno.R")
 
 ## Resource dynamics ----
 
@@ -539,7 +525,7 @@ source("resources_indeg_cv.R")
 ### Calculate resource dynamics ----
 
 #calculate resource dynamics
-for(i in 1:nrow(it_data)){
+for(i in 1:max(it_dataf$id)){
   #resource dynamics
   #storage
   #total
@@ -576,4 +562,53 @@ head(final_ind_data)
 
 ## Plot it! ----
 
+#Longevity/LRO ~ Storage
+par(mfrow=c(3,2))
+#longevity~total storage
+plot(final_ind_data$lng[1:100]~final_ind_data$store_total[1:100],main="longevity")
+#lro~total storage
+plot(final_ind_data$lro[1:100]~final_ind_data$store_total[1:100],main="LRO")
+#longevity~average storage
+plot(final_ind_data$lng[1:100]~final_ind_data$store_av[1:100],main="longevity")
+#lro~average storage
+plot(final_ind_data$lro[1:100]~final_ind_data$store_av[1:100],main="LRO")
+#longevity~cv storage
+plot(final_ind_data$lng[1:100]~final_ind_data$store_cv[1:100],main="longevity")
+#lro~cv storage
+plot(final_ind_data$lro[1:100]~final_ind_data$store_cv[1:100],main="LRO")
 
+#Longevity/LRO ~ Production
+par(mfrow=c(3,2))
+#longevity~total production
+plot(final_ind_data$lng[1:100]~final_ind_data$prod_total[1:100],main="longevity")
+#lro~total production
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_total[1:100],main="LRO")
+#longevity~average production
+plot(final_ind_data$lng[1:100]~final_ind_data$prod_av[1:100],main="longevity")
+#lro~average production
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_av[1:100],main="LRO")
+#longevity~cv production
+plot(final_ind_data$lng[1:100]~final_ind_data$prod_cv[1:100],main="longevity")
+#lro~cv production
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_cv[1:100],main="LRO")
+
+#Longevity/LRO ~ Given away
+par(mfrow=c(3,2))
+#longevity~total given away
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_total[1:100],main="longevity")
+points(final_ind_data$lng[1:100]~final_ind_data$indeg_total[1:100],col="red")
+#lro~total given away
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_total[1:100],main="LRO")
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_total[1:100],col="red")
+#longevity~average given away
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_av[1:100],main="longevity")
+points(final_ind_data$lng[1:100]~final_ind_data$indeg_av[1:100],col="red")
+#lro~average given away
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_av[1:100],main="LRO")
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_av[1:100],col="red")
+#longevity~cv given away
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_cv[1:100],main="longevity")
+points(final_ind_data$lng[1:100]~final_ind_data$indeg_cv[1:100],col="red")
+#lro~cv given away
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_cv[1:100],main="LRO")
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_cv[1:100],col="red")

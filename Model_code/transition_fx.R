@@ -14,6 +14,8 @@ transition <- function(it_indpop){
         it_indpop$store_a[i] <- it_indpop$store_a[i] - repro_cost
         it_indpop$repro[i] <- 1
         it_indpop$stage[i] <- 3
+        it_indpop$tlr[i] <- 0
+        it_indpop$lro[i] <- it_indpop$lro[i] + it_indpop$repro[i]
       } 
      else
       if(it_indpop$stage[i]==2 & it_indpop$age[i]==60 ){ #transition adult to post-reproductive...can't figure out a resource dynamic that could resemble this
@@ -24,5 +26,5 @@ transition <- function(it_indpop){
         } else {
           it_indpop$stage[i] <- it_indpop$stage[i]
         }
-  return(it_indpop$stage)
+  return(it_indpop)
 }

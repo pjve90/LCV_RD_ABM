@@ -5,6 +5,6 @@
 #' The total amount of resources produced by an individual throughout her whole lifespan is calculated by the sum of resources produced in each iteration.
 
 produce_total <- function(final_ind_data){
-  final_ind_data$prod_total[i] <- as.numeric(rowSums(it_data[i,grep("prod_a",colnames(it_data))],na.rm = T))
+  final_ind_data$prod_total[i] <- sum(it_dataf[which(it_dataf$id==i),"prod_a"])
   return(final_ind_data$prod_total)
 }
