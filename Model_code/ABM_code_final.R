@@ -6,11 +6,34 @@
 getwd()
 setwd("./LCV_RD_ABM/Model_code")
 
-#Install packages
+## Initial population ----
 
-#tidyverse
-#install.packages("tidyverse")
-library(tidyverse)
+#create population
+it_indpop <- data.frame(id=1:100, #id
+                        stage=rep(2,length.out=100), #life cycle stage
+                        store_a=rep(0,length.out=100), #stored resources
+                        prod_o=rep(NA,length.out=100), #production output
+                        prod_a=rep(0,length.out=100), #production amount
+                        mom_id=rep(NA,length.out=100), #mom id
+                        mom_surplus=rep(NA,length.out=100), #identify mom surplus
+                        mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
+                        desc_need=rep(0,length.out=100), #identify descendant need
+                        desc_need_a=rep(NA,length.out=100), #descendant need amount
+                        max_deg=rep(NA,length.out=100), #surplus for resource transfers
+                        in_degree=rep(NA,length.out=100), #amount of resources received
+                        out_degree=rep(NA,length.out=100), #amount of resources given away
+                        repro=rep(NA,length.out=100), #reproduction output
+                        lro=rep(0,length.out=100), #lifetime reproductive output
+                        tlr=rep(0,length.out=100), #time since last reproduction
+                        surv=rep(NA,length.out=100), #survival output
+                        age=rep(10,length.out=25) #age
+)
+
+#create data frame to record the dynamics in each iteration
+it_data <- data.frame(id=1:nrow(it_indpop))
+
+#create data frame to record need of descendants
+it_descpop <- data.frame(id=1:nrow(it_indpop))
 
 ## Resource production ----
 
@@ -50,8 +73,8 @@ source("mat_invest_fx.R")
 
 ## Resource transfers ----
 
-# Specify the number of nodes and the number of blocks
-num_blocks <- length(levels(as.factor(it_indpop$stage)))
+# Specify the number of of blocks
+num_blocks <- 4
 
 #Define the block matrix
 block_probs <- matrix(c(1e-10, 8e-10, 8e-10, 8e-10,
@@ -69,6 +92,21 @@ source("transfers_sbm_fx.R")
 #Record the resources transferred
 source("transfers_amount.R") 
 
+
+## Survival ----
+
+#Survival cost
+surv_cost <- 1
+
+#Survival
+source("survival_survive_fx.R")
+
+#Discount of survival cost
+source("survival_discount.R")
+
+#Age
+source("survival_age.R")
+
 ## Reproduction ----
 
 #Number of descendants per reproduction
@@ -76,9 +114,6 @@ n_desc <- 1
 
 #Reproductive threshold
 repro_thresh <- surv_cost*10
-
-#Reproductive cost
-repro_cost <- surv_cost*5
 
 #Reproduction
 source("reproduction_reproduce_fx.R")
@@ -100,52 +135,7 @@ source("transition_tlr.R")
 #Transition
 source("transition_fx.R")
 
-## Survival ----
-
-#Survival cost
-surv_cost <- 1
-
-#Survival
-source("survival_survive_fx.R")
-
-#Discount of survival cost
-source("survival_discount.R")
-
-#Age
-source("survival_age.R")
-
 ## Run one iteration ----
-
-### Initial population ----
-
-#create population
-it_indpop <- data.frame(id=1:100, #id
-                        stage=c(rep(1,length.out=25),rep(2,length.out=25),rep(3,length.out=25),rep(4,length.out=25)), #life cycle stage
-                        store_a=rep(surv_cost,length.out=100), #stored resources
-                        prod_o=rep(NA,length.out=100), #production output
-                        prod_a=rep(0,length.out=100), #production amount
-                        mom_id=rep(NA,length.out=100), #mom id
-                        mom_surplus=rep(NA,length.out=100), #identify mom surplus
-                        mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
-                        desc_need=rep(0,length.out=100), #identify descendant need
-                        desc_need_a=rep(NA,length.out=100), #descendant need amount
-                        max_deg=rep(NA,length.out=100), #surplus for resource transfers
-                        in_degree=rep(NA,length.out=100), #amount of resources received
-                        out_degree=rep(NA,length.out=100), #amount of resources given away
-                        repro=rep(NA,length.out=100), #reproduction output
-                        lro=rep(0,length.out=100), #lifetime reproductive output
-                        tlr=rep(0,length.out=100), #time since last reproduction
-                        surv=rep(NA,length.out=100), #survival output
-                        age=c(rep(0,length.out=25),rep(10,length.out=25),rep(15,length.out=25),rep(45,length.out=25)) #age
-                        )
-#assign mom id in initial population
-it_indpop$mom_id[it_indpop$stage==1] <- it_indpop$id[it_indpop$stage==3]
-#check mom id
-it_indpop$mom_id
-
-#create data frame to record the dynamics in each iteration
-it_data <- data.frame(id=1:nrow(it_indpop))
-it_descpop <- data.frame(id=1:nrow(it_indpop))
 
 ### Run one iteration for all the population ----
 
@@ -266,59 +256,6 @@ head(it_indpop)
 head(it_data)
 
 ## Run 100 iterations ----
-
-### Initial population ----
-
-#create population
-it_indpop <- data.frame(id=1:100, #id
-                        stage=c(rep(1,length.out=25),rep(2,length.out=25),rep(3,length.out=25),rep(4,length.out=25)), #life cycle stage
-                        store_a=rep(surv_cost,length.out=100), #stored resources
-                        prod_o=rep(NA,length.out=100), #production output
-                        prod_a=rep(0,length.out=100), #production amount
-                        mom_id=rep(NA,length.out=100), #mom id
-                        mom_surplus=rep(NA,length.out=100), #identify mom surplus
-                        mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
-                        desc_need=rep(0,length.out=100), #identify descendant need
-                        desc_need_a=rep(NA,length.out=100), #descendant need amount
-                        max_deg=rep(NA,length.out=100), #surplus for resource transfers
-                        in_degree=rep(NA,length.out=100), #amount of resources received
-                        out_degree=rep(NA,length.out=100), #amount of resources given away
-                        repro=rep(NA,length.out=100), #reproduction output
-                        lro=c(rep(0,length.out=50),rep(1,length.out=25),rep(0,length.out=25)), #lifetime reproductive output
-                        tlr=rep(0,length.out=100), #time since last reproduction
-                        surv=rep(NA,length.out=100), #survival output
-                        age=c(rep(0,length.out=25),rep(10,length.out=25),rep(15,length.out=25),rep(45,length.out=25)) #age
-)
-
-it_indpop <- data.frame(id=1:100, #id
-                        stage=rep(2,length.out=100), #life cycle stage
-                        store_a=rep(surv_cost,length.out=100), #stored resources
-                        prod_o=rep(NA,length.out=100), #production output
-                        prod_a=rep(0,length.out=100), #production amount
-                        mom_id=rep(NA,length.out=100), #mom id
-                        mom_surplus=rep(NA,length.out=100), #identify mom surplus
-                        mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
-                        desc_need=rep(0,length.out=100), #identify descendant need
-                        desc_need_a=rep(NA,length.out=100), #descendant need amount
-                        max_deg=rep(NA,length.out=100), #surplus for resource transfers
-                        in_degree=rep(NA,length.out=100), #amount of resources received
-                        out_degree=rep(NA,length.out=100), #amount of resources given away
-                        repro=rep(NA,length.out=100), #reproduction output
-                        lro=rep(0,length.out=100), #lifetime reproductive output
-                        tlr=rep(0,length.out=100), #time since last reproduction
-                        surv=rep(NA,length.out=100), #survival output
-                        age=rep(10,length.out=25) #age
-)
-
-
-#assign mom id in initial population
-it_indpop$mom_id[it_indpop$stage==1] <- it_indpop$id[it_indpop$stage==3]
-#check mom id
-it_indpop$mom_id
-
-#create data frame to record the dynamics in each iteration
-it_data <- data.frame(id=1:nrow(it_indpop))
-it_descpop <- data.frame(id=1:nrow(it_indpop))
 
 ### Run 100 iterations for all the population ----
 
@@ -451,7 +388,9 @@ head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_dataf)
 
-## Life history traits ----
+## Calculate outcomes from the model ----
+
+### Life history traits ----
 
 #longevity
 source("life_history_lng.R")
@@ -496,9 +435,9 @@ for(i in 1:max(it_dataf$id)){
 #check the dataset
 head(final_ind_data)
 
-## Resource dynamics ----
+### Resource dynamics ----
 
-### Storage ----
+#### Storage ----
 
 #total amount of stored resources
 source("resources_storage_total.R")
@@ -509,7 +448,7 @@ source("resources_storage_av.R")
 #variability of stored resources
 source("resources_storage_cv.R")
 
-### Production ----
+#### Production ----
 
 #total amount of production
 source("resources_production_total.R")
@@ -520,9 +459,9 @@ source("resources_production_av.R")
 #variability of amount of production
 source("resources_production_cv.R")
 
-### Resource transfers ----
+#### Resource transfers ----
 
-#### Given away ----
+##### Given away ----
 
 #total amount of resources given away
 source("resources_outdeg_total.R")
@@ -533,7 +472,7 @@ source("resources_outdeg_av.R")
 #variability of amount of resources given away
 source("resources_outdeg_cv.R")
 
-#### Received ----
+##### Received ----
 
 #total amount of resources received
 source("resources_indeg_total.R")
@@ -555,82 +494,420 @@ for(i in 1:max(it_dataf$id)){
   #average
   final_ind_data$store_av <- storage_av(final_ind_data)
   #variability
-  final_ind_data$store_cv <- storage_cv(final_ind_data)
+  final_ind_data$store_sd <- storage_cv(final_ind_data)
   #production
   #total
   final_ind_data$prod_total <- produce_total(final_ind_data)
   #average
   final_ind_data$prod_av <- produce_av(final_ind_data)
   #variability
-  final_ind_data$prod_cv <- produce_cv(final_ind_data)
+  final_ind_data$prod_sd <- produce_cv(final_ind_data)
   #given away
   #total
   final_ind_data$outdeg_total <- outdegree_total(final_ind_data)
   #average
   final_ind_data$outdeg_av <- outdegree_av(final_ind_data)
   #variability
-  final_ind_data$outdeg_cv <- outdegree_cv(final_ind_data)
+  final_ind_data$outdeg_sd <- outdegree_cv(final_ind_data)
   #received
   #total
   final_ind_data$indeg_total <- indegree_total(final_ind_data)
   #average
   final_ind_data$indeg_av <- indegree_av(final_ind_data)
   #variability
-  final_ind_data$indeg_cv <- indegree_cv(final_ind_data)
+  final_ind_data$indeg_sd <- indegree_cv(final_ind_data)
 }
 
 #check dataset
 head(final_ind_data)
 
+## Descriptive statistics ----
+
+### Life history traits ----
+
+#longevity
+summary(final_ind_data$lng[1:100])
+sd(final_ind_data$lng[1:100])
+#mean=69.16
+#median=104
+#min=13
+#max=110
+#sd=41.693
+
+#lro
+summary(final_ind_data$lro[1:100])
+sd(final_ind_data$lro[1:100])
+#mean=1.56
+#median=1
+#min=0
+#max=8
+#sd=1.731
+
+#asm
+summary(final_ind_data$asm[1:100])
+sd(final_ind_data$asm[1:100])
+#mean=11
+#median=11
+#min=11
+#max=11
+#sd=0
+
+#afr
+summary(final_ind_data$afr[1:100])
+sd(final_ind_data$afr[1:100],na.rm=T)
+#mean=26.73
+#median=24
+#min=13
+#max=51
+#sd=10.655
+#NA=19
+
+#alr
+summary(final_ind_data$alr[1:100])
+sd(final_ind_data$alr[1:100],na.rm=T)
+#mean=31.44
+#median=31
+#min=13
+#max=61
+#sd=12.539
+#NA=19
+
+#meno
+summary(final_ind_data$meno[1:100])
+sd(final_ind_data$meno[1:100],na.rm=T)
+#mean=53
+#median=56
+#min=41
+#max=61
+#sd=8.337
+#NA=47
+
+### Resource dynamics ----
+
+#### Storage ----
+
+#total
+summary(final_ind_data$store_total[1:100])
+sd(final_ind_data$store_total[1:100],na.rm=T)
+#mean=354.14
+#median=504.5
+#min=17
+#max=686
+#sd=254.675
+
+#average
+summary(final_ind_data$store_av[1:100])
+sd(final_ind_data$store_av[1:100],na.rm=T)
+#mean=5.688
+#median=5.619
+#min=4.167
+#max=7
+#sd=0.598
+
+#sd
+summary(final_ind_data$store_sd[1:100])
+sd(final_ind_data$store_sd[1:100],na.rm=T)
+#mean=2.551
+#median=2.515
+#min=1.8
+#max=3.948
+#sd=0.439
+
+#### Production ----
+
+#total
+summary(final_ind_data$prod_total[1:100])
+sd(final_ind_data$prod_total[1:100],na.rm=T)
+#mean=65.06
+#median=64
+#min=8
+#max=136
+#sd=36.553
+
+#average
+summary(final_ind_data$prod_av[1:100])
+sd(final_ind_data$prod_av[1:100],na.rm=T)
+#mean=1.454
+#median=1.225
+#min=0.546
+#max=3.556
+#sd=0.684
+
+#sd
+summary(final_ind_data$prod_sd[1:100])
+sd(final_ind_data$prod_sd[1:100],na.rm=T)
+#mean=1.805
+#median=1.793
+#min=1.304
+#max=2.191
+#sd=0.245
+
+#### Given away ----
+
+#total
+summary(final_ind_data$outdeg_total[1:100])
+sd(final_ind_data$outdeg_total[1:100],na.rm=T)
+#mean=237.7
+#median=401
+#min=12
+#max=516
+#sd=189.253
+
+#average
+summary(final_ind_data$outdeg_av[1:100])
+sd(final_ind_data$outdeg_av[1:100],na.rm=T)
+#mean=4.5
+#median=4.571
+#min=2.4
+#max=6.231
+#sd=0.632
+
+#sd
+summary(final_ind_data$outdeg_sd[1:100])
+sd(final_ind_data$outdeg_sd[1:100],na.rm=T)
+#mean=2.687
+#median=2.673
+#min=1.414
+#max=4.03
+#sd=0.397
+
+#### Received ----
+
+#total
+summary(final_ind_data$indeg_total[1:100])
+sd(final_ind_data$indeg_total[1:100],na.rm=T)
+#mean=282.4
+#median=396.5
+#min=13
+#max=560
+#sd=206.134
+
+#average
+summary(final_ind_data$indeg_av[1:100])
+sd(final_ind_data$indeg_av[1:100],na.rm=T)
+#mean=4.487
+#median=4.379
+#min=3.25
+#max=5.714
+#sd=0.57
+
+#sd
+summary(final_ind_data$indeg_sd[1:100])
+sd(final_ind_data$indeg_sd[1:100],na.rm=T)
+#mean=2.422
+#median=2.403
+#min=1.657
+#max=4.031
+#sd=0.438
+
 ## Plot it! ----
 
-#Longevity/LRO ~ Storage
-par(mfrow=c(3,2))
+### Descriptive plots ----
+
+#### Life history traits ----
+
+#longevity
+par(mfrow=c(1,2))
+hist(final_ind_data$lng[1:100],breaks=20)
+plot(final_ind_data$lng[1:100]~final_ind_data$id[1:100])
+
+#lro
+par(mfrow=c(1,2))
+hist(final_ind_data$lro[1:100],breaks=20)
+plot(final_ind_data$lro[1:100]~final_ind_data$id[1:100])
+
+#asm
+par(mfrow=c(1,2))
+hist(final_ind_data$asm[1:100],breaks=20)
+plot(final_ind_data$asm[1:100]~final_ind_data$id[1:100])
+
+#afr
+par(mfrow=c(1,2))
+hist(final_ind_data$afr[1:100],breaks=20)
+plot(final_ind_data$afr[1:100]~final_ind_data$id[1:100])
+
+#alr
+par(mfrow=c(1,2))
+hist(final_ind_data$alr[1:100],breaks=20)
+plot(final_ind_data$alr[1:100]~final_ind_data$id[1:100])
+
+#meno
+par(mfrow=c(1,2))
+hist(final_ind_data$meno[1:100],breaks=20)
+plot(final_ind_data$meno[1:100]~final_ind_data$id[1:100])
+
+#### Resource dynamics ----
+
+##### Storage ----
+
+#total
+par(mfrow=c(1,2))
+hist(final_ind_data$store_total[1:100],breaks=20)
+plot(final_ind_data$store_total[1:100]~final_ind_data$id[1:100])
+
+#average
+par(mfrow=c(1,2))
+hist(final_ind_data$store_av[1:100],breaks=20)
+plot(final_ind_data$store_av[1:100]~final_ind_data$id[1:100])
+
+#sd
+par(mfrow=c(1,2))
+hist(final_ind_data$store_sd[1:100],breaks=20)
+plot(final_ind_data$store_sd[1:100]~final_ind_data$id[1:100])
+
+##### Production ----
+
+#total
+par(mfrow=c(1,2))
+hist(final_ind_data$prod_total[1:100],breaks=20)
+plot(final_ind_data$prod_total[1:100]~final_ind_data$id[1:100])
+
+#average
+par(mfrow=c(1,2))
+hist(final_ind_data$prod_av[1:100],breaks=20)
+plot(final_ind_data$prod_av[1:100]~final_ind_data$id[1:100])
+
+#sd
+par(mfrow=c(1,2))
+hist(final_ind_data$prod_sd[1:100],breaks=20)
+plot(final_ind_data$prod_sd[1:100]~final_ind_data$id[1:100])
+
+##### Given away ----
+
+#total
+par(mfrow=c(1,2))
+hist(final_ind_data$outdeg_total[1:100],breaks=20)
+plot(final_ind_data$outdeg_total[1:100]~final_ind_data$id[1:100])
+
+#average
+par(mfrow=c(1,2))
+hist(final_ind_data$outdeg_av[1:100],breaks=20)
+plot(final_ind_data$outdeg_av[1:100]~final_ind_data$id[1:100])
+
+#sd
+par(mfrow=c(1,2))
+hist(final_ind_data$outdeg_sd[1:100],breaks=20)
+plot(final_ind_data$outdeg_sd[1:100]~final_ind_data$id[1:100])
+
+##### Received ----
+
+#total
+par(mfrow=c(1,2))
+hist(final_ind_data$indeg_total[1:100],breaks=20)
+plot(final_ind_data$indeg_total[1:100]~final_ind_data$id[1:100])
+
+#average
+par(mfrow=c(1,2))
+hist(final_ind_data$indeg_av[1:100],breaks=20)
+plot(final_ind_data$indeg_av[1:100]~final_ind_data$id[1:100])
+
+#sd
+par(mfrow=c(1,2))
+hist(final_ind_data$indeg_sd[1:100],breaks=20)
+plot(final_ind_data$indeg_sd[1:100]~final_ind_data$id[1:100])
+
+### Relationships ----
+
+#### Longevity ~ Storage ----
+par(mfrow=c(3,1))
 #longevity~total storage
 plot(final_ind_data$lng[1:100]~final_ind_data$store_total[1:100],main="longevity")
-#lro~total storage
-plot(final_ind_data$lro[1:100]~final_ind_data$store_total[1:100],main="LRO")
 #longevity~average storage
 plot(final_ind_data$lng[1:100]~final_ind_data$store_av[1:100],main="longevity")
+#longevity~cv storage
+plot(final_ind_data$lng[1:100]~final_ind_data$store_sd[1:100],main="longevity")
+
+#### LRO ~ Storage ----
+par(mfrow=c(3,1))
+#lro~total storage
+plot(final_ind_data$lro[1:100]~final_ind_data$store_total[1:100],main="LRO")
 #lro~average storage
 plot(final_ind_data$lro[1:100]~final_ind_data$store_av[1:100],main="LRO")
-#longevity~cv storage
-plot(final_ind_data$lng[1:100]~final_ind_data$store_cv[1:100],main="longevity")
 #lro~cv storage
-plot(final_ind_data$lro[1:100]~final_ind_data$store_cv[1:100],main="LRO")
+plot(final_ind_data$lro[1:100]~final_ind_data$store_sd[1:100],main="LRO")
 
-#Longevity/LRO ~ Production
-par(mfrow=c(3,2))
+#### Longevity ~ Production ----
+par(mfrow=c(3,1))
 #longevity~total production
 plot(final_ind_data$lng[1:100]~final_ind_data$prod_total[1:100],main="longevity")
-#lro~total production
-plot(final_ind_data$lro[1:100]~final_ind_data$prod_total[1:100],main="LRO")
 #longevity~average production
 plot(final_ind_data$lng[1:100]~final_ind_data$prod_av[1:100],main="longevity")
+#longevity~cv production
+plot(final_ind_data$lng[1:100]~final_ind_data$prod_sd[1:100],main="longevity")
+
+#### LRO ~ Production ----
+par(mfrow=c(3,1))
+#lro~total production
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_total[1:100],main="LRO")
 #lro~average production
 plot(final_ind_data$lro[1:100]~final_ind_data$prod_av[1:100],main="LRO")
-#longevity~cv production
-plot(final_ind_data$lng[1:100]~final_ind_data$prod_cv[1:100],main="longevity")
 #lro~cv production
-plot(final_ind_data$lro[1:100]~final_ind_data$prod_cv[1:100],main="LRO")
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_sd[1:100],main="LRO")
 
-#Longevity/LRO ~ Given away
-par(mfrow=c(3,2))
+#### Longevity ~ Sharing ----
+par(mfrow=c(3,1))
 #longevity~total given away
-plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_total[1:100],main="longevity")
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_total[1:100],main="longevity",xlim=c(0,610))
+#adding received
 points(final_ind_data$lng[1:100]~final_ind_data$indeg_total[1:100],col="red")
-#lro~total given away
-plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_total[1:100],main="LRO")
-points(final_ind_data$lro[1:100]~final_ind_data$indeg_total[1:100],col="red")
 #longevity~average given away
-plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_av[1:100],main="longevity")
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_av[1:100],main="longevity",xlim=c(0,6))
+#adding received
 points(final_ind_data$lng[1:100]~final_ind_data$indeg_av[1:100],col="red")
-#lro~average given away
-plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_av[1:100],main="LRO")
-points(final_ind_data$lro[1:100]~final_ind_data$indeg_av[1:100],col="red")
 #longevity~cv given away
-plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_cv[1:100],main="longevity")
-points(final_ind_data$lng[1:100]~final_ind_data$indeg_cv[1:100],col="red")
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_sd[1:100],main="longevity",xlim=c(0,7))
+#adding received
+points(final_ind_data$lng[1:100]~final_ind_data$indeg_sd[1:100],col="red")
+
+#### LRO ~ Sharing ----
+par(mfrow=c(3,1))
+#lro~total given away
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_total[1:100],main="LRO",xlim=c(0,610))
+#adding received
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_total[1:100],col="red")
+#lro~average given away
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_av[1:100],main="LRO",xlim=c(0,6))
+#adding received
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_av[1:100],col="red")
 #lro~cv given away
-plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_cv[1:100],main="LRO")
-points(final_ind_data$lro[1:100]~final_ind_data$indeg_cv[1:100],col="red")
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_sd[1:100],main="LRO",xlim=c(0,7))
+#adding received
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100],col="red")
+
+#### Longevity ~ SD resource dynamics ----
+par(mfrow=c(3,1))
+#longevity~sd storage
+lo <- loess(final_ind_data$lng[1:100]~final_ind_data$store_sd[1:100])
+plot(final_ind_data$lng[1:100]~final_ind_data$store_sd[1:100],main="Longevity",xlab="SD of stored resources",ylab="Longevity",pch=16)
+lines(predict(lo),col="blue",lwd=2)
+#longevity~sd production
+lo <- loess(final_ind_data$lng[1:100]~final_ind_data$prod_sd[1:100])
+plot(final_ind_data$lng[1:100]~final_ind_data$prod_sd[1:100],main="Longevity",xlab="SD of resources produced",ylab="Longevity",pch=16)
+lines(predict(lo),col="blue",lwd=2)
+#longevity~sd sharing
+lo <- loess(final_ind_data$lng[1:100]~final_ind_data$outdeg_sd[1:100])
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_sd[1:100],main="Longevity",xlab="SD of resources shared",ylab="Longevity",pch=16,ylim=c(-2,120))
+lines(predict(lo),col="blue",lwd=2)
+#adding received
+lo <- loess(final_ind_data$lng[1:100]~final_ind_data$indeg_sd[1:100])
+points(final_ind_data$lng[1:100]~final_ind_data$indeg_sd[1:100],col="red",pch=16)
+lines(predict(lo),col="gold",lwd=2)
+
+#### LRO ~ SD resource dynamics ----
+par(mfrow=c(3,1))
+#longevity~cv storage
+lo <- loess(final_ind_data$lro[1:100]~final_ind_data$store_sd[1:100])
+plot(final_ind_data$lro[1:100]~final_ind_data$store_sd[1:100],main="LRO",xlab="SD of stored resources",ylab="LRO",pch=16)
+lines(predict(lo),col="blue",lwd=2)
+#longevity~cv production
+lo <- loess(final_ind_data$lro[1:100]~final_ind_data$prod_sd[1:100])
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_sd[1:100],main="LRO",xlab="SD of resources produced",ylab="LRO",pch=16)
+lines(predict(lo),col="blue",lwd=2)
+#longevity~cv sharing
+lo <- loess(final_ind_data$lro[1:100]~final_ind_data$outdeg_sd[1:100])
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_sd[1:100],main="LRO",xlab="SD of resources shared",ylab="LRO",pch=16)
+lines(predict(lo),col="blue",lwd=2)
+#adding received
+lo <- loess(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100])
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100],col="red",pch=16)
+lines(predict(lo),col="gold",lwd=2)
