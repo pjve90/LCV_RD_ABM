@@ -528,59 +528,59 @@ head(final_ind_data)
 #longevity
 summary(final_ind_data$lng[1:100])
 sd(final_ind_data$lng[1:100])
-#mean=69.16
-#median=104
-#min=13
-#max=110
-#sd=41.693
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #lro
 summary(final_ind_data$lro[1:100])
 sd(final_ind_data$lro[1:100])
-#mean=1.56
-#median=1
-#min=0
-#max=8
-#sd=1.731
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #asm
 summary(final_ind_data$asm[1:100])
 sd(final_ind_data$asm[1:100])
-#mean=11
-#median=11
-#min=11
-#max=11
-#sd=0
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #afr
 summary(final_ind_data$afr[1:100])
 sd(final_ind_data$afr[1:100],na.rm=T)
-#mean=26.73
-#median=24
-#min=13
-#max=51
-#sd=10.655
-#NA=19
+#mean=
+#median=
+#min=
+#max=
+#sd=
+#NA=
 
 #alr
 summary(final_ind_data$alr[1:100])
 sd(final_ind_data$alr[1:100],na.rm=T)
-#mean=31.44
-#median=31
-#min=13
-#max=61
-#sd=12.539
-#NA=19
+#mean=
+#median=
+#min=
+#max=
+#sd=
+#NA=
 
 #meno
 summary(final_ind_data$meno[1:100])
 sd(final_ind_data$meno[1:100],na.rm=T)
-#mean=53
-#median=56
-#min=41
-#max=61
-#sd=8.337
-#NA=47
+#mean=
+#median=
+#min=
+#max=
+#sd=
+#NA=
 
 ### Resource dynamics ----
 
@@ -589,116 +589,116 @@ sd(final_ind_data$meno[1:100],na.rm=T)
 #total
 summary(final_ind_data$store_total[1:100])
 sd(final_ind_data$store_total[1:100],na.rm=T)
-#mean=354.14
-#median=504.5
-#min=17
-#max=686
-#sd=254.675
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #average
 summary(final_ind_data$store_av[1:100])
 sd(final_ind_data$store_av[1:100],na.rm=T)
-#mean=5.688
-#median=5.619
-#min=4.167
-#max=7
-#sd=0.598
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #sd
 summary(final_ind_data$store_sd[1:100])
 sd(final_ind_data$store_sd[1:100],na.rm=T)
-#mean=2.551
-#median=2.515
-#min=1.8
-#max=3.948
-#sd=0.439
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #### Production ----
 
 #total
 summary(final_ind_data$prod_total[1:100])
 sd(final_ind_data$prod_total[1:100],na.rm=T)
-#mean=65.06
-#median=64
-#min=8
-#max=136
-#sd=36.553
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #average
 summary(final_ind_data$prod_av[1:100])
 sd(final_ind_data$prod_av[1:100],na.rm=T)
-#mean=1.454
-#median=1.225
-#min=0.546
-#max=3.556
-#sd=0.684
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #sd
 summary(final_ind_data$prod_sd[1:100])
 sd(final_ind_data$prod_sd[1:100],na.rm=T)
-#mean=1.805
-#median=1.793
-#min=1.304
-#max=2.191
-#sd=0.245
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #### Given away ----
 
 #total
 summary(final_ind_data$outdeg_total[1:100])
 sd(final_ind_data$outdeg_total[1:100],na.rm=T)
-#mean=237.7
-#median=401
-#min=12
-#max=516
-#sd=189.253
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #average
 summary(final_ind_data$outdeg_av[1:100])
 sd(final_ind_data$outdeg_av[1:100],na.rm=T)
-#mean=4.5
-#median=4.571
-#min=2.4
-#max=6.231
-#sd=0.632
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #sd
 summary(final_ind_data$outdeg_sd[1:100])
 sd(final_ind_data$outdeg_sd[1:100],na.rm=T)
-#mean=2.687
-#median=2.673
-#min=1.414
-#max=4.03
-#sd=0.397
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #### Received ----
 
 #total
 summary(final_ind_data$indeg_total[1:100])
 sd(final_ind_data$indeg_total[1:100],na.rm=T)
-#mean=282.4
-#median=396.5
-#min=13
-#max=560
-#sd=206.134
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #average
 summary(final_ind_data$indeg_av[1:100])
 sd(final_ind_data$indeg_av[1:100],na.rm=T)
-#mean=4.487
-#median=4.379
-#min=3.25
-#max=5.714
-#sd=0.57
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 #sd
 summary(final_ind_data$indeg_sd[1:100])
 sd(final_ind_data$indeg_sd[1:100],na.rm=T)
-#mean=2.422
-#median=2.403
-#min=1.657
-#max=4.031
-#sd=0.438
+#mean=
+#median=
+#min=
+#max=
+#sd=
 
 ## Plot it! ----
 
@@ -911,3 +911,129 @@ lines(predict(lo),col="blue",lwd=2)
 lo <- loess(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100])
 points(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100],col="red",pch=16)
 lines(predict(lo),col="gold",lwd=2)
+
+#### Ggplot version of relationships ----
+
+#lng~store_sd
+q <- ggplot(final_ind_data[1:100,],aes(x=store_sd,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=1,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=1)+
+  coord_cartesian(xlim=c(0,8),ylim=c(0,110)) +
+  xlab("SD stored resources") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~store_sd
+w <- ggplot(final_ind_data[1:100,],aes(x=store_sd,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=1,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=1)+
+  coord_cartesian(xlim=c(0,8),ylim=c(-1.5,13)) +
+  xlab("SD stored resources") +
+  ylab("LRO") +
+  theme_classic()
+#lng~prod_sd
+e <- ggplot(final_ind_data[1:100,],aes(x=prod_sd,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=2,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 5), se = FALSE,color=2)+
+  coord_cartesian(xlim=c(0,2.3),ylim=c(-2,110)) +
+  xlab("SD resources produced") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~prod_sd
+r <- ggplot(final_ind_data[1:100,],aes(x=prod_sd,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=2,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=2)+
+  coord_cartesian(xlim=c(0,2.3),ylim=c(-0.5,13)) +
+  xlab("SD resources produced") +
+  ylab("LRO") +
+  theme_classic()
+#lng~sharing sdc
+t <- ggplot(final_ind_data[1:100,],aes(x=outdeg_sd,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=3,alpha=0.5)+
+  geom_point(aes(x=indeg_sd,y=lng),show.legend = FALSE,color=4,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 6), se = FALSE,color=3)+
+  geom_smooth(aes(x=indeg_sd,y=lng),method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=4)+
+  coord_cartesian(ylim=c(-0.5,110)) +
+  xlab("SD shared resources") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~sharing sd
+y <- ggplot(final_ind_data[1:100,],aes(x=outdeg_sd,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=3,alpha=0.5)+
+  geom_point(aes(x=indeg_sd,y=lro),show.legend = FALSE,color=4,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=3)+
+  geom_smooth(aes(x=indeg_sd,y=lro),method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=4)+
+  coord_cartesian(ylim=c(-0.5,13)) +
+  xlab("SD shared resources") +
+  ylab("LRO") +
+  theme_classic()
+
+ggarrange(q,w,e,r,t,y,ncol=2,nrow=3,labels=c("A.2","B.2","C.2","D.2","E.2","F.2"),common.legend = TRUE,legend="bottom")
+
+#lng~store_av
+a <- ggplot(final_ind_data[1:100,],aes(x=store_av,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=1,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=1)+
+  coord_cartesian(xlim=c(0,13),ylim=c(0,110)) +
+  xlab("Mean stored resources") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~store_av
+s <- ggplot(final_ind_data[1:100,],aes(x=store_av,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=1,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=1)+
+  coord_cartesian(xlim=c(0,13),ylim=c(-2.5,13)) +
+  xlab("Mean stored resources") +
+  ylab("LRO") +
+  theme_classic()
+#lng~prod_av
+d <- ggplot(final_ind_data[1:100,],aes(x=prod_av,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=2,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 5), se = FALSE,color=2)+
+  coord_cartesian(ylim=c(-2,110)) +
+  xlab("Mean resources produced") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~prod_av
+f <- ggplot(final_ind_data[1:100,],aes(x=prod_av,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=2,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 5), se = FALSE,color=2)+
+  coord_cartesian(ylim=c(-0.5,13)) +
+  xlab("Mean resources produced") +
+  ylab("LRO") +
+  theme_classic()
+#lng~sharing sdc
+g <- ggplot(final_ind_data[1:100,],aes(x=outdeg_av,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=3,alpha=0.5)+
+  geom_point(aes(x=indeg_av,y=lng),color=4,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=3)+
+  geom_smooth(aes(x=indeg_av,y=lng),method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=4)+
+  coord_cartesian(ylim=c(-0.5,110)) +
+  xlab("Mean shared resources") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~sharing sd
+h <- ggplot(final_ind_data[1:100,],aes(x=outdeg_av,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=3,alpha=0.5)+
+  geom_point(aes(x=indeg_av,y=lro),show.legend = FALSE,color=4,alpha=0.5)+
+  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=3)+
+  geom_smooth(aes(x=indeg_av,y=lro),method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=4)+
+  coord_cartesian(ylim=c(-0.5,13)) +
+  xlab("Mean shared resources") +
+  ylab("LRO") +
+  theme_classic()
+
+ggarrange(a,s,d,f,g,h,ncol=2,nrow=3,labels=c("A.1","B.1","C.1","D.1","E.1","F.1"))
+
+ggarrange(a,q,s,w,d,e,f,r,g,t,h,y,ncol=4,nrow=3,labels=c("A.1","A.2","B.1","B.2","C.1","C.2","D.1","D.2","E.1","E.2","F.1","F.2"),common.legend=T,legend="bottom")
