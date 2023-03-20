@@ -896,144 +896,164 @@ lines(predict(lo),col="gold",lwd=2)
 #### LRO ~ SD resource dynamics ----
 par(mfrow=c(3,1))
 #longevity~cv storage
-lo <- loess(final_ind_data$lro[1:100]~final_ind_data$store_sd[1:100])
 plot(final_ind_data$lro[1:100]~final_ind_data$store_sd[1:100],main="LRO",xlab="SD of stored resources",ylab="LRO",pch=16)
-lines(predict(lo),col="blue",lwd=2)
 #longevity~cv production
-lo <- loess(final_ind_data$lro[1:100]~final_ind_data$prod_sd[1:100])
 plot(final_ind_data$lro[1:100]~final_ind_data$prod_sd[1:100],main="LRO",xlab="SD of resources produced",ylab="LRO",pch=16)
-lines(predict(lo),col="blue",lwd=2)
 #longevity~cv sharing
-lo <- loess(final_ind_data$lro[1:100]~final_ind_data$outdeg_sd[1:100])
 plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_sd[1:100],main="LRO",xlab="SD of resources shared",ylab="LRO",pch=16)
-lines(predict(lo),col="blue",lwd=2)
 #adding received
-lo <- loess(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100])
 points(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100],col="red",pch=16)
-lines(predict(lo),col="gold",lwd=2)
+
+#### Longevity and LRO ~ Mean and SD ----
+par(mfrow=c(3,4))
+palette(hcl.colors(4,"spectral",alpha=0.5))
+#longevity~mean storage
+plot(final_ind_data$lng[1:100]~final_ind_data$store_av[1:100],xlab="Mean stored resources",ylab="Longevity",pch=16,col=1,main="A.1",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#longevity~sd storage
+plot(final_ind_data$lng[1:100]~final_ind_data$store_sd[1:100],xlab="SD stored resources",ylab="Longevity",pch=16,col=1,main="A.2",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#lro~mean storage
+plot(final_ind_data$lro[1:100]~final_ind_data$store_av[1:100],xlab="Mean stored resources",ylab="LRO",pch=16,col=1,main="B.1",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#lro~sd storage
+plot(final_ind_data$lro[1:100]~final_ind_data$store_sd[1:100],xlab="SD stored resources",ylab="LRO",pch=16,col=1,main="B.2",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#longevity~mean production
+plot(final_ind_data$lng[1:100]~final_ind_data$prod_av[1:100],xlab="Mean resources produced",ylab="Longevity",pch=16,col=2,main="C.1",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#longevity~sd production
+plot(final_ind_data$lng[1:100]~final_ind_data$prod_sd[1:100],xlab="SD resources produced",ylab="Longevity",pch=16,col=2,main="C.2",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#lro~mean production
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_av[1:100],xlab="Mean resourcs produced",ylab="LRO",pch=16,col=2,main="D.1",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#lro~sd production
+plot(final_ind_data$lro[1:100]~final_ind_data$prod_sd[1:100],xlab="SD resources produced",ylab="LRO",pch=16,col=2,main="D.2",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#longevity~mean sharing
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_av[1:100],xlab="Mean shared resources",ylab="Longevity",pch=16,col=3,main="E.1",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#adding received
+points(final_ind_data$lng[1:100]~final_ind_data$indeg_av[1:100],pch=16,col=4,cex=1.7)
+#longevity~sd sharing
+plot(final_ind_data$lng[1:100]~final_ind_data$outdeg_sd[1:100],xlab="SD shared resources",ylab="Longevity",pch=16,col=3,main="E.2",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#adding received
+points(final_ind_data$lng[1:100]~final_ind_data$indeg_sd[1:100],pch=16,col=4,cex=1.7)
+#lro~mean sharing
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_av[1:100],xlab="Mean shared resources",ylab="LRO",pch=16,col=3,main="F.1",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#adding received
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_av[1:100],pch=16,col=4,cex=1.7)
+#lro~sd sharing
+plot(final_ind_data$lro[1:100]~final_ind_data$outdeg_sd[1:100],xlab="SD shared resources",ylab="LRO",pch=16,col=3,main="F.2",cex.lab=1.2,cex.main=1.2,cex=1.7)
+#adding received
+points(final_ind_data$lro[1:100]~final_ind_data$indeg_sd[1:100],pch=16,col=4,cex=1.7)
+
+
 
 #### Ggplot version of relationships ----
 
-#lng~store_sd
-q <- ggplot(final_ind_data[1:100,],aes(x=store_sd,y=lng))+
-  scale_color_brewer(palette = "RdBu") +
-  geom_point(color=1,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=1)+
-  coord_cartesian(xlim=c(0,8),ylim=c(0,110)) +
-  xlab("SD stored resources") +
-  ylab("Longevity") +
-  theme_classic()
-#lro~store_sd
-w <- ggplot(final_ind_data[1:100,],aes(x=store_sd,y=lro))+
-  scale_color_brewer(palette = "RdBu") +
-  geom_point(color=1,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=1)+
-  coord_cartesian(xlim=c(0,8),ylim=c(-1.5,13)) +
-  xlab("SD stored resources") +
-  ylab("LRO") +
-  theme_classic()
-#lng~prod_sd
-e <- ggplot(final_ind_data[1:100,],aes(x=prod_sd,y=lng))+
-  scale_color_brewer(palette = "RdBu") +
-  geom_point(color=2,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 5), se = FALSE,color=2)+
-  coord_cartesian(xlim=c(0,2.3),ylim=c(-2,110)) +
-  xlab("SD resources produced") +
-  ylab("Longevity") +
-  theme_classic()
-#lro~prod_sd
-r <- ggplot(final_ind_data[1:100,],aes(x=prod_sd,y=lro))+
-  scale_color_brewer(palette = "RdBu") +
-  geom_point(color=2,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=2)+
-  coord_cartesian(xlim=c(0,2.3),ylim=c(-0.5,13)) +
-  xlab("SD resources produced") +
-  ylab("LRO") +
-  theme_classic()
-#lng~sharing sdc
-t <- ggplot(final_ind_data[1:100,],aes(x=outdeg_sd,y=lng))+
-  scale_color_brewer(palette = "RdBu") +
-  geom_point(color=3,alpha=0.5)+
-  geom_point(aes(x=indeg_sd,y=lng),show.legend = FALSE,color=4,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 6), se = FALSE,color=3)+
-  geom_smooth(aes(x=indeg_sd,y=lng),method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=4)+
-  coord_cartesian(ylim=c(-0.5,110)) +
-  xlab("SD shared resources") +
-  ylab("Longevity") +
-  theme_classic()
-#lro~sharing sd
-y <- ggplot(final_ind_data[1:100,],aes(x=outdeg_sd,y=lro))+
-  scale_color_brewer(palette = "RdBu") +
-  geom_point(color=3,alpha=0.5)+
-  geom_point(aes(x=indeg_sd,y=lro),show.legend = FALSE,color=4,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=3)+
-  geom_smooth(aes(x=indeg_sd,y=lro),method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=4)+
-  coord_cartesian(ylim=c(-0.5,13)) +
-  xlab("SD shared resources") +
-  ylab("LRO") +
-  theme_classic()
-
-ggarrange(q,w,e,r,t,y,ncol=2,nrow=3,labels=c("A.2","B.2","C.2","D.2","E.2","F.2"),common.legend = TRUE,legend="bottom")
+##### Average ----
 
 #lng~store_av
 a <- ggplot(final_ind_data[1:100,],aes(x=store_av,y=lng))+
   scale_color_brewer(palette = "RdBu") +
-  geom_point(color=1,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=1)+
-  coord_cartesian(xlim=c(0,13),ylim=c(0,110)) +
+  geom_point(color=1,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,110)) +
   xlab("Mean stored resources") +
   ylab("Longevity") +
   theme_classic()
 #lro~store_av
 s <- ggplot(final_ind_data[1:100,],aes(x=store_av,y=lro))+
   scale_color_brewer(palette = "RdBu") +
-  geom_point(color=1,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=1)+
-  coord_cartesian(xlim=c(0,13),ylim=c(-2.5,13)) +
+  geom_point(color=1,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,13)) +
   xlab("Mean stored resources") +
   ylab("LRO") +
   theme_classic()
 #lng~prod_av
 d <- ggplot(final_ind_data[1:100,],aes(x=prod_av,y=lng))+
   scale_color_brewer(palette = "RdBu") +
-  geom_point(color=2,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 5), se = FALSE,color=2)+
-  coord_cartesian(ylim=c(-2,110)) +
+  geom_point(color=2,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,110)) +
   xlab("Mean resources produced") +
   ylab("Longevity") +
   theme_classic()
 #lro~prod_av
 f <- ggplot(final_ind_data[1:100,],aes(x=prod_av,y=lro))+
   scale_color_brewer(palette = "RdBu") +
-  geom_point(color=2,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 5), se = FALSE,color=2)+
-  coord_cartesian(ylim=c(-0.5,13)) +
+  geom_point(color=2,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,13)) +
   xlab("Mean resources produced") +
   ylab("LRO") +
   theme_classic()
 #lng~sharing sdc
 g <- ggplot(final_ind_data[1:100,],aes(x=outdeg_av,y=lng))+
   scale_color_brewer(palette = "RdBu") +
-  geom_point(color=3,alpha=0.5)+
-  geom_point(aes(x=indeg_av,y=lng),color=4,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=3)+
-  geom_smooth(aes(x=indeg_av,y=lng),method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=4)+
-  coord_cartesian(ylim=c(-0.5,110)) +
+  geom_point(color=3,alpha=0.5,size=3)+
+  geom_point(aes(x=indeg_av,y=lng),color=4,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,110)) +
   xlab("Mean shared resources") +
   ylab("Longevity") +
   theme_classic()
 #lro~sharing sd
 h <- ggplot(final_ind_data[1:100,],aes(x=outdeg_av,y=lro))+
   scale_color_brewer(palette = "RdBu") +
-  geom_point(color=3,alpha=0.5)+
-  geom_point(aes(x=indeg_av,y=lro),show.legend = FALSE,color=4,alpha=0.5)+
-  geom_smooth(method = "lm", formula = y ~ splines::bs(x, 3), se = FALSE,color=3)+
-  geom_smooth(aes(x=indeg_av,y=lro),method = "lm", formula = y ~ splines::bs(x, 4), se = FALSE,color=4)+
-  coord_cartesian(ylim=c(-0.5,13)) +
+  geom_point(color=3,alpha=0.5,size=3)+
+  geom_point(aes(x=indeg_av,y=lro),show.legend = FALSE,color=4,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,13)) +
   xlab("Mean shared resources") +
   ylab("LRO") +
   theme_classic()
 
 ggarrange(a,s,d,f,g,h,ncol=2,nrow=3,labels=c("A.1","B.1","C.1","D.1","E.1","F.1"))
+
+##### Variability ----
+
+#lng~store_sd
+q <- ggplot(final_ind_data[1:100,],aes(x=store_sd,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=1,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,110)) +
+  xlab("SD stored resources") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~store_sd
+w <- ggplot(final_ind_data[1:100,],aes(x=store_sd,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=1,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,13)) +
+  xlab("SD stored resources") +
+  ylab("LRO") +
+  theme_classic()
+#lng~prod_sd
+e <- ggplot(final_ind_data[1:100,],aes(x=prod_sd,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=2,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,110)) +
+  xlab("SD resources produced") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~prod_sd
+r <- ggplot(final_ind_data[1:100,],aes(x=prod_sd,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=2,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,13)) +
+  xlab("SD resources produced") +
+  ylab("LRO") +
+  theme_classic()
+#lng~sharing sdc
+t <- ggplot(final_ind_data[1:100,],aes(x=outdeg_sd,y=lng))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=3,alpha=0.5,size=3)+
+  geom_point(aes(x=indeg_sd,y=lng),show.legend = FALSE,color=4,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,110)) +
+  xlab("SD shared resources") +
+  ylab("Longevity") +
+  theme_classic()
+#lro~sharing sd
+y <- ggplot(final_ind_data[1:100,],aes(x=outdeg_sd,y=lro))+
+  scale_color_brewer(palette = "RdBu") +
+  geom_point(color=3,alpha=0.5,size=3)+
+  geom_point(aes(x=indeg_sd,y=lro),show.legend = FALSE,color=4,alpha=0.5,size=3)+
+  coord_cartesian(ylim=c(0,13)) +
+  xlab("SD shared resources") +
+  ylab("LRO") +
+  theme_classic()
+
+ggarrange(q,w,e,r,t,y,ncol=2,nrow=3,labels=c("A.2","B.2","C.2","D.2","E.2","F.2"),common.legend = TRUE,legend="bottom")
+
+##### All together ----
 
 ggarrange(a,q,s,w,d,e,f,r,g,t,h,y,ncol=4,nrow=3,labels=c("A.1","A.2","B.1","B.2","C.1","C.2","D.1","D.2","E.1","E.2","F.1","F.2"),common.legend=T,legend="bottom")
