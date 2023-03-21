@@ -9,7 +9,6 @@ newborns <- function(new_it_indpop){
     new_it_indpop <- data.frame(id=max_id+1:sum(it_indpop[which(it_indpop$repro==1),"repro"]), #id
                             stage=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #life cycle stage
                             store_a=rep(surv_cost,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #stored resources
-                            prod_o=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #production output
                             prod_a=rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #production amount
                             mom_id=it_indpop$id[it_indpop$repro==1], #mom id
                             mom_surplus=rep(NA,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #identify mom surplus
@@ -30,7 +29,6 @@ newborns <- function(new_it_indpop){
     new_it_indpop <- data.frame(id=NA, #id
                                 stage=NA, #life cycle stage
                                 store_a=NA, #stored resources
-                                prod_o=NA, #production output
                                 prod_a=NA, #production amount
                                 mom_id=NA, #mom id
                                 mom_surplus=NA, #identify mom surplus
