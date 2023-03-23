@@ -864,7 +864,7 @@ n <- ggplot(final_ind_data[1:100,])+
   xlab("Mean shared resources")+
   theme_classic()
 
-ggarrange(p,o,z,x,c,v,b,n,ncol=2,nrow=4)
+ggarrange(p,z,c,b,o,x,v,n,ncol=4,nrow=2)
 
 ### Relationships ----
 
