@@ -7,7 +7,7 @@
 old_age_survival_offset<-c(rep(1,70),1.2^(1:50))
 
 survive <- function(it_indpop){
-  if(it_indpop$store_a[i] >= (surv_cost*old_age_survival_offset[it_indpop$age[i]] )){
+  if(it_indpop$store_a[i] >= (surv_cost*old_age_survival_offset[it_indpop$age[i]+1] )){
       it_indpop$surv[i] <- 1
     } else{
       it_indpop$surv[i] <- 0

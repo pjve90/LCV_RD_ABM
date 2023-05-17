@@ -267,7 +267,7 @@ head(it_data)
 
 ### Run 100 iterations for all the population ----
 
-it_indpop<-create_initialpop(100)
+it_indpop<-create_initialpop(populationsize=100)
 
 for (b in 1:100){
   
@@ -352,10 +352,13 @@ for (b in 1:100){
   #record survival and age
   surv_data <- it_indpop[,c("id","surv","age")]
   
+  print(c("original",nrow(it_indpop)))
+  print(c("offspring",nrow(new_it_indpop[is.na(new_it_indpop$id)==F,])))
   #combine original population with newborns
   it_indpop <- rbind(it_indpop,new_it_indpop)
   #remove NA in id
   it_indpop <- it_indpop[!is.na(it_indpop$id),]
+  print(c("new",nrow(it_indpop)))
   
   #merge iteration records
   if(b==1){
@@ -391,7 +394,7 @@ for (b in 1:100){
 
 }
 
-#check the population by the end of the iteration
+i#check the population by the end of the iteration
 head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_dataf)
