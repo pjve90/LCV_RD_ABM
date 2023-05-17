@@ -263,13 +263,20 @@ head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_data)
 
-## Run 100 iterations ----
+
+
+
+
+
+##### Run 100 iterations ----
 
 ### Run 100 iterations for all the population ----
 
 it_indpop<-create_initialpop(populationsize=100)
 
-for (b in 1:100){
+years<-200
+
+for (b in 1:years){
   
   #record the maximum id
   max_id <- max(it_indpop$id)
@@ -352,13 +359,13 @@ for (b in 1:100){
   #record survival and age
   surv_data <- it_indpop[,c("id","surv","age")]
   
-  print(c("original",nrow(it_indpop)))
-  print(c("offspring",nrow(new_it_indpop[is.na(new_it_indpop$id)==F,])))
+  print(c("year",b))
+  print(c("offspring born",nrow(new_it_indpop[is.na(new_it_indpop$id)==F,])))
   #combine original population with newborns
   it_indpop <- rbind(it_indpop,new_it_indpop)
   #remove NA in id
   it_indpop <- it_indpop[!is.na(it_indpop$id),]
-  print(c("new",nrow(it_indpop)))
+  print(c("new population size",nrow(it_indpop)))
   
   #merge iteration records
   if(b==1){

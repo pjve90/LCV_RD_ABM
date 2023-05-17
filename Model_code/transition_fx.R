@@ -12,9 +12,8 @@ transition <- function(it_indpop){
   }    else
     if(it_indpop$stage[i]==1 & it_indpop$age[i]>=18 ){ #forced transition from juvenile to adult
       it_indpop$stage[i] <- 2
-      it_indpop$store_a[i] <- it_indpop$store_a[i] - repro_thresh
     } else
-    if(it_indpop$stage[i]==2 & it_indpop$store_a[i] >= repro_thresh){ #transition adult to reproductive career
+    if(it_indpop$stage[i]==2 & it_indpop$store_a[i] >= repro_thresh+surv_cost){ #transition adult to reproductive career
         it_indpop$store_a[i] <- it_indpop$store_a[i] - repro_thresh
         it_indpop$repro[i] <- 1
         it_indpop$stage[i] <- 3
