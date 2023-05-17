@@ -9,24 +9,29 @@ setwd("./LCV_RD_ABM/Model_code")
 ## Initial population ----
 
 #create population
-it_indpop <- data.frame(id=1:100, #id
-                        stage=rep(2,length.out=100), #life cycle stage
-                        store_a=rep(0,length.out=100), #stored resources
-                        prod_a=rep(0,length.out=100), #production amount
-                        mom_id=rep(NA,length.out=100), #mom id
-                        mom_surplus=rep(NA,length.out=100), #identify mom surplus
-                        mom_surplus_a=rep(NA,length.out=100), #mom surplus amount
-                        desc_need=rep(0,length.out=100), #identify descendant need
-                        desc_need_a=rep(NA,length.out=100), #descendant need amount
-                        max_deg=rep(NA,length.out=100), #surplus for resource transfers
-                        in_degree=rep(NA,length.out=100), #amount of resources received
-                        out_degree=rep(NA,length.out=100), #amount of resources given away
-                        repro=rep(NA,length.out=100), #reproduction output
-                        lro=rep(0,length.out=100), #lifetime reproductive output
-                        tlr=rep(0,length.out=100), #time since last reproduction
-                        surv=rep(NA,length.out=100), #survival output
-                        age=rep(10,length.out=25) #age
+create_initialpop<-function(populationsize){
+it_indpop <- data.frame(id=1:populationsize, #id
+                        stage=rep(2,length.out=populationsize), #life cycle stage
+                        store_a=rep(0,length.out=populationsize), #stored resources
+                        prod_a=rep(0,length.out=populationsize), #production amount
+                        mom_id=rep(NA,length.out=populationsize), #mom id
+                        mom_surplus=rep(NA,length.out=populationsize), #identify mom surplus
+                        mom_surplus_a=rep(NA,length.out=populationsize), #mom surplus amount
+                        desc_need=rep(0,length.out=populationsize), #identify descendant need
+                        desc_need_a=rep(NA,length.out=populationsize), #descendant need amount
+                        max_deg=rep(NA,length.out=populationsize), #surplus for resource transfers
+                        in_degree=rep(NA,length.out=populationsize), #amount of resources received
+                        out_degree=rep(NA,length.out=populationsize), #amount of resources given away
+                        repro=rep(NA,length.out=populationsize), #reproduction output
+                        lro=rep(0,length.out=populationsize), #lifetime reproductive output
+                        tlr=rep(0,length.out=populationsize), #time since last reproduction
+                        surv=rep(NA,length.out=populationsize), #survival output
+                        age=rep(10,length.out=populationsize) #age
 )
+return(it_indpop)
+}
+
+it_indpop<-create_initialpop(100)
 
 #create data frame to record the dynamics in each iteration
 it_data <- data.frame(id=1:nrow(it_indpop))
@@ -37,7 +42,9 @@ it_descpop <- data.frame(id=1:nrow(it_indpop))
 ## Resource production ----
 
 #Habitat quality
-habitat <- c(1,3,3,1)
+habitat_quality<-4
+age_specific_abilities<-c(0.25,1,1,0.33)
+habitat <- round(habitat_quality * age_specific_abilities,0) 
 names(habitat) <- c("juvenile","adult","reproductive career", "post-reproductive")
 
 #Stage-specific probabilities of production
@@ -73,11 +80,18 @@ source("mat_invest_fx.R")
 num_blocks <- 4
 
 #Define the block matrix
-block_probs <- matrix(c(1e-10, 8e-10, 8e-10, 8e-10,
-                        1e-10, 1e-10, 1e-10, 1e-10,
-                        1e-10, 2e-10, 2e-10, 3e-10,
-                        1e-10, 3e-10, 3e-10, 2e-10),
-                      nrow = num_blocks, ncol = num_blocks)
+# overall tendency to share
+prob_ties <- 1e-10
+
+# weights of sharing directionality
+block_offsets<-matrix(c(1,8,8,8,
+                        1,1,1,1,
+                        1,2,2,3,
+                        1,3,3,2),
+nrow=num_blocks,ncol=num_blocks)
+
+block_probs<-prob_ties*block_offsets 
+
 
 #Define the surplus for transfers (max out degree in the network)
 source("transfers_surplus_sbm.R")
@@ -109,7 +123,7 @@ source("survival_age.R")
 n_desc <- 1
 
 #Reproductive threshold
-repro_thresh <- surv_cost*10
+repro_thresh <- surv_cost*10+surv_cost
 
 #Reproduction
 source("reproduction_reproduce_fx.R")
@@ -252,6 +266,8 @@ head(it_data)
 ## Run 100 iterations ----
 
 ### Run 100 iterations for all the population ----
+
+it_indpop<-create_initialpop(100)
 
 for (b in 1:100){
   
