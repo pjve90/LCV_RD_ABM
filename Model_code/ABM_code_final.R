@@ -28,6 +28,7 @@ it_indpop <- data.frame(id=1:popsize, #id
                         surv=rep(NA,length.out=popsize), #survival output
                         age=c(rep(0,length.out=popsize/4),rep(10,length.out=popsize/4),rep(15,length.out=popsize/4),rep(45,length.out=popsize/4)) #age
 )
+it_indpop$mom_id[it_indpop$stage==1] <- it_indpop$id[it_indpop$stage==3]
 return(it_indpop)
 }
 
@@ -54,7 +55,7 @@ max_prod_prob <- 0.5
 #Stage-specific offset in the probabilities of production for an individual
 stage_prod_prob <- c(0.2,1,1,0.7)
 #stage-specific production probabilities
-prod_prob <- round(max_prod_prob * stage_prod_prob,0)
+prod_prob <- round(max_prod_prob * stage_prod_prob,1)
 names(prod_prob) <- c("juvenile","adult","reproductive career", "post-reproductive")
 
 #Production function
@@ -268,16 +269,11 @@ head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_data)
 
-
-
-
-
-
-##### Run 100 iterations ----
+## Run 100 iterations ----
 
 ### Run 100 iterations for all the population ----
 
-it_indpop<-create_initialpop(populationsize=100)
+it_indpop<-create_initialpop(popsize=100)
 
 years<-200
 
@@ -406,7 +402,7 @@ for (b in 1:years){
 
 }
 
-i#check the population by the end of the iteration
+#check the population by the end of the iteration
 head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_dataf)
