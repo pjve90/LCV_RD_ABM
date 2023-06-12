@@ -6,12 +6,14 @@
 getwd()
 setwd("./LCV_RD_ABM/Model_code")
 
-## Initial population ----
+## Sourcing functions ----
+
+### Initial population ----
 
 #create population
 source("initial_pop_fx.R")
 
-## Resource production ----
+### Resource production ----
 
 #Stage-specific maximum amount of resource production 
 source("production_maxprod_fx.R")
@@ -22,7 +24,7 @@ source("production_prodprob_fx.R")
 #Production function
 source("production_fx.R")
 
-## Maternal investment ----
+### Maternal investment ----
 
 #Identify if the mother has surplus of resources
 source("mat_invest_mom_surp_identify.R")
@@ -42,7 +44,7 @@ source("mat_invest_desc_order.R")
 #Mother invest in her descendants
 source("mat_invest_fx.R")
 
-## Resource transfers ----
+### Resource transfers ----
 
 #Define the block matrix
 source("transfers_blockmatrix_fx.R")
@@ -56,7 +58,7 @@ source("transfers_sbm_fx.R")
 #Record the resources transferred
 source("transfers_amount.R") 
 
-## Survival ----
+### Survival ----
 
 #Survival
 source("survival_survive_fx.R")
@@ -67,7 +69,7 @@ source("survival_discount.R")
 #Age
 source("survival_age.R")
 
-## Reproduction ----
+### Reproduction ----
 
 #Reproduction
 source("reproduction_reproduce_fx.R")
@@ -81,7 +83,7 @@ source("reproduction_lro.R")
 #Add newborns
 source("reproduction_newborn.R")
 
-## Transition ----
+### Transition ----
 
 #Time since last birth
 source("transition_tlr.R")
