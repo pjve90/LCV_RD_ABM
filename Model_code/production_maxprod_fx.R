@@ -1,4 +1,4 @@
-#' Stage-specific maximum amount of resource production .
+#' Stage-specific maximum amount of resource production.
 #'
 #' \code{max_production} returns the maximum amount of resources an individual can produce, based on her life cycle stage.
 #' 

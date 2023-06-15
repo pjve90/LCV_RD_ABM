@@ -6,7 +6,7 @@
 
 produce <- function(it_indpop){
   it_indpop$prod_a[i] <- rbinom(1, maxprod[it_indpop$stage[i]],prod_prob[it_indpop$stage[i]])
-  it_indpop$store_a[i] <- it_indpop$store_a[i]+it_indpop$prod_a[i]
+  it_indpop$res_a[i] <- it_indpop$store_a[i]+it_indpop$prod_a[i]
   return(it_indpop)
 }
 

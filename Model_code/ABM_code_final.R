@@ -8,6 +8,8 @@ setwd("./LCV_RD_ABM/Model_code")
 
 ## Sourcing functions ----
 
+#In this section, you source the different R functions needed to set up the state and auxiliary variables for the model.
+
 ### Initial population ----
 
 #create population
@@ -58,17 +60,6 @@ source("transfers_sbm_fx.R")
 #Record the resources transferred
 source("transfers_amount.R") 
 
-### Survival ----
-
-#Survival
-source("survival_survive_fx.R")
-
-#Discount of survival cost
-source("survival_discount.R")
-
-#Age
-source("survival_age.R")
-
 ### Reproduction ----
 
 #Reproduction
@@ -91,86 +82,133 @@ source("transition_tlr.R")
 #Transition
 source("transition_fx.R")
 
+#Transition
+source("transition_fx.R")
+
+### Survival ----
+
+#Survival
+source("survival_survive_fx.R")
+
+#Discount of survival cost
+source("survival_discount.R")
+
+#Age
+source("survival_age.R")
+
+### Resource storing ----
+
+#Store resources
+source("storage_fx.R")
+
 ## Run one iteration ----
 
 ### Define auxiliary variables and parameters for initialisation ----
 
-#initial population
+#Initial population
+#Here, you define the population size, create a data frame for the initial population, another one to record the output of each iteration, and one to record the need of descendants, for the maternal investment dynamics.
 
+#population size = 100
+popsize <- 100
 #create population
-it_indpop<-create_initialpop(100)
+it_indpop<-create_initialpop(popsize)
 
-#create data frame to record the dynamics in each iteration
+#create data frame to record the individual dynamics in each iteration
 it_data <- data.frame(id=1:nrow(it_indpop))
 
-#create data frame to record need of descendants
+#create data frame to record need of descendants, necessary for maternal investment
 it_descpop <- data.frame(id=1:nrow(it_indpop))
 
-#resource production
+#Resource production
+#Here, you define the habitat quality and the maximum production probability
 
 #habitat quality
 habitat_quality <- 4
+#stage-specific maximum amount of resource production.
+maxprod <- max_production(habitat_quality)
 
 #maximum production probability
 max_prod_prob <- 0.5
+#stage-specific production probabilities.
+prod_prob <- production_prob(max_prod_prob)
 
-#resource transfers
+#Resource transfers
+#Here, you define the number of blocks, which is the number of life cycle stages, as well as the overall transfer probability used as reference to build the block matrix.
 
-#specify the number of of blocks
+#specify the number of blocks
 num_blocks <- 4
 
-#overall tendency to share
+#overall tendency to transfer resources
 prob_ties <- 1e-10
 
-#survival
+#Survival
+#Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
 
-#Survival cost
+#survival cost
 surv_cost <- 1
 
-#reproduction
+#Reproduction
+#Here, you define the number of descendants an individual can have per reproductive event, as well as the reproductive cost, which is the amount of resources that an individual needs to produce a new descendant.
 
-#Number of descendants per reproduction
+#number of descendants per reproduction
 n_desc <- 1
 
-#Reproductive cost
+#reproductive cost
 repro_cost <- surv_cost*10
 
 ### Run one iteration for all the population ----
 
-#record the maximum id
+#Here, you run the different functions to check that everything is working well for one iteration
+
+#Maximum id
+#you record the maximum id so the id of the new individuals start after the existing one
 max_id <- max(it_indpop$id)
 
 #production
+#you run the production function for every individual in the population, and record the amount of resources produced and available
 for (i in 1:nrow(it_indpop)){
-  #production outcome
+  #resource production
   it_indpop <- produce(it_indpop)
 }
-#record production outcome and amount
-#separate data
+#record the amount of resources produced by each individual
 resource_data <- it_indpop[,c("id","prod_a")]
 
 #maternal investment
+#you run the different functions necessary for the need-based maternal investment, and record the surplus of the mother and the need of each descendant
+#mothers
 for (i in 1:nrow(it_indpop)){
   #identify mom surplus
   it_indpop$mom_surplus <- mom_surplus(it_indpop)
   #mom surplus amount
   it_indpop$mom_surplus_a <- mom_surplus_a(it_indpop)
+  #subset mothers
+  it_mompop <- it_indpop[is.na(it_indpop$mom_surplus_a)==F,]
+}  
+#descendants  
+for (i in 1:nrow(it_indpop)){
   #identify descendant need
   it_indpop$desc_need <- desc_need(it_indpop)
   #descendant need amount
   it_indpop$desc_need_a <- desc_need_a(it_indpop)
   #order descendants
   it_descpop <- desc_order(it_indpop)
+}
+#maternal investment
+for (i in 1:nrow(it_mompop)){
+  #subset descendants of mother
+  it_descpop_momsub <- it_descpop[it_mompop$id[i] == it_descpop$mom_id,]
   #maternal investment
   it_indpop <- mat_invest(it_indpop)
 }
+
 #record maternal investment
-#separate data
 mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
 
 #resource transfers
+#you run the functions for resource transfers. First you define the resource surplus of each individual, which is the upper limit for the number of ties an individual can make, then you generate the social netwnork, and then record the resource transfers
+
+#define surplus
 for (i in 1:nrow(it_indpop)){
-  #define surplus
   it_indpop$max_deg <- max_deg(it_indpop)
 }
 #generate network
@@ -180,14 +218,16 @@ network <- simulate_SBM_max_degree(nrow(it_indpop), #number of individuals
                                    it_indpop$max_deg, #maximum out degree per individual
                                    it_indpop$stage #life cycle stage of each individual
                                    )
+#record resource transfers
 for (i in 1:nrow(it_indpop)){
- #record resource transfers
   it_indpop <- transfers(it_indpop)
 }
-#record resource transfers and stored resources
-transfers_data <- it_indpop[,c("id","out_degree","in_degree","store_a")]
+#record resource transfers and resources available
+transfers_data <- it_indpop[,c("id","out_degree","in_degree","res_a")]
 
-#reproduction
+#Reproduction
+#you run the functions for reproduction, record the outcomes, and generate a data frame with the newborns
+
 for (i in 1:nrow(it_indpop)){
   #reproduction probability
   it_indpop$repro <- reproduce(it_indpop)
@@ -201,7 +241,9 @@ repro_data <- it_indpop[,c("id","repro","lro")]
 #add newborns
 new_it_indpop <- newborns(new_it_indpop)
   
-#transition
+#Transition
+#you update the time since last reproduction, evaluate if the individual transitions to the next life cycle stage, and record the outcomes
+
 for (i in 1:nrow(it_indpop)){
   #time since last reproduction
   it_indpop$tlr <- tlr(it_indpop)
@@ -213,7 +255,9 @@ transition_data <- it_indpop[,c("id","tlr","stage")]
 #record reproduction again to update in case of transition to reproductive career
 repro_data <- it_indpop[,c("id","repro","lro")]
 
-#survival
+#Survival
+#you evaluate if the individuals have enough resources to cover the survival costs, update the amount of resources available, and individuals age.
+
 for (i in 1:nrow(it_indpop)){
   #survival
   it_indpop$surv <- survive(it_indpop)
@@ -225,11 +269,27 @@ for (i in 1:nrow(it_indpop)){
 #record survival and age
 surv_data <- it_indpop[,c("id","surv","age")]
 
+#Storage
+#Here, you are storing the resources available by the end of the iteration to take them to the next iteration, and recording them
+
+#store
+for (i in 1:nrow(it_indpop)){
+  #store resources
+  it_indpop$store_a <- store(it_indpop)
+}
+#record stored resources
+store_data <- it_indpop[,c("id","store_a")]
+
+#Update datasets at the end of iteration
+#Here, you update the population and record the individual dynamics at the end of the iteration. In the end you remove the individuals who died to have the population ready for the next iteration
+
+#Update the population
 #combine original population with newborns
 it_indpop <- rbind(it_indpop,new_it_indpop)
 #remove NA in id
 it_indpop <- it_indpop[!is.na(it_indpop$id),]
 
+#Update iteration record
 #merge iteration records
 it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
   it_data,
@@ -238,13 +298,17 @@ it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
   transfers_data,
   repro_data,
   transition_data,
-  surv_data
+  surv_data,
+  store_data
 ))
 #record iteration
 it_data$year <- rep(1,length.out=nrow(it_data))
 
+#Update the population for next iteration
 #remove individual who died
 it_indpop <- it_indpop[!it_indpop$surv==0,]
+
+#Check that the population and iteration record look fine
 
 #check the population by the end of the iteration
 head(it_indpop)

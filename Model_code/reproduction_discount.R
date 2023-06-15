@@ -5,6 +5,6 @@
 #' This is a function that discounts the reproductive cost from the stored resources of an individual.
 
 reproduce_c <- function(it_indpop) {
-  it_indpop$store_a[i] <- it_indpop$store_a[i] - (repro_cost*it_indpop$repro[i])
-  return(it_indpop$store_a)
+  it_indpop$res_a[i] <- it_indpop$res_a[i] - (repro_cost*it_indpop$repro[i])
+  return(it_indpop$res_a)
 }

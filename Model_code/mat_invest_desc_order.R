@@ -2,18 +2,19 @@
 #'
 #' \code{desc_order} rearrange the descendants for the resource dynamics of maternal investment.
 #' 
-#' This is a function that substs and rearrange the order of the descendants in the population for the resource gain and discount due to maternal investment.
+#' This is a function that substitutes and rearrange the order of the descendants in the population for the resource gain and discount due to maternal investment.
 #'
 
 desc_order <- function(it_indpop){
-  if(sum(it_indpop$desc_need) > 0){
+  if(sum(it_indpop$desc_need[is.na(it_indpop$desc_need)==F]) > 0){
     #subset of descendants
-    it_descpop <- it_indpop[it_indpop$desc_need == 1,]
+    it_descpop <- it_indpop[is.na(it_indpop$desc_need)==F & it_indpop$desc_need == 1,]
     #order the descendants by need and mother id
     it_descpop[order(-it_descpop[,"desc_need"],it_descpop[,"mom_id"]),]
   } else{
     it_descpop <- data.frame(id=NA, #id
                              stage=NA, #life cycle stage
+                             res_a=NA, #resources available
                              store_a=NA, #stored resources
                              prod_o=NA, #production output
                              prod_a=NA, #production amount

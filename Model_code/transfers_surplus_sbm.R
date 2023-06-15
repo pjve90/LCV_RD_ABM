@@ -6,9 +6,9 @@
 
 max_deg <- function(it_indpop){
   if(it_indpop$stage[i]==3){
-    it_indpop$max_deg[i] <- it_indpop$store_a[i]-(surv_cost+repro_cost)
+    it_indpop$max_deg[i] <- it_indpop$res_a[i]-(surv_cost+repro_cost)
   }else{
-    it_indpop$max_deg[i] <- it_indpop$store_a[i]-ifelse(it_indpop$stage[i]==3,repro_thresh,surv_cost)
+    it_indpop$max_deg[i] <- it_indpop$res_a[i]-surv_cost
   }
   it_indpop$max_deg[it_indpop$max_deg < 0] <- 0
   return(it_indpop$max_deg)

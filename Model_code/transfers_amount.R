@@ -7,6 +7,6 @@
 transfers <- function(it_indpop){
   it_indpop$out_degree <- rowSums(network)
   it_indpop$in_degree <- colSums(network)
-  it_indpop$store_a[i] <- it_indpop$store_a[i] - it_indpop$out_degree[i] + it_indpop$in_degree[i]
+  it_indpop$res_a[i] <- it_indpop$res_a[i] - it_indpop$out_degree[i] + it_indpop$in_degree[i]
   return(it_indpop)
 }

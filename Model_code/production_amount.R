@@ -6,6 +6,6 @@
 
 produce_a <- function(it_indpop){
   it_indpop$prod_a[i] <- it_indpop$prod_o[i]*habitat[it_indpop$stage[i]]
-  it_indpop$store_a[i] <- it_indpop$store_a[i]+it_indpop$prod_a[i]
+  it_indpop$res_a[i] <- it_indpop$store_a[i]+it_indpop$prod_a[i]
   return(it_indpop)
 }

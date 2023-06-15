@@ -7,6 +7,7 @@
 create_initialpop <- function(popsize){
   it_indpop <- data.frame(id=1:popsize, #id
                           stage=c(rep(1,length.out=popsize/4),rep(2,length.out=popsize/4),rep(3,length.out=popsize/4),rep(4,length.out=popsize/4)), #life cycle stage
+                          res_a=rep(0,length.out=popsize), #resources available
                           store_a=rep(0,length.out=popsize), #stored resources
                           prod_a=rep(0,length.out=popsize), #production amount
                           mom_id=rep(NA,length.out=popsize), #mom id
