@@ -6,6 +6,6 @@
 
 store <- function(it_indpop){
   it_indpop$store_a[i] <- it_indpop$res_a[i]
-  return(it_indpop)
+  return(it_indpop$store_a)
 }
 

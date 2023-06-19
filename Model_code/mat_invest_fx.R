@@ -5,7 +5,7 @@
 #' This is a function that updates the amount of resources an individual has stored based on the flow of resources due to maternal investment. The amounts discounted for the mother are based on the amount of surplus for maternal investment (\code{mom_surplus_a}). The amount of resources gained by a descendant is based on the amount of resources needed to cover the survival costs (\code{desc_need_a}). If the mother does not have sufficient resources to cover the needs of the current descendant, she invest in the next one, until she runs out of surplus.
 
 mat_invest <- function(it_indpop){
-  if(it_mompop$mom_surplus_a[i] > 0){ #if the current individual is a mother of any descendants currently alive that need resources, and if she has a surplus of resources
+  if(it_mompop$mom_surplus_a[i] > 0 & nrow(it_mompop) > 0 & sum(is.na(it_descpop$id)) == 0){ #if the current individual is a mother of any descendants currently alive that need resources, and if she has a surplus of resources
       for(desc in 1:nrow(it_descpop_momsub)){   # Loop through all of the mother's descendants, starting with the offspring with the largest need
       if(it_mompop$mom_surplus_a[i] >= it_descpop_momsub$desc_need_a[desc]) { # If the mother has enough surplus to cover the need of her descendant, she invest
         it_mompop$mom_surplus_a[i] <- it_mompop$mom_surplus_a[i] - it_descpop_momsub$desc_need_a[desc]
