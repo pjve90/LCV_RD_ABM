@@ -13,9 +13,10 @@ mat_invest <- function(it_indpop){
         it_descpop$res_a[it_descpop$id == it_descpop_momsub] <- it_descpop_momsub$res_a
       }
     }
-    if(it_indpop$mom_surplus[it_mompop$id[i] %in% it_indpop$id]>0 ) {it_indpop$res_a[it_mompop$id[i] %in% it_indpop$id] <- it_mompop$mom_surplus_a[i]+surv_cost}
+    if(it_indpop$mom_surplus[it_mompop$id[i] %in% it_indpop$id]>0 ) {
+    it_indpop$res_a[it_mompop$id[i] %in% it_indpop$id] <- it_mompop$mom_surplus_a[i]+surv_cost
+    }
     it_indpop$res_a[it_indpop$id[i] %in% it_descpop$id] <- it_descpop$res_a[i]
   }
-  
-  return(it_indpop)
+return(it_indpop)
 }
