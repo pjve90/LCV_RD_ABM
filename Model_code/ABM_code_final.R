@@ -198,7 +198,8 @@ for (i in 1:nrow(it_mompop)){
   #subset descendants of mother
   it_descpop_momsub <- it_descpop[it_mompop$id[i] == it_descpop$mom_id,]
   #maternal investment
-  it_indpop <- mat_invest(it_indpop)
+  if(nrow(it_descpop_momsub)>0){
+  it_indpop <- mat_invest(it_indpop)}
 }
 
 #record maternal investment
