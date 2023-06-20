@@ -380,6 +380,8 @@ repro_cost <- surv_cost*10
 
 ### Run 100 iterations for all the population ----
 
+#Here, you run the simulation for a 100 iterations, resembling 100 years.
+
 #Define the number of years (iterations) you want to run the simulation
 years<-100
 
@@ -517,7 +519,8 @@ for (b in 1:years){
   it_indpop <- it_indpop[!is.na(it_indpop$id),]
   
   #merge iteration records
-  if(b==1){
+  #Here you differentiate the ways you record the outcomes of the first iteration from the next ones, this way you can keep identify what is happening in each iteration
+  if(b==1){ #first iteration
   it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
     resource_data,
     mat_invest_data,
@@ -529,7 +532,7 @@ for (b in 1:years){
   ))
   #record iteration
   it_data$year <- rep(b,length.out=nrow(it_data))
-  }else{
+  }else{ #other iterations
     it_data2 <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
       resource_data,
       mat_invest_data,
@@ -559,7 +562,13 @@ head(it_data)
 
 ## Calculate outcomes from the model ----
 
+#Now that the simulation is done and you have all the individual information from all the iterations, it is possible to calculate the different outcomes that are used to understand how the resource dynamics influente the variability of life cycles within a population.
+
+#The section is divided in two sub sections: first, the life history traits, and second by the resource dynamics
+
 ### Life history traits ----
+
+#Here you source the functions to calculate the different life history traits of interest: longevity, lifetime reproductive output, age at sexual maturity, first and last reproduction, and age at menopause. 
 
 #longevity
 source("life_history_lng.R")
@@ -581,11 +590,13 @@ source("life_history_meno.R")
 
 ### Calculate life history traits ----
 
+#In this section you run the different functions to calculate the different life history traits.
+
 #create dataset
-final_ind_data <- data.frame(id=1:max(it_dataf$id))
+final_ind_data <- data.frame(id=1:nrow(it_data))
 
 #calculate life history traits
-for(i in 1:max(it_dataf$id)){
+for(i in 1:max(it_data$id)){
   #life-history traits
   #longevity
   final_ind_data$lng <- longevity(final_ind_data)
@@ -605,6 +616,19 @@ for(i in 1:max(it_dataf$id)){
 head(final_ind_data)
 
 ### Resource dynamics ----
+
+#Here you source the functions to calculate the different resource dynamics - available, storage, production, and transfers -, and for each of them you are calculating the total, the average, and the coefficient of variation
+
+#### Resources available ----
+
+#total amount of resources available
+source("resources_available_total.R")
+
+#average amount of resources available
+source("resources_available_av.R")
+
+#variability of resources available
+source("resources_available_cv.R")
 
 #### Storage ----
 
@@ -654,51 +678,62 @@ source("resources_indeg_cv.R")
 
 ### Calculate resource dynamics ----
 
+#In this section you run the different functions to calculate the resource dynamics
+
 #calculate resource dynamics
-for(i in 1:max(it_dataf$id)){
+for(i in 1:max(it_data$id)){
   #resource dynamics
+  #available
+  #total
+  final_ind_data$available_total <- available_total(final_ind_data)
+  #average
+  final_ind_data$available_av <- available_av(final_ind_data)
+  #variability
+  final_ind_data$available_cv <- available_cv(final_ind_data)
   #storage
   #total
   final_ind_data$store_total <- storage_total(final_ind_data)
   #average
   final_ind_data$store_av <- storage_av(final_ind_data)
   #variability
-  final_ind_data$store_sd <- storage_cv(final_ind_data)
+  final_ind_data$store_cv <- storage_cv(final_ind_data)
   #production
   #total
   final_ind_data$prod_total <- produce_total(final_ind_data)
   #average
   final_ind_data$prod_av <- produce_av(final_ind_data)
   #variability
-  final_ind_data$prod_sd <- produce_cv(final_ind_data)
+  final_ind_data$prod_cv <- produce_cv(final_ind_data)
   #given away
   #total
   final_ind_data$outdeg_total <- outdegree_total(final_ind_data)
   #average
   final_ind_data$outdeg_av <- outdegree_av(final_ind_data)
   #variability
-  final_ind_data$outdeg_sd <- outdegree_cv(final_ind_data)
+  final_ind_data$outdeg_cv <- outdegree_cv(final_ind_data)
   #received
   #total
   final_ind_data$indeg_total <- indegree_total(final_ind_data)
   #average
   final_ind_data$indeg_av <- indegree_av(final_ind_data)
   #variability
-  final_ind_data$indeg_sd <- indegree_cv(final_ind_data)
+  final_ind_data$indeg_cv <- indegree_cv(final_ind_data)
 }
 
 #check dataset
 head(final_ind_data)
 
 #change NAs in standard deviation of resource dynamics into 0
+#available
+final_ind_data$available_cv[which(is.na(final_ind_data$available_cv)==TRUE)] <- 0
 #storage
-final_ind_data$store_sd[which(is.na(final_ind_data$store_sd)==TRUE)] <- 0
+final_ind_data$store_cv[which(is.na(final_ind_data$store_cv)==TRUE)] <- 0
 #production
-final_ind_data$prod_sd[which(is.na(final_ind_data$prod_sd)==TRUE)] <- 0
+final_ind_data$prod_cv[which(is.na(final_ind_data$prod_cv)==TRUE)] <- 0
 #given away
-final_ind_data$outdeg_sd[which(is.na(final_ind_data$outdeg_sd)==TRUE)] <- 0
+final_ind_data$outdeg_cv[which(is.na(final_ind_data$outdeg_cv)==TRUE)] <- 0
 #received
-final_ind_data$indeg_sd[which(is.na(final_ind_data$indeg_sd)==TRUE)] <- 0
+final_ind_data$indeg_cv[which(is.na(final_ind_data$indeg_cv)==TRUE)] <- 0
 
 ## Descriptive statistics ----
 

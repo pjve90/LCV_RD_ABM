@@ -5,6 +5,6 @@
 #' The average amount of resources produces by an individual throughout her whole lifespan is calculated by the average of produced resources in each iteration.
 
 produce_av <- function(final_ind_data){
-  final_ind_data$prod_av[i] <- mean(it_dataf[which(it_dataf$id==i),"prod_a"])
+  final_ind_data$prod_av[i] <- mean(it_data[which(it_data$id==i),"prod_a"])
   return(final_ind_data$prod_av)
 }
