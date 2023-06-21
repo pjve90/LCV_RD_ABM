@@ -5,6 +5,6 @@
 #' The variability of resources received by an individual throughout her whole lifespan is calculated by the coefficient of variation of resources received in each iteration.
 
 indegree_cv <- function(final_ind_data){
-  final_ind_data$indeg_cv[i] <- sd(it_data[which(it_data$id==i),"in_degree"])/mean(it_data[which(it_data$id==i),"in_degree"])
+  final_ind_data$indeg_cv[i] <- sd(it_dataf[which(it_dataf$id==i),"in_degree"])/mean(it_dataf[which(it_dataf$id==i),"in_degree"])
   return(final_ind_data$indeg_cv)
 }

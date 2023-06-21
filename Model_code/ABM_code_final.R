@@ -309,6 +309,8 @@ it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
 it_data$year <- rep(1,length.out=nrow(it_data))
 
 #Update the population for next iteration
+#Update the maximum id
+max_id <- max(it_data$id)
 #remove individual who died
 it_indpop <- it_indpop[!it_indpop$surv==0,]
 
@@ -384,14 +386,13 @@ repro_cost <- surv_cost*10
 
 #Define the number of years (iterations) you want to run the simulation
 years<-100
+#Maximum id
+#you record the maximum id so the id of the new individuals start after the existing one
+max_id <- max(it_data$id)
 
 #Run the simulation
 for (b in 1:years){
-  
-  #Maximum id
-  #you record the maximum id so the id of the new individuals start after the existing one
-  max_id <- max(it_data$id)
-  
+
   #production
   #you run the production function for every individual in the population, and record the amount of resources produced and available
   for (i in 1:nrow(it_indpop)){
@@ -550,6 +551,9 @@ for (b in 1:years){
     #update it_data for rbind
     it_data <- it_dataf
   }
+  
+  #Update the maximum id
+  max_id <- max(it_data$id)
   #remove individuals that died
   it_indpop <- it_indpop[!it_indpop$surv==0,]
 

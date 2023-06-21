@@ -25,7 +25,6 @@ newborns <- function(new_it_indpop){
                             surv=rep(1,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"])), #survival output
                             age=c(rep(0,length.out=sum(it_indpop[which(it_indpop$repro==1),"repro"]))) #age
     )
-    it_indpop <- rbind(it_indpop,new_it_indpop) #combine original population with newborns
   } else{
     new_it_indpop <- data.frame(id=NA, #id
                                 stage=NA, #life cycle stage
