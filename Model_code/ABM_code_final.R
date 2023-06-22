@@ -114,7 +114,22 @@ popsize <- 100
 it_indpop<-create_initialpop(popsize)
 
 #create data frame to record the individual dynamics in each iteration
-it_data <- data.frame(id=1:nrow(it_indpop))
+it_data <- data.frame(id=1:popsize)
+# , #id
+#                       stage=rep(NA,length.out=popsize), #life cycle stage
+#                       res_a=rep(NA,length.out=popsize), #resources available
+#                       store_a=rep(NA,length.out=popsize), #stored resources
+#                       prod_a=rep(NA,length.out=popsize), #production amount
+#                       mom_surplus_a=rep(NA,length.out=popsize), #mom surplus amount
+#                       desc_need_a=rep(NA,length.out=popsize), #descendant need amount
+#                       in_degree=rep(NA,length.out=popsize), #amount of resources received
+#                       out_degree=rep(NA,length.out=popsize), #amount of resources given away
+#                       repro=rep(NA,length.out=popsize), #reproduction output
+#                       lro=rep(NA,length.out=popsize), #lifetime reproductive output
+#                       tlr=rep(NA,length.out=popsize), #time since last reproduction
+#                       surv=rep(NA,length.out=popsize), #survival output
+#                       age=rep(NA,length.out=popsize)
+# )
 
 #create data frame to record need of descendants, necessary for maternal investment
 it_descpop <- data.frame(id=1:nrow(it_indpop))
@@ -522,38 +537,70 @@ for (b in 1:years){
   #merge iteration records
   #Here you differentiate the ways you record the outcomes of the first iteration from the next ones, this way you can keep identify what is happening in each iteration
   if(b==1){ #first iteration
-  it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
-    resource_data,
-    mat_invest_data,
-    transfers_data,
-    repro_data,
-    transition_data,
-    surv_data,
-    store_data
-  ))
+  it_data <- it_indpop[,c("id",
+                          "prod_a",
+                          "mom_id",
+                          "mom_surplus_a",
+                          "desc_need_a",
+                          "out_degree",
+                          "in_degree",
+                          "res_a",
+                          "repro",
+                          "lro",
+                          "tlr",
+                          "stage",
+                          "surv",
+                          "age",
+                          "store_a"
+                          )]
+  #   Reduce(function(x,y)merge(x,y,all=TRUE),list(
+  #   resource_data,
+  #   mat_invest_data,
+  #   transfers_data,
+  #   repro_data,
+  #   transition_data,
+  #   surv_data,
+  #   store_data
+  # ))
   #record iteration
   it_data$year <- rep(b,length.out=nrow(it_data))
+  #update it_dataf for rbind
+  it_dataf <- it_data
   }else{ #other iterations
-    it_data2 <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
-      resource_data,
-      mat_invest_data,
-      transfers_data,
-      repro_data,
-      transition_data,
-      surv_data,
-      store_data
-    ))
-    #record iteration
-    it_data2$year <- rep(b,length.out=nrow(it_data2))
+    it_data <- it_indpop[,c("id",
+                            "prod_a",
+                            "mom_id",
+                            "mom_surplus_a",
+                            "desc_need_a",
+                            "out_degree",
+                            "in_degree",
+                            "res_a",
+                            "repro",
+                            "lro",
+                            "tlr",
+                            "stage",
+                            "surv",
+                            "age",
+                            "store_a"
+    )]
+  #   it_data2 <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
+  #     resource_data,
+  #     mat_invest_data,
+  #     transfers_data,
+  #     repro_data,
+  #     transition_data,
+  #     surv_data,
+  #     store_data
+  #   ))
+  #   #record iteration
+    it_data$year <- rep(b,length.out=nrow(it_data))
     #merge with previous iteration records
-    it_dataf <- rbind(it_data,it_data2)
+    it_dataf <- rbind(it_dataf,it_data)
     it_dataf <- it_dataf[order(it_dataf$id),]
-    #update it_data for rbind
-    it_data <- it_dataf
   }
   
   #Update the maximum id
-  max_id <- max(it_data$id)
+  max_id <- max(it_dataf$id)
   #remove individuals that died
   it_indpop <- it_indpop[!it_indpop$surv==0,]
 
