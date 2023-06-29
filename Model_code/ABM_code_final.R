@@ -48,14 +48,20 @@ source("mat_invest_fx.R")
 
 ### Resource transfers ----
 
-#Define the block matrix
-source("transfers_blockmatrix_fx.R")
+#Softmax function
+source("transfers_softmax_fx.R")
+
+#Self nominations
+source("transfers_self_nom.R")
+
+#Define the stage-specific probabilities for each individual
+source("transfers_blockprobs_fx.R")
 
 #Define the surplus for transfers (max out degree in the network)
-source("transfers_surplus_sbm.R")
+source("transfers_surplus_maxdeg.R")
 
 #Generate the network
-source("transfers_sbm_fx.R")
+source("transfers_sbm_multinom_fx.R")
 
 #Record the resources transferred
 source("transfers_amount.R") 
@@ -105,7 +111,7 @@ source("storage_fx.R")
 
 ### Define auxiliary variables and parameters for initialisation ----
 
-#Initial population
+#Initial population 
 #Here, you define the population size, create a data frame for the initial population, another one to record the output of each iteration, and one to record the need of descendants, for the maternal investment dynamics.
 
 #population size = 100
@@ -115,21 +121,6 @@ it_indpop<-create_initialpop(popsize)
 
 #create data frame to record the individual dynamics in each iteration
 it_data <- data.frame(id=1:popsize)
-# , #id
-#                       stage=rep(NA,length.out=popsize), #life cycle stage
-#                       res_a=rep(NA,length.out=popsize), #resources available
-#                       store_a=rep(NA,length.out=popsize), #stored resources
-#                       prod_a=rep(NA,length.out=popsize), #production amount
-#                       mom_surplus_a=rep(NA,length.out=popsize), #mom surplus amount
-#                       desc_need_a=rep(NA,length.out=popsize), #descendant need amount
-#                       in_degree=rep(NA,length.out=popsize), #amount of resources received
-#                       out_degree=rep(NA,length.out=popsize), #amount of resources given away
-#                       repro=rep(NA,length.out=popsize), #reproduction output
-#                       lro=rep(NA,length.out=popsize), #lifetime reproductive output
-#                       tlr=rep(NA,length.out=popsize), #time since last reproduction
-#                       surv=rep(NA,length.out=popsize), #survival output
-#                       age=rep(NA,length.out=popsize)
-# )
 
 #create data frame to record need of descendants, necessary for maternal investment
 it_descpop <- data.frame(id=1:nrow(it_indpop))
@@ -146,18 +137,6 @@ maxprod <- max_production(habitat_quality)
 max_prod_prob <- 0.5
 #stage-specific production probabilities.
 prod_prob <- production_prob(max_prod_prob)
-
-#Resource transfers
-#Here, you define the number of blocks, which is the number of life cycle stages, as well as the overall transfer probability used as reference to build the block matrix.
-
-#specify the number of blocks
-num_blocks <- 4
-
-#overall tendency to transfer resources
-prob_ties <- 1e-10
-
-#create block matrix
-block_probs <- blockmatrix(prob_ties)
 
 #Survival
 #Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
@@ -230,12 +209,19 @@ mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
 for (i in 1:nrow(it_indpop)){
   it_indpop$max_deg <- max_deg(it_indpop)
 }
+#define self nominations
+self_noms <- create_self_noms(nrow(it_indpop), #population size
+                              1 #self nomination
+                              )
+#define individual block probabilities
+block_probs <- create_block_probs(nrow(it_indpop), #population size
+                                  it_indpop$stage #life cycle stages of individuals in the population
+                                  )
 #generate network
-network <- simulate_SBM_max_degree(nrow(it_indpop), #number of individuals
-                                   as.vector(table(it_indpop$stage)), #number of individuals per life cycle stage
-                                   block_probs, #block matrix
+network <- simulate_SBM_multinomial(nrow(it_indpop), #number of individuals
                                    it_indpop$max_deg, #maximum out degree per individual
-                                   it_indpop$stage #life cycle stage of each individual
+                                   block_probs, #individual block matrices
+                                   self_noms #self nominations
                                    )
 #record resource transfers
 for (i in 1:nrow(it_indpop)){
@@ -310,16 +296,22 @@ it_indpop <- it_indpop[!is.na(it_indpop$id),]
 
 #Update iteration record
 #merge iteration records
-it_data <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
-  it_data,
-  resource_data,
-  mat_invest_data,
-  transfers_data,
-  repro_data,
-  transition_data,
-  surv_data,
-  store_data
-))
+it_data <- it_indpop[,c("id",
+                        "prod_a",
+                        "mom_id",
+                        "mom_surplus_a",
+                        "desc_need_a",
+                        "out_degree",
+                        "in_degree",
+                        "res_a",
+                        "repro",
+                        "lro",
+                        "tlr",
+                        "stage",
+                        "surv",
+                        "age",
+                        "store_a"
+)]
 #record iteration
 it_data$year <- rep(1,length.out=nrow(it_data))
 
@@ -340,7 +332,7 @@ head(it_data)
 
 ### Define auxiliary variables and parameters for initialisation ----
 
-#Initial population
+#Initial population 
 #Here, you define the population size, create a data frame for the initial population, another one to record the output of each iteration, and one to record the need of descendants, for the maternal investment dynamics.
 
 #population size = 100
@@ -348,9 +340,8 @@ popsize <- 100
 #create population
 it_indpop<-create_initialpop(popsize)
 
-#create data frames to record the individual dynamics in each iteration
-#initial iteration
-it_data <- data.frame(id=1:nrow(it_indpop))
+#create data frame to record the individual dynamics in each iteration
+it_data <- data.frame(id=1:popsize)
 
 #create data frame to record need of descendants, necessary for maternal investment
 it_descpop <- data.frame(id=1:nrow(it_indpop))
@@ -367,18 +358,6 @@ maxprod <- max_production(habitat_quality)
 max_prod_prob <- 0.5
 #stage-specific production probabilities.
 prod_prob <- production_prob(max_prod_prob)
-
-#Resource transfers
-#Here, you define the number of blocks, which is the number of life cycle stages, as well as the overall transfer probability used as reference to build the block matrix.
-
-#specify the number of blocks
-num_blocks <- 4
-
-#overall tendency to transfer resources
-prob_ties <- 1e-10
-
-#create block matrix
-block_probs <- blockmatrix(prob_ties)
 
 #Survival
 #Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
@@ -456,12 +435,19 @@ for (b in 1:years){
   for (i in 1:nrow(it_indpop)){
     it_indpop$max_deg <- max_deg(it_indpop)
   }
+  #define self nominations
+  self_noms <- create_self_noms(nrow(it_indpop), #population size
+                                1 #self nomination
+  )
+  #define individual block probabilities
+  block_probs <- create_block_probs(nrow(it_indpop), #population size
+                                    it_indpop$stage #life cycle stages of individuals in the population
+  )
   #generate network
-  network <- simulate_SBM_max_degree(nrow(it_indpop), #number of individuals
-                                     as.vector(table(it_indpop$stage)), #number of individuals per life cycle stage
-                                     block_probs, #block matrix
-                                     it_indpop$max_deg, #maximum out degree per individual
-                                     it_indpop$stage #life cycle stage of each individual
+  network <- simulate_SBM_multinomial(nrow(it_indpop), #number of individuals
+                                      it_indpop$max_deg, #maximum out degree per individual
+                                      block_probs, #individual block matrices
+                                      self_noms #self nominations
   )
   #record resource transfers
   for (i in 1:nrow(it_indpop)){
@@ -553,15 +539,6 @@ for (b in 1:years){
                           "age",
                           "store_a"
                           )]
-  #   Reduce(function(x,y)merge(x,y,all=TRUE),list(
-  #   resource_data,
-  #   mat_invest_data,
-  #   transfers_data,
-  #   repro_data,
-  #   transition_data,
-  #   surv_data,
-  #   store_data
-  # ))
   #record iteration
   it_data$year <- rep(b,length.out=nrow(it_data))
   #update it_dataf for rbind
@@ -583,16 +560,7 @@ for (b in 1:years){
                             "age",
                             "store_a"
     )]
-  #   it_data2 <- Reduce(function(x,y)merge(x,y,all=TRUE),list(
-  #     resource_data,
-  #     mat_invest_data,
-  #     transfers_data,
-  #     repro_data,
-  #     transition_data,
-  #     surv_data,
-  #     store_data
-  #   ))
-  #   #record iteration
+    #record iteration
     it_data$year <- rep(b,length.out=nrow(it_data))
     #merge with previous iteration records
     it_dataf <- rbind(it_dataf,it_data)
