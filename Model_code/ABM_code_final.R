@@ -138,6 +138,25 @@ max_prod_prob <- 0.5
 #stage-specific production probabilities.
 prod_prob <- production_prob(max_prod_prob)
 
+#Resource transfers
+#Here you define the number of life cycle stages, and the block matrix with its original probabilities, and log-odds transformation.
+
+#number of life cycle stages
+num_stages <- 4
+
+#block matrix
+#original probabilities
+blockmatrix <- matrix(c(
+  0.25,0.75,0.75,0.75, #juvenile column
+  0.25,0.25,0.25,0.25, #adult column
+  0.25,0.4,0.4,0.5, #reproductive career column
+  0.25,0.5,0.5,0.4 #post-reproductive career column
+),
+nrow=num_stages,ncol=num_stages #matrix dimensions
+)
+#transform into log-odds
+logodds_blockm <- log(blockmatrix/(1-blockmatrix))
+
 #Survival
 #Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
 
