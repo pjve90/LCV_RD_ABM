@@ -111,7 +111,7 @@ source("storage_fx.R")
 
 ### Define auxiliary variables and parameters for initialisation ----
 
-#Initial population 
+#### Initial population ----
 #Here, you define the population size, create a data frame for the initial population, another one to record the output of each iteration, and one to record the need of descendants, for the maternal investment dynamics.
 
 #population size = 100
@@ -125,7 +125,7 @@ it_data <- data.frame(id=1:popsize)
 #create data frame to record need of descendants, necessary for maternal investment
 it_descpop <- data.frame(id=1:nrow(it_indpop))
 
-#Resource production
+#### Resource production ----
 #Here, you define the habitat quality and the maximum production probability
 
 #habitat quality
@@ -138,7 +138,7 @@ max_prod_prob <- 0.5
 #stage-specific production probabilities.
 prod_prob <- production_prob(max_prod_prob)
 
-#Resource transfers
+#### Resource transfers ----
 #Here you define the number of life cycle stages, and the block matrix with its original probabilities, and log-odds transformation.
 
 #number of life cycle stages
@@ -157,13 +157,13 @@ nrow=num_stages,ncol=num_stages #matrix dimensions
 #transform into log-odds
 logodds_blockm <- log(blockmatrix/(1-blockmatrix))
 
-#Survival
+#### Survival ----
 #Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
 
 #survival cost
 surv_cost <- 1
 
-#Reproduction
+#### Reproduction ----
 #Here, you define the number of descendants an individual can have per reproductive event, as well as the reproductive cost, which is the amount of resources that an individual needs to produce a new descendant.
 
 #number of descendants per reproduction
@@ -351,7 +351,7 @@ head(it_data)
 
 ### Define auxiliary variables and parameters for initialisation ----
 
-#Initial population 
+#### Initial population ----
 #Here, you define the population size, create a data frame for the initial population, another one to record the output of each iteration, and one to record the need of descendants, for the maternal investment dynamics.
 
 #population size = 100
@@ -365,7 +365,7 @@ it_data <- data.frame(id=1:popsize)
 #create data frame to record need of descendants, necessary for maternal investment
 it_descpop <- data.frame(id=1:nrow(it_indpop))
 
-#Resource production
+#### Resource production ----
 #Here, you define the habitat quality and the maximum production probability
 
 #habitat quality
@@ -378,13 +378,32 @@ max_prod_prob <- 0.5
 #stage-specific production probabilities.
 prod_prob <- production_prob(max_prod_prob)
 
-#Survival
+#### Resource transfers ----
+#Here you define the number of life cycle stages, and the block matrix with its original probabilities, and log-odds transformation.
+
+#number of life cycle stages
+num_stages <- 4
+
+#block matrix
+#original probabilities
+blockmatrix <- matrix(c(
+  0.25,0.75,0.75,0.75, #juvenile column
+  0.25,0.25,0.25,0.25, #adult column
+  0.25,0.4,0.4,0.5, #reproductive career column
+  0.25,0.5,0.5,0.4 #post-reproductive career column
+),
+nrow=num_stages,ncol=num_stages #matrix dimensions
+)
+#transform into log-odds
+logodds_blockm <- log(blockmatrix/(1-blockmatrix))
+
+#### Survival ----
 #Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
 
 #survival cost
 surv_cost <- 1
 
-#Reproduction
+#### Reproduction ----
 #Here, you define the number of descendants an individual can have per reproductive event, as well as the reproductive cost, which is the amount of resources that an individual needs to produce a new descendant.
 
 #number of descendants per reproduction
@@ -398,7 +417,7 @@ repro_cost <- surv_cost*10
 #Here, you run the simulation for a 100 iterations, resembling 100 years.
 
 #Define the number of years (iterations) you want to run the simulation
-years<-100
+years<-300
 #Maximum id
 #you record the maximum id so the id of the new individuals start after the existing one
 max_id <- max(it_data$id)

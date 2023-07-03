@@ -11,28 +11,27 @@ create_block_probs <- function(N, block_assignments) {
   
   for (i in 1:N) {
     block <- block_assignments[i]
-    vector_length <- block_sizes[block]
     
     if (block == 1) {
-      vector <- c(rep(logodds_blockm[1,1], vector_length),
-                  rep(logodds_blockm[1,2], vector_length),
-                  rep(logodds_blockm[1,3], vector_length),
-                  rep(logodds_blockm[1,4], vector_length))
+      vector <- c(rep(logodds_blockm[1,1], block_sizes[1]),
+                  rep(logodds_blockm[1,2], block_sizes[2]),
+                  rep(logodds_blockm[1,3], block_sizes[3]),
+                  rep(logodds_blockm[1,4], block_sizes[4]))
     } else if (block == 2) {
-      vector <- c(rep(logodds_blockm[2,1], vector_length),
-                  rep(logodds_blockm[2,2], vector_length),
-                  rep(logodds_blockm[2,3], vector_length),
-                  rep(logodds_blockm[2,4], vector_length))
+      vector <- c(rep(logodds_blockm[2,1], block_sizes[1]),
+                  rep(logodds_blockm[2,2], block_sizes[2]),
+                  rep(logodds_blockm[2,3], block_sizes[3]),
+                  rep(logodds_blockm[2,4], block_sizes[4]))
     } else if (block == 3) {
-      vector <- c(rep(logodds_blockm[3,1], vector_length),
-                  rep(logodds_blockm[3,2], vector_length),
-                  rep(logodds_blockm[3,3], vector_length),
-                  rep(logodds_blockm[3,4], vector_length))
+      vector <- c(rep(logodds_blockm[3,1], block_sizes[1]),
+                  rep(logodds_blockm[3,2], block_sizes[2]),
+                  rep(logodds_blockm[3,3], block_sizes[3]),
+                  rep(logodds_blockm[3,4], block_sizes[4]))
     } else if (block == 4) {
-      vector <- c(rep(logodds_blockm[4,1], vector_length),
-                  rep(logodds_blockm[4,2], vector_length),
-                  rep(logodds_blockm[4,3], vector_length),
-                  rep(logodds_blockm[4,4], vector_length))
+      vector <- c(rep(logodds_blockm[4,1], block_sizes[1]),
+                  rep(logodds_blockm[4,2], block_sizes[2]),
+                  rep(logodds_blockm[4,3], block_sizes[3]),
+                  rep(logodds_blockm[4,4], block_sizes[4]))
     }
     
     vectors[[i]] <- vector
