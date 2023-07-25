@@ -347,6 +347,9 @@ head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_data)
 
+
+
+
 ## Run 100 iterations ----
 
 ### Define auxiliary variables and parameters for initialisation ----
@@ -369,7 +372,7 @@ it_descpop <- data.frame(id=1:nrow(it_indpop))
 #Here, you define the habitat quality and the maximum production probability
 
 #habitat quality
-habitat_quality <- 4
+habitat_quality <- 6
 #stage-specific maximum amount of resource production.
 maxprod <- max_production(habitat_quality)
 
@@ -410,7 +413,7 @@ surv_cost <- 1
 n_desc <- 1
 
 #reproductive cost
-repro_cost <- surv_cost*10
+repro_cost <- surv_cost*5
 
 ### Run 100 iterations for all the population ----
 
@@ -609,13 +612,20 @@ for (b in 1:years){
   max_id <- max(it_dataf$id)
   #remove individuals that died
   it_indpop <- it_indpop[!it_indpop$surv==0,]
-
+  print(b)
 }
 
 #check the population by the end of the iteration
 head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_data)
+
+#Check change in number of individuals in the population over time
+library(dplyr)
+as.data.frame(it_dataf %>% group_by(year) %>% summarize(n()))
+
+#Check the change in average age over the years (shouldn't change if population stable)
+as.data.frame(it_dataf %>% group_by(year) %>% summarize(mean(age)))
 
 ## Calculate outcomes from the model ----
 

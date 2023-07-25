@@ -5,7 +5,7 @@
 #' The definition of the surplus of resources for an individual is calculated based on the amount of extra resources that an individual has, after accounting for the costs of survival.
 
 max_deg <- function(it_indpop){
-  if(it_indpop$stage[i]==3){
+  if(it_indpop$stage[i]==2 | it_indpop$stage[i]==3){
     it_indpop$max_deg[i] <- it_indpop$res_a[i]-(surv_cost+repro_cost)
   }else{
     it_indpop$max_deg[i] <- it_indpop$res_a[i]-surv_cost
