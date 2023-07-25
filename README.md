@@ -9,5 +9,3 @@ The coding files are developed with the R programming language.
 You can also access the manuscript, and edit, in the following link:
 
 https://sharelatex.gwdg.de/9557269544zmvgdgkfydmz
-
-Note that it may open in a random .tex file (e.g. reading_list.tex), but you just need to go the menu in the left, select "Manuscript drafts" and then the one called "PCIRR.tex".
