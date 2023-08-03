@@ -170,7 +170,10 @@ surv_cost <- 1
 n_desc <- 1
 
 #reproductive cost
-repro_cost <- surv_cost*10
+repro_cost <- surv_cost*2
+
+#reproductive threshold
+repro_thresh <- repro_cost*5
 
 ### Run one iteration for all the population ----
 
@@ -413,7 +416,10 @@ surv_cost <- 1
 n_desc <- 1
 
 #reproductive cost
-repro_cost <- surv_cost*5
+repro_cost <- surv_cost*2
+
+#reproductive threshold
+repro_thresh <- repro_cost*5
 
 ### Run 100 iterations for all the population ----
 

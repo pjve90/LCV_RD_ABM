@@ -6,14 +6,14 @@
 
 #transition
 transition <- function(it_indpop){
-  if(it_indpop$stage[i]==1 & it_indpop$age[i] >= 10 & it_indpop$res_a[i] >= surv_cost+repro_cost){ #transition juvenile to adult
+  if(it_indpop$stage[i]==1 & it_indpop$age[i] >= 10 & it_indpop$res_a[i] >= repro_thresh){ #transition juvenile to adult
     it_indpop$res_a[i] <- it_indpop$res_a[i] - repro_cost
     it_indpop$stage[i] <- 2
   }    else
     if(it_indpop$stage[i]==1 & it_indpop$age[i]>=18 ){ #forced transition from juvenile to adult
       it_indpop$stage[i] <- 2
     } else
-    if(it_indpop$stage[i]==2 & it_indpop$res_a[i] >= surv_cost+repro_cost){ #transition adult to reproductive career
+    if(it_indpop$stage[i]==2 & it_indpop$res_a[i] >= repro_thresh){ #transition adult to reproductive career
         it_indpop$res_a[i] <- it_indpop$res_a[i] - repro_cost
         it_indpop$repro[i] <- 1
         it_indpop$stage[i] <- 3
@@ -24,7 +24,7 @@ transition <- function(it_indpop){
       if(it_indpop$stage[i]==2 & it_indpop$age[i]>=60 ){ #forced transition adult to post-reproductive
         it_indpop$stage[i] <- 4
       } else 
-        if(it_indpop$stage[i]==3 & it_indpop$age[i] >=40 & it_indpop$res_a[i] <= repro_cost & it_indpop$tlr[i] >= 10){ #transition reproductive career to post-reproductive career
+        if(it_indpop$stage[i]==3 & it_indpop$age[i] >=40 & it_indpop$res_a[i] <= repro_thresh & it_indpop$tlr[i] >= 10){ #transition reproductive career to post-reproductive career
           it_indpop$stage[i] <- 4
         }
          else
