@@ -6,7 +6,6 @@
 
 production_prob <- function(max_prod_prob){
   stage_prod_prob <- c(0.2,1,1,0.7) #stage-specific offset in the probabilities of production for an individual
-  prod_prob <- round(max_prod_prob * stage_prod_prob,1) #stage-specific production probabilities
-  names(prod_prob) <- c("juvenile","adult","reproductive career", "post-reproductive")
+  prod_prob <- round(outer(stage_prod_prob,max_prod_prob,"*"),2) #stage-specific production probabilities
   return(prod_prob)
 }

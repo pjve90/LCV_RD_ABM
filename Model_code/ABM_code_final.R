@@ -4,7 +4,7 @@
 
 #set working directory
 getwd()
-setwd("./LCV_RD_ABM/Model_code")
+setwd("./Model_code")
 
 ## Sourcing functions ----
 
@@ -349,9 +349,6 @@ it_indpop <- it_indpop[!it_indpop$surv==0,]
 head(it_indpop)
 #check the recorded data by the end of the iteration
 head(it_data)
-
-
-
 
 ## Run 100 iterations ----
 
