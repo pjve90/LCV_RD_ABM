@@ -10,7 +10,7 @@
 
 #set working directory
 getwd()
-setwd("./LCV_RD_ABM")
+setwd("./LCV_RD_ABM/Model_Code")
 
 #install packages
 #parallel package
@@ -738,18 +738,41 @@ head(it_data)
 
 ##Parameter sweep ----
 
+
+# Initialize a list to store results for each 'd'
+simulation_results <- list()
+
 #value of parameter sweep
 for(d in 1:ncol(prod_prob)){
-
+  
+  cat("Starting simulation for d =", d, "\n")
+  
 #Define the number of years (iterations) you want to run the simulation
 years<-300
 #Maximum id
 #you record the maximum id so the id of the new individuals start after the existing one
 max_id <- max(it_data$id)
+#initial population
+it_indpop<-create_initialpop(popsize)
 
 #Run the simulation
 for (b in 1:years){
   
+  if(nrow(it_indpop)==0){
+    warning("No individuals in it_indpop for year ", b, " and parameter value =", d)
+    # Create empty it_data with consistent structure (for the current iteration)
+    it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
+                          mom_surplus_a = NA, desc_need_a = NA,
+                          out_degree = NA, in_degree = NA,
+                          res_a = NA, repro = NA, lro = NA,
+                          tlr = NA, stage = NA, surv = NA,
+                          age = NA, store_a = NA, year = NA)
+    
+    # Combine the previous data with the empty one
+    it_dataf <- rbind(it_dataf, it_data)
+    
+    break # skip the rest of the loop for this iteration
+  }else{
   #production
   #you run the production function for every individual in the population, and record the amount of resources produced and available
   for (i in 1:nrow(it_indpop)){
@@ -906,9 +929,26 @@ for (b in 1:years){
   max_id <- max(it_dataf$id)
   #remove individuals that died
   it_indpop <- it_indpop[!it_indpop$surv==0,]
-  print(b)
+  
+  # Print year for progress tracking
+  if (b %% 10 == 0) {  # Adjust the modulus for desired frequency
+    cat("d =", d, ": Year", b, "completed\n")
+  }
+  
+  }
 }
-}
+  
+  # After completing all years for this 'd', store the results
+  simulation_results[[paste0("d_", d)]] <- list(
+    it_dataf = it_dataf,
+    final_it_data = it_data,
+    final_it_indpop = it_indpop
+  )
+  
+  cat("Completed simulation for d =", d, "\n\n")
+  
+  }
+
 #check the population by the end of the iteration
 head(it_indpop)
 #check the recorded data by the end of the iteration
@@ -948,12 +988,14 @@ registerDoParallel(cl = my_cluster)
 getDoParRegistered() #if the cluster is registered
 getDoParWorkers() #number of cores registered
 
+# Create and open a log file
+writeLines(c(""), "log.txt")
 
-##### Parameter sweep for one iteration -----
+##### Parameter sweep for 300 iterations -----
 
 #paralellise the parameter sweep
 results <- foreach(d = 1:ncol(prod_prob),
-                   .combine='rbind',
+                   .combine="list",
                    .export=c("produce",
                              "mom_surplus",
                              "mom_surplus_a",
@@ -974,31 +1016,45 @@ results <- foreach(d = 1:ncol(prod_prob),
                    )
 ) %dopar% {
 
+    # Use unique log file for each task (d)
+    log_file <- paste0("log_", d, ".txt")
+    
+    # Use tryCatch to manage any errors
+    tryCatch({
+      
+    # Start logging both cat() and message() output to log_d.txt
+    sink(log_file, append = TRUE)
+    # Redirect messages and warnings to the same log file
+    sink(log_file, append = TRUE, type = "message")
+    
+  cat("\n","Starting simulation for d =", d, "\n")
+    
   #Define the number of years (iterations) you want to run the simulation
   years<-300
   #Maximum id
   #you record the maximum id so the id of the new individuals start after the existing one
   max_id <- max(it_data$id)
-  
-  # Check if the population is already extinct before starting
-  if (nrow(it_indpop)==0) {
-    message("Initial population is extinct.")
-    
-    # Create empty it_data with consistent structure (for the current iteration)
-    it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA, 
-                          mom_surplus_a = NA, desc_need_a = NA, 
-                          out_degree = NA, in_degree = NA, 
-                          res_a = NA, repro = NA, lro = NA, 
-                          tlr = NA, stage = NA, surv = NA, 
-                          age = NA, store_a = NA, year = NA)
-    
-    return(list(it_dataf = it_dataf, it_data = it_data, it_indpop = it_indpop))
-  }
+  #initial population
+  it_indpop<-create_initialpop(popsize)
   
   #Run the simulation
   for (b in 1:years){
     
-    #production
+    if(nrow(it_indpop)==0){
+      warning("No individuals in it_indpop for year ", b, " and parameter value =", d)
+      # Create empty it_data with consistent structure (for the current iteration)
+      it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
+                            mom_surplus_a = NA, desc_need_a = NA,
+                            out_degree = NA, in_degree = NA,
+                            res_a = NA, repro = NA, lro = NA,
+                            tlr = NA, stage = NA, surv = NA,
+                            age = NA, store_a = NA, year = NA)
+      
+      # Combine the previous data with the empty one
+      it_dataf <- rbind(it_dataf, it_data)
+      
+      break # skip the rest of the loop for this iteration
+    }else{#production
     #you run the production function for every individual in the population, and record the amount of resources produced and available
     for (i in 1:nrow(it_indpop)){
       #resource production
@@ -1170,10 +1226,17 @@ results <- foreach(d = 1:ncol(prod_prob),
     #remove individuals that died
     it_indpop <- it_indpop[!it_indpop$surv==0,]
     
+    
     }
-
-  return(list(it_dataf = it_dataf, it_data = it_data, it_indpop = it_indpop))
+  }
   
+  cat("Completed simulation for d =", d, "\n\n")
+  
+    }, finally = {
+      # Always close the sink properly, even in case of errors
+      if (sink.number() > 0) sink()  # Close stdout sink
+      if (sink.number("message") > 0) sink(type = "message")  # Close stderr sink
+    })
 }
 
 # Stop the cluster after computation
