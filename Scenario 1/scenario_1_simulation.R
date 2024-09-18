@@ -739,7 +739,7 @@ head(it_data)
 logger_path <- getwd()
 
 get_logger_file_name <- function(file_name="log_file"){   
-  file_name <- paste(file_name,format(Sys.time(), "%Y%m%d"),sep="_")
+  file_name <- paste(file_name,format(Sys.time(), "%d_%m_%Y"),sep="_")
   file_name <- paste(logger_path, paste(file_name,"log", sep="."), sep="/")
   return(file_name)
 }
@@ -776,7 +776,8 @@ for(d in 1:ncol(prod_prob)){
   for (b in 1:years){
     
     if(nrow(it_indpop)==0){
-      warning("No individuals in it_indpop for year ", b, " and parameter value =", d)
+      cat("No individuals in it_indpop for year ", b, " and parameter value =", d,"\n")
+      recordlogger("No individuals in it_indpop for year ", b, " and parameter value =", d,"\n")
       # Create empty it_data with consistent structure (for the current iteration)
       it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
                             mom_surplus_a = NA, desc_need_a = NA,
@@ -1011,8 +1012,9 @@ registerDoParallel(cl = my_cluster)
 getDoParRegistered() #if the cluster is registered
 getDoParWorkers() #number of cores registered
 
-# Create and open a log file
-writeLines(c(""), "log.txt")
+##### Log file ----
+
+writeLines(c(""),"log.txt")
 
 ##### Parameter sweep for 300 iterations -----
 
@@ -1039,18 +1041,9 @@ results <- foreach(d = 1:ncol(prod_prob),
                    )
 ) %dopar% {
 
-    # Use unique log file for each task (d)
-    log_file <- paste0("log_", d, ".txt")
-    
-    # Use tryCatch to manage any errors
-    tryCatch({
-      
-    # Start logging both cat() and message() output to log_d.txt
-    sink(log_file, append = TRUE)
-    # Redirect messages and warnings to the same log file
-    sink(log_file, append = TRUE, type = "message")
-    
-  cat("\n","Starting simulation for d =", d, "\n")
+  sink("log.txt", append = TRUE)
+  cat("Starting simulation for d =", d, "at", Sys.time(), "\n")
+  sink()
     
   #Define the number of years (iterations) you want to run the simulation
   years<-300
@@ -1064,7 +1057,9 @@ results <- foreach(d = 1:ncol(prod_prob),
   for (b in 1:years){
     
     if(nrow(it_indpop)==0){
-      warning("No individuals in it_indpop for year ", b, " and parameter value =", d)
+      sink("log.txt", append = TRUE)
+      cat(paste("No individuals in it_indpop for year", b, "and parameter value =", d, "at", Sys.time(), "\n"))
+      sink()
       # Create empty it_data with consistent structure (for the current iteration)
       it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
                             mom_surplus_a = NA, desc_need_a = NA,
@@ -1253,13 +1248,11 @@ results <- foreach(d = 1:ncol(prod_prob),
     }
   }
   
-  cat("Completed simulation for d =", d, "\n\n")
+  # Final logging after the simulation completes
+  sink("log.txt", append = TRUE)
+  cat(paste("Completed simulation for d =", d, "at", Sys.time(), "\n"))
+  sink()
   
-    }, finally = {
-      # Always close the sink properly, even in case of errors
-      if (sink.number() > 0) sink()  # Close stdout sink
-      if (sink.number("message") > 0) sink(type = "message")  # Close stderr sink
-    })
 }
 
 # Stop the cluster after computation
