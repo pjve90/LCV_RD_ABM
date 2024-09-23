@@ -1284,8 +1284,12 @@ registerDoParallel(cl = my_cluster)
 getDoParRegistered() #if the cluster is registered
 getDoParWorkers() #number of cores registered
 
+#initialise results_10
+results_10 <- list()
+
 #paralellise the parameter sweep
-results_10 <- foreach(r=1:10) %:%
+results_10 <- foreach(r=1:10,
+                      .combine="c") %:%
               foreach(d = 1:ncol(prod_prob),
                    .combine="list",
                    .export=c("produce",
@@ -1323,6 +1327,8 @@ results_10 <- foreach(r=1:10) %:%
   max_id <- max(it_data$id)
   #initial population
   it_indpop<-create_initialpop(popsize)
+  #storing it_dataf
+  it_dataf <- data.frame()
   
   #Run the simulation
   for (b in 1:years){
@@ -1517,11 +1523,15 @@ results_10 <- foreach(r=1:10) %:%
   cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
   sink()
   
+  results_10[[paste0("d_", d, "_r_", r)]] <- it_dataf
+  
 }
+
+
 
 # Stop the cluster after computation
 stopCluster(my_cluster)
 
 #save data ----
 
-saveRDS(simulation_results,file="./Scenario 1/raw_simulation.RData")
+saveRDS(results_10,file="./Scenario 1/raw_simulation.RData")
