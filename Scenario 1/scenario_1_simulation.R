@@ -1291,7 +1291,7 @@ results_10 <- list()
 results_10 <- foreach(r=1:10,
                       .combine="c") %:%
               foreach(d = 1:ncol(prod_prob),
-                   .combine="list",
+                   .combine="c",
                    .export=c("produce",
                              "mom_surplus",
                              "mom_surplus_a",
@@ -1523,7 +1523,8 @@ results_10 <- foreach(r=1:10,
   cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
   sink()
   
-  results_10[[paste0("d_", d, "_r_", r)]] <- it_dataf
+  # Return the result with a clear name indicating the combination of d and r
+  setNames(list(it_dataf), paste0("d_", d, "_r_", r))
   
 }
 
