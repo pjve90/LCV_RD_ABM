@@ -40,6 +40,23 @@ for (i in 1:length(results)){
 
 #Plot it! ----
 
+#get the parameter values for labeling
+
+#source the functions
+#Stage-specific maximum amount of resource production 
+source("~/LCV_RD_ABM/Model_code/production_maxprod_fx.R")
+#Stage-specific production probabilities
+source("~/LCV_RD_ABM/Model_code/production_prodprob_fx.R")
+#get the values
+#habitat quality
+habitat_quality <- 4
+#stage-specific maximum amount of resource production.
+maxprod <- max_production(habitat_quality)
+#maximum production probability
+max_prod_prob <- seq(0.1,0.9,length=17)
+#stage-specific production probabilities.
+prod_prob <- production_prob(max_prod_prob)
+
 #Each parameter value separately ----
 
 #Longevity ----
@@ -49,7 +66,7 @@ par(mfrow=c(4,5))
 for(d in 1:17){
   plot(c(0,100),c(0,600),
        type = "n",
-       main=paste("Parameter value",d),
+       main=paste("Parameter value",prod_prob[2,d]),
        xlab="Longevity",
        ylab="Frequency")
   for(r in 1:10){
@@ -68,7 +85,7 @@ par(mfrow=c(4,5))
 for(d in 1:17){
   plot(c(0,20),c(0,600),
        type = "n",
-       main=paste("Parameter value",d),
+       main=paste("Parameter value",prod_prob[2,d]),
        xlab="Lifetime reproductive output",
        ylab="Frequency")
   for(r in 1:10){
@@ -88,7 +105,7 @@ par(mfrow=c(4,5))
 for(d in 1:17){
   plot(c(0,100),c(0,600),
        type = "n",
-       main=paste("Parameter value",d),
+       main=paste("Parameter value",prod_prob[2,d]),
        xlab="Age sexual maturity",
        ylab="Frequency")
   for(r in 1:10){
@@ -108,7 +125,7 @@ par(mfrow=c(4,5))
 for(d in 1:17){
   plot(c(0,100),c(0,600),
        type = "n",
-       main=paste("Parameter value",d),
+       main=paste("Parameter value",prod_prob[2,d]),
        xlab="Age first reproduction",
        ylab="Frequency")
   for(r in 1:10){
@@ -128,7 +145,7 @@ par(mfrow=c(4,5))
 for(d in 1:17){
   plot(c(0,100),c(0,600),
        type = "n",
-       main=paste("Parameter value",d),
+       main=paste("Parameter value",prod_prob[2,d]),
        xlab="Age last reproduction",
        ylab="Frequency")
   for(r in 1:10){
@@ -148,7 +165,7 @@ par(mfrow=c(4,5))
 for(d in 1:17){
   plot(c(0,100),c(0,600),
        type = "n",
-       main=paste("Parameter value",d),
+       main=paste("Parameter value",prod_prob[2,d]),
        xlab="Age menopause",
        ylab="Frequency")
   for(r in 1:10){
@@ -238,7 +255,7 @@ for(i in 1:length(valid_indices)){
 
 # Step 5: Adjust the legend to match the valid data frames
 legend(x=105,y=208,
-       legend=valid_indices,  # Use valid indices for the legend
+       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
        col=color_palette,     # Use the corresponding colors from the palette
        lty=1,
        pch=16,
@@ -320,7 +337,7 @@ for(i in 1:length(valid_indices)){
 
 # Step 5: Adjust the legend to match the valid data frames
 legend(x=21,y=1560,
-       legend=valid_indices,  # Use valid indices for the legend
+       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
        col=color_palette,     # Use the corresponding colors from the palette
        lty=1,
        pch=16,
@@ -402,7 +419,7 @@ for(i in 1:length(valid_indices)){
 
 # Step 5: Adjust the legend to match the valid data frames
 legend(x=27,y=312,
-       legend=valid_indices,  # Use valid indices for the legend
+       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
        col=color_palette,     # Use the corresponding colors from the palette
        lty=1,
        pch=16,
@@ -484,7 +501,7 @@ for(i in 1:length(valid_indices)){
 
 # Step 5: Adjust the legend to match the valid data frames
 legend(x=37,y=208,
-       legend=valid_indices,  # Use valid indices for the legend
+       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
        col=color_palette,     # Use the corresponding colors from the palette
        lty=1,
        pch=16,
@@ -566,7 +583,7 @@ for(i in 1:length(valid_indices)){
 
 # Step 5: Adjust the legend to match the valid data frames
 legend(x=63,y=104,
-       legend=valid_indices,  # Use valid indices for the legend
+       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
        col=color_palette,     # Use the corresponding colors from the palette
        lty=1,
        pch=16,
@@ -648,7 +665,7 @@ for(i in 1:length(valid_indices)){
 
 # Step 5: Adjust the legend to match the valid data frames
 legend(x=75,y=312,
-       legend=valid_indices,  # Use valid indices for the legend
+       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
        col=color_palette,     # Use the corresponding colors from the palette
        lty=1,
        pch=16,

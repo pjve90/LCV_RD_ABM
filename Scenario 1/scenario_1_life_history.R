@@ -9,7 +9,7 @@
 #R settings ----
 
 getwd()
-setwd("./LCV_RD_ABM")
+#setwd("./LCV_RD_ABM")
 
 #Data wrangling ----
 
@@ -30,7 +30,6 @@ names(raw_sample) <- names(raw_sim)
 names(raw_sample)
 
 #Import functions to calculate life history traits ----
-
 
 #longevity
 source("./Model_code/life_history_lng.R")
@@ -126,7 +125,5 @@ for (i in 1:length(lht_list)){
 }
 
 #save the data ----
-
-#save data ----
 
 saveRDS(lht_list,file="./Scenario 1/lht_list.RData")
