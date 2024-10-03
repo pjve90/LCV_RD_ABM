@@ -217,7 +217,7 @@ results_10 <- foreach(r=1:10,
                    ) %dopar% {
   
   #Use unique log file for each parameter value (d)
-  log_file <- paste0(getwd(),"/Scenario 1/","log_", d,"_", r,".txt")
+  log_file <- paste0(getwd(),"/Scenario_1/","log_", d,"_", r,".txt")
   
   sink(log_file, append = TRUE)
   cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
@@ -444,4 +444,4 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10,file="./Scenario 1/raw_simulation.RData")
+saveRDS(results_10,file="./Scenario_1/raw_simulation_s1.RData")

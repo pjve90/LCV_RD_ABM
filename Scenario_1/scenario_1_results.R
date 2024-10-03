@@ -10,7 +10,7 @@
 
 #set work directory
 getwd()
-setwd("./LCV_RD_ABM")
+#setwd("./LCV_RD_ABM")
 
 #install packages
 #install.packages("scales")
@@ -19,7 +19,7 @@ library(scales)
 #Data import ----
 
 #import raw results from the simulation
-results <- readRDS("./Scenario 1/lht_list.RData")
+results <- readRDS("./Scenario_1/lht_list.RData")
 
 #Summary statistics ----
 

@@ -14,7 +14,7 @@ getwd()
 #Data wrangling ----
 
 #import raw results from the simulation
-raw_sim <- readRDS("./Scenario 1/raw_simulation.RData")
+raw_sim <- readRDS("./Scenario_1/raw_simulation.RData")
 #create empty list
 raw_sample <- vector("list", 170)
 #loop through every simulation to get the sample
@@ -126,4 +126,4 @@ for (i in 1:length(lht_list)){
 
 #save the data ----
 
-saveRDS(lht_list,file="./Scenario 1/lht_list.RData")
+saveRDS(lht_list,file="./Scenario_1/lht_list_s1.RData")
