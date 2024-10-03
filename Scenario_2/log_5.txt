@@ -1,0 +1,13 @@
+Starting simulation for repetition = 5 at 2024-10-03 14:40:27 
+Starting simulation for repetition = 5 at 2024-10-03 14:44:16 
+Year 10 completed in repetition = 5 at 2024-10-03 14:44:19 
+Year 20 completed in repetition = 5 at 2024-10-03 14:44:22 
+Year 30 completed in repetition = 5 at 2024-10-03 14:44:26 
+Year 40 completed in repetition = 5 at 2024-10-03 14:44:42 
+Year 50 completed in repetition = 5 at 2024-10-03 14:44:54 
+Year 60 completed in repetition = 5 at 2024-10-03 14:45:16 
+Year 70 completed in repetition = 5 at 2024-10-03 14:45:47 
+Year 80 completed in repetition = 5 at 2024-10-03 14:46:34 
+Year 90 completed in repetition = 5 at 2024-10-03 14:48:14 
+Year 100 completed in repetition = 5 at 2024-10-03 14:49:42 
+Year 110 completed in repetition = 5 at 2024-10-03 14:52:47 
