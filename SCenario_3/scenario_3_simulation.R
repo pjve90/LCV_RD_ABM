@@ -41,7 +41,7 @@ source("./Model_code/production_maxprod_fx.R")
 source("./Model_code/production_prodprob_fx.R")
 
 #Production function
-source("./Model_code/production_fx.R")
+source("./Model_code/production_fx_s2.R")
 
 ### Maternal investment ----
 
@@ -153,7 +153,7 @@ habitat_quality <- 4
 maxprod <- max_production(habitat_quality)
 
 #maximum production probability
-max_prod_prob <- seq(0.1,0.9,length=17)
+max_prod_prob <- 0.5
 #stage-specific production probabilities.
 prod_prob <- production_prob(max_prod_prob)
 
@@ -165,19 +165,7 @@ num_stages <- 4
 
 #block matrix
 #create block matrix for the parameter sweep
-#original probabilities
-blockmatrix <- matrix(c(
-  0.25,0.75,0.75,0.75, #juvenile column
-  0.25,0.25,0.25,0.25, #adult column
-  0.25,0.4,0.4,0.5, #reproductive career column
-  0.25,0.5,0.5,0.4 #post-reproductive career column
-),
-nrow=num_stages,ncol=num_stages #matrix dimensions
-)
-#transform into log-odds
-logodds_blockm <- log(blockmatrix/(1-blockmatrix))
-
-# Step 1: Create the blockmatrix
+# Step 1: Create the blockmatrix with original probabilities
 blockmatrix <- matrix(c(
   0.25,0.75,0.75,0.75, #juvenile column
   0.25,0.25,0.25,0.25, #adult column
@@ -190,13 +178,13 @@ nrow=4,ncol=4)
 matrices_list <- vector("list", 19)
 
 # Step 3: Iterate over the elements of the blockmatrix
-for (i in 1:4) { # rows
-  for (j in 1:4) { # columns
+for (i in 1:nrow(blockmatrix)) { # rows
+  for (j in 1:ncol(blockmatrix)) { # columns
     # Generate a sequence for each element
     sequence <- round(seq((blockmatrix[i, j] - 0.2), (blockmatrix[i, j] + 0.2), length = 19), 2)
     
     # Step 4: Assign the sequence values to the appropriate position in each of the 19 matrices
-    for (k in 1:19) {
+    for (k in 1:length(matrices_list)) {
       if (is.null(matrices_list[[k]])) {
         matrices_list[[k]] <- matrix(0, nrow = 4, ncol = 4) # Initialize the matrix
       }
@@ -205,9 +193,18 @@ for (i in 1:4) { # rows
   }
 }
 
-# Now matrices_list contains 19 matrices with the desired sequences.
-# Example: Print the first matrix
-print(matrices_list[[1]])
+# check the matrices
+head(matrices_list)
+
+#transform into log-odds
+#create empty list
+logodds_list <- vector("list", 19)
+#get the log odds of each matrix
+for(k in 1:length(logodds_list)){
+  logodds_list[[k]] <- log(matrices_list[[k]]/(1-matrices_list[[k]]))
+}
+#check it
+head(logodds_list)
 
 #### Survival ----
 #Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
@@ -239,14 +236,14 @@ unregister_dopar <- function() {
 unregister_dopar()
 
 #set up the parallel backend
-num_cores <- 100 
+num_cores <- 5 
 #check the number of cores
 num_cores
 
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  type="FORK" #uncomment if you use an OS different than Windows
+#  type="FORK" #uncomment if you use an OS different than Windows
 )
 
 #register the cluster
@@ -258,7 +255,7 @@ getDoParWorkers() #number of cores registered
 #### Parameter sweep ----
 
 #set seed
-set.seed(1990)
+set.seed(1993)
 
 #initialise results_10
 results_10 <- list()
@@ -266,7 +263,7 @@ results_10 <- list()
 #paralellise the parameter sweep
 results_10 <- foreach(r=1:10,
                       .combine="c") %:%
-  foreach(d = 1:ncol(prod_prob),
+  foreach(m = 1:length(logodds_list),
           .combine="c",
           .export=c("produce",
                     "mom_surplus",
@@ -275,6 +272,11 @@ results_10 <- foreach(r=1:10,
                     "desc_need_a",
                     "desc_order",
                     "mat_invest",
+                    "max_deg",
+                    "create_self_noms",
+                    "create_block_probs",
+                    "simulate_SBM_multinomial",
+                    "transfers",
                     "reproduce",
                     "reproduce_c",
                     "lro",
@@ -288,11 +290,11 @@ results_10 <- foreach(r=1:10,
           )
   ) %dopar% {
     
-    #Use unique log file for each parameter value (d)
-    log_file <- paste0(getwd(),"Scenario_3/","log_", d,"_", r,".txt")
+    #Use unique log file for each parameter value (m)
+    log_file <- paste0(getwd(),"./Scenario_3/","log_", m,"_", r,".txt")
     
     sink(log_file, append = TRUE)
-    cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+    cat(paste("Starting simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
     sink()
     start_sim <- Sys.time()  
     
@@ -311,7 +313,7 @@ results_10 <- foreach(r=1:10,
       
       if(nrow(it_indpop)==0){
         sink(log_file, append = TRUE)
-        cat(paste("No individuals in it_indpop for year", b, "and parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+        cat(paste("No individuals in it_indpop for year", b, "and parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
         sink()
         # Create empty it_data with consistent structure (for the current iteration)
         it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
@@ -452,7 +454,7 @@ results_10 <- foreach(r=1:10,
         # Log the time at every 10 iterations
         if (b %% 10 == 0) {
           sink(log_file, append = TRUE)
-          cat(paste("Year", b, "completed for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+          cat(paste("Year", b, "completed for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
           sink()
         }
         
@@ -523,7 +525,7 @@ results_10 <- foreach(r=1:10,
     
     # Final logging after the simulation completes
     sink(log_file, append = TRUE)
-    cat(paste("Completed simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+    cat(paste("Completed simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
     sink()
     
     end_sim <- Sys.time()
@@ -531,11 +533,11 @@ results_10 <- foreach(r=1:10,
     time_sim <- difftime(end_sim,start_sim,units=c("mins"))
     
     sink(log_file, append = TRUE)
-    cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
+    cat(paste("Length of simulation for parameter value =", m, "in repetition =", r, "is", time_sim, "minutes", "\n"))
     sink()
     
     # Return the result with a clear name indicating the combination of d and r
-    setNames(list(it_dataf), paste0("d_", d, "_r_", r))
+    setNames(list(it_dataf), paste0("m_", m, "_r_", r))
     
   }
 

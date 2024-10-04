@@ -13,25 +13,25 @@ create_block_probs <- function(N, block_assignments) {
     block <- block_assignments[i]
     
     if (block == 1) {
-      vector <- c(rep(logodds_blockm[1,1], block_sizes[1]),
-                  rep(logodds_blockm[1,2], block_sizes[2]),
-                  rep(logodds_blockm[1,3], block_sizes[3]),
-                  rep(logodds_blockm[1,4], block_sizes[4]))
+      vector <- c(rep(matrices_list[[m]][1,1], block_sizes[1]),
+                  rep(matrices_list[[m]][1,2], block_sizes[2]),
+                  rep(matrices_list[[m]][1,3], block_sizes[3]),
+                  rep(matrices_list[[m]][1,4], block_sizes[4]))
     } else if (block == 2) {
-      vector <- c(rep(logodds_blockm[2,1], block_sizes[1]),
-                  rep(logodds_blockm[2,2], block_sizes[2]),
-                  rep(logodds_blockm[2,3], block_sizes[3]),
-                  rep(logodds_blockm[2,4], block_sizes[4]))
+      vector <- c(rep(matrices_list[[m]][2,1], block_sizes[1]),
+                  rep(matrices_list[[m]][2,2], block_sizes[2]),
+                  rep(matrices_list[[m]][2,3], block_sizes[3]),
+                  rep(matrices_list[[m]][2,4], block_sizes[4]))
     } else if (block == 3) {
-      vector <- c(rep(logodds_blockm[3,1], block_sizes[1]),
-                  rep(logodds_blockm[3,2], block_sizes[2]),
-                  rep(logodds_blockm[3,3], block_sizes[3]),
-                  rep(logodds_blockm[3,4], block_sizes[4]))
+      vector <- c(rep(matrices_list[[m]][3,1], block_sizes[1]),
+                  rep(matrices_list[[m]][3,2], block_sizes[2]),
+                  rep(matrices_list[[m]][3,3], block_sizes[3]),
+                  rep(matrices_list[[m]][3,4], block_sizes[4]))
     } else if (block == 4) {
-      vector <- c(rep(logodds_blockm[4,1], block_sizes[1]),
-                  rep(logodds_blockm[4,2], block_sizes[2]),
-                  rep(logodds_blockm[4,3], block_sizes[3]),
-                  rep(logodds_blockm[4,4], block_sizes[4]))
+      vector <- c(rep(matrices_list[[m]][4,1], block_sizes[1]),
+                  rep(matrices_list[[m]][4,2], block_sizes[2]),
+                  rep(matrices_list[[m]][4,3], block_sizes[3]),
+                  rep(matrices_list[[m]][4,4], block_sizes[4]))
     }
     
     vectors[[i]] <- vector
