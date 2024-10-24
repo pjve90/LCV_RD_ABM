@@ -15,6 +15,7 @@ getwd()
 
 #import raw results from the simulation
 raw_sim <- readRDS("./Scenario_1/raw_simulation_s1.RData")
+
 #create empty list
 raw_sample <- vector("list", 170)
 #loop through every simulation to get the sample

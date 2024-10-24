@@ -153,7 +153,7 @@ habitat_quality <- 4
 maxprod <- max_production(habitat_quality)
 
 #maximum production probability
-max_prod_prob <- seq(0.1,0.9,length=17)
+max_prod_prob <- 0.5
 #stage-specific production probabilities.
 prod_prob <- production_prob(max_prod_prob)
 
@@ -165,19 +165,7 @@ num_stages <- 4
 
 #block matrix
 #create block matrix for the parameter sweep
-#original probabilities
-blockmatrix <- matrix(c(
-  0.25,0.75,0.75,0.75, #juvenile column
-  0.25,0.25,0.25,0.25, #adult column
-  0.25,0.4,0.4,0.5, #reproductive career column
-  0.25,0.5,0.5,0.4 #post-reproductive career column
-),
-nrow=num_stages,ncol=num_stages #matrix dimensions
-)
-#transform into log-odds
-logodds_blockm <- log(blockmatrix/(1-blockmatrix))
-
-# Step 1: Create the blockmatrix
+# Step 1: Create the blockmatrix with original probabilities
 blockmatrix <- matrix(c(
   0.25,0.75,0.75,0.75, #juvenile column
   0.25,0.25,0.25,0.25, #adult column
@@ -190,13 +178,13 @@ nrow=4,ncol=4)
 matrices_list <- vector("list", 19)
 
 # Step 3: Iterate over the elements of the blockmatrix
-for (i in 1:4) { # rows
-  for (j in 1:4) { # columns
+for (i in 1:nrow(blockmatrix)) { # rows
+  for (j in 1:ncol(blockmatrix)) { # columns
     # Generate a sequence for each element
     sequence <- round(seq((blockmatrix[i, j] - 0.15), (blockmatrix[i, j] + 0.15), length = 17), 2)
     
     # Step 4: Assign the sequence values to the appropriate position in each of the 19 matrices
-    for (k in 1:19) {
+    for (k in 1:length(matrices_list)) {
       if (is.null(matrices_list[[k]])) {
         matrices_list[[k]] <- matrix(0, nrow = 4, ncol = 4) # Initialize the matrix
       }
@@ -205,9 +193,18 @@ for (i in 1:4) { # rows
   }
 }
 
-# Now matrices_list contains 19 matrices with the desired sequences.
-# Example: Print the first matrix
-print(matrices_list[[1]])
+# check the matrices
+head(matrices_list)
+
+#transform into log-odds
+#create empty list
+logodds_list <- vector("list", 19)
+#get the log odds of each matrix
+for(k in 1:length(logodds_list)){
+  logodds_list[[k]] <- log(matrices_list[[k]]/(1-matrices_list[[k]]))
+}
+#check it
+head(logodds_list)
 
 #transform into log-odds
 #create empty list
@@ -305,7 +302,7 @@ results_10_3 <- foreach(r=1:10,
     
     #Use unique log file for each parameter value (m)
     log_file <- paste0(getwd(),"/Scenario_3/","log_", m,"_", r,".txt")
-    
+
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
     sink()
@@ -560,4 +557,4 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10_3,file=".Scenario_3/raw_simulation.RData")
+saveRDS(results_10,file="./Scenario_3/raw_simulation_s3.RData")

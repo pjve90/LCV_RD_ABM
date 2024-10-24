@@ -186,7 +186,7 @@ getDoParWorkers() #number of cores registered
 #### Parameter sweep ----
 
 #set seed
-set.seed(1990)
+set.seed(1991)
 
 #initialise results_10
 results_10_1 <- list()

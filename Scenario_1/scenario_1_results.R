@@ -44,9 +44,9 @@ for (i in 1:length(results)){
 
 #source the functions
 #Stage-specific maximum amount of resource production 
-source("~/LCV_RD_ABM/Model_code/production_maxprod_fx.R")
+source("./Model_code/production_maxprod_fx.R")
 #Stage-specific production probabilities
-source("~/LCV_RD_ABM/Model_code/production_prodprob_fx.R")
+source("./Model_code/production_prodprob_fx.R")
 #get the values
 #habitat quality
 habitat_quality <- 4
