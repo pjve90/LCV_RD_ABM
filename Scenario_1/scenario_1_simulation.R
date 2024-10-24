@@ -10,7 +10,7 @@
 
 #set working directory
 getwd()
-#setwd("./LCV_RD_ABM")
+setwd("./LCV_RD_ABM")
 
 #install packages
 #parallel package
@@ -30,79 +30,79 @@ library(foreach)
 ### Initial population ----
 
 #create population
-source("~/LCV_RD_ABM/Model_code/initial_pop_fx.R")
+source("./Model_code/initial_pop_fx.R")
 
 ### Resource production ----
 
 #Stage-specific maximum amount of resource production 
-source("~/LCV_RD_ABM/Model_code/production_maxprod_fx.R")
+source("./Model_code/production_maxprod_fx.R")
 
 #Stage-specific production probabilities
-source("~/LCV_RD_ABM/Model_code/production_prodprob_fx.R")
+source("./Model_code/production_prodprob_fx.R")
 
 #Production function
-source("~/LCV_RD_ABM/Model_code/production_fx.R")
+source("./Model_code/production_fx.R")
 
 ### Maternal investment ----
 
 #Identify if the mother has surplus of resources
-source("~/LCV_RD_ABM/Model_code/mat_invest_mom_surp_identify.R")
+source("./Model_code/mat_invest_mom_surp_identify.R")
 
 #Identify the amount of surplus of the mother
-source("~/LCV_RD_ABM/Model_code/mat_invest_mom_surp_amount.R")
+source("./Model_code/mat_invest_mom_surp_amount.R")
 
 #Identify if the descendants need resources
-source("~/LCV_RD_ABM/Model_code/mat_invest_desc_need_identify.R")
+source("./Model_code/mat_invest_desc_need_identify.R")
 
 #Identify the amount of need for each descendant
-source("~/LCV_RD_ABM/Model_code/mat_invest_desc_need_amount.R")
+source("./Model_code/mat_invest_desc_need_amount.R")
 
 #Order the descendants by need and mother id
-source("~/LCV_RD_ABM/Model_code/mat_invest_desc_order.R")
+source("./Model_code/mat_invest_desc_order.R")
 
 #Mother invest in her descendants
-source("~/LCV_RD_ABM/Model_code/mat_invest_fx.R")
+source("./Model_code/mat_invest_fx.R")
 
 ### Reproduction ----
 
 #Reproduction
-source("~/LCV_RD_ABM/Model_code/reproduction_reproduce_fx.R")
+source("./Model_code/reproduction_reproduce_fx.R")
 
 #Discount of reproductive cost
-source("~/LCV_RD_ABM/Model_code/reproduction_discount.R")
+source("./Model_code/reproduction_discount.R")
 
 #Lifetime reproductive output
-source("~/LCV_RD_ABM/Model_code/reproduction_lro.R")
+source("./Model_code/reproduction_lro.R")
 
 #Add newborns
-source("~/LCV_RD_ABM/Model_code/reproduction_newborn.R")
+source("./Model_code/reproduction_newborn.R")
 
 ### Transition ----
 
 #Time since last birth
-source("~/LCV_RD_ABM/Model_code/transition_tlr.R")
+source("./Model_code/transition_tlr.R")
 
 #Transition
-source("~/LCV_RD_ABM/Model_code/transition_fx.R")
+source("./Model_code/transition_fx.R")
 
 #Transition
-source("~/LCV_RD_ABM/Model_code/transition_fx.R")
+source("./Model_code/transition_fx.R")
 
 ### Survival ----
 
 #Survival
-source("~/LCV_RD_ABM/Model_code/survival_survive_fx.R")
+source("./Model_code/survival_survive_fx.R")
 
 #Discount of survival cost
-source("~/LCV_RD_ABM/Model_code/survival_discount.R")
+source("./Model_code/survival_discount.R")
 
 #Age
-source("~/LCV_RD_ABM/Model_code/survival_age.R")
+source("./Model_code/survival_age.R")
 
 ### Resource storing ----
 
 #Store resources
-source("~/LCV_RD_ABM/Model_code/storage_fx.R")
+source("./Model_code/storage_fx.R")
 
 # Run for 300 iterations ----
 
@@ -174,7 +174,7 @@ num_cores
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  type="FORK" #uncomment if you use an OS different than Windows
+#  type="FORK" #uncomment if you use an OS different than Windows
 )
 
 #register the cluster
@@ -189,10 +189,10 @@ getDoParWorkers() #number of cores registered
 set.seed(1990)
 
 #initialise results_10
-results_10 <- list()
+results_10_1 <- list()
 
 #paralellise the parameter sweep
-results_10 <- foreach(r=1:10,
+results_10_1 <- foreach(r=1:10,
                       .combine="c") %:%
               foreach(d = 1:ncol(prod_prob),
                    .combine="c",
@@ -217,7 +217,7 @@ results_10 <- foreach(r=1:10,
                    ) %dopar% {
   
   #Use unique log file for each parameter value (d)
-  log_file <- paste0(getwd(),"/Scenario 1/","log_", d,"_", r,".txt")
+  log_file <- paste0(getwd(),"/Scenario_1/","log_", d,"_", r,".txt")
   
   sink(log_file, append = TRUE)
   cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
@@ -444,4 +444,4 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10,file="./Scenario 1/raw_simulation.RData")
+saveRDS(results_10_1,file="./Scenario_1/raw_simulation_s1.RData")

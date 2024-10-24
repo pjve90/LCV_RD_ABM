@@ -30,99 +30,99 @@ library(foreach)
 ### Initial population ----
 
 #create population
-source("~/LCV_RD_ABM/Model_code/initial_pop_fx.R")
+source("./Model_code/initial_pop_fx.R")
 
 ### Resource production ----
 
 #Stage-specific maximum amount of resource production 
-source("~/LCV_RD_ABM/Model_code/production_maxprod_fx.R")
+source("./Model_code/production_maxprod_fx.R")
 
 #Stage-specific production probabilities
-source("~/LCV_RD_ABM/Model_code/production_prodprob_fx.R")
+source("./Model_code/production_prodprob_fx.R")
 
 #Production function
-source("~/LCV_RD_ABM/Model_code/production_fx.R")
+source("./Model_code/production_fx_s2.R")
 
 ### Maternal investment ----
 
 #Identify if the mother has surplus of resources
-source("~/LCV_RD_ABM/Model_code/mat_invest_mom_surp_identify.R")
+source("./Model_code/mat_invest_mom_surp_identify.R")
 
 #Identify the amount of surplus of the mother
-source("~/LCV_RD_ABM/Model_code/mat_invest_mom_surp_amount.R")
+source("./Model_code/mat_invest_mom_surp_amount.R")
 
 #Identify if the descendants need resources
-source("~/LCV_RD_ABM/Model_code/mat_invest_desc_need_identify.R")
+source("./Model_code/mat_invest_desc_need_identify.R")
 
 #Identify the amount of need for each descendant
-source("~/LCV_RD_ABM/Model_code/mat_invest_desc_need_amount.R")
+source("./Model_code/mat_invest_desc_need_amount.R")
 
 #Order the descendants by need and mother id
-source("~/LCV_RD_ABM/Model_code/mat_invest_desc_order.R")
+source("./Model_code/mat_invest_desc_order.R")
 
 #Mother invest in her descendants
-source("~/LCV_RD_ABM/Model_code/mat_invest_fx.R")
+source("./Model_code/mat_invest_fx.R")
 
 ### Resource transfers ----
 
 #Softmax function
-source("~/LCV_RD_ABM/Model_code/transfers_softmax_fx.R")
+source("./Model_code/transfers_softmax_fx.R")
 
 #Self nominations
-source("~/LCV_RD_ABM/Model_code/transfers_self_nom.R")
+source("./Model_code/transfers_self_nom.R")
 
 #Define the stage-specific probabilities for each individual
-source("~/LCV_RD_ABM/Model_code/transfers_blockprobs_fx.R")
+source("./Model_code/transfers_blockprobs_fx.R")
 
 #Define the surplus for transfers (max out degree in the network)
-source("~/LCV_RD_ABM/Model_code/transfers_surplus_maxdeg.R")
+source("./Model_code/transfers_surplus_maxdeg.R")
 
 #Generate the network
-source("~/LCV_RD_ABM/Model_code/transfers_sbm_multinom_fx.R")
+source("./Model_code/transfers_sbm_multinom_fx.R")
 
 #Record the resources transferred
-source("~/LCV_RD_ABM/Model_code/transfers_amount.R") 
+source("./Model_code/transfers_amount.R") 
 
 ### Reproduction ----
 
 #Reproduction
-source("~/LCV_RD_ABM/Model_code/reproduction_reproduce_fx.R")
+source("./Model_code/reproduction_reproduce_fx.R")
 
 #Discount of reproductive cost
-source("~/LCV_RD_ABM/Model_code/reproduction_discount.R")
+source("./Model_code/reproduction_discount.R")
 
 #Lifetime reproductive output
-source("~/LCV_RD_ABM/Model_code/reproduction_lro.R")
+source("./Model_code/reproduction_lro.R")
 
 #Add newborns
-source("~/LCV_RD_ABM/Model_code/reproduction_newborn.R")
+source("./Model_code/reproduction_newborn.R")
 
 ### Transition ----
 
 #Time since last birth
-source("~/LCV_RD_ABM/Model_code/transition_tlr.R")
+source("./Model_code/transition_tlr.R")
 
 #Transition
-source("~/LCV_RD_ABM/Model_code/transition_fx.R")
+source("./Model_code/transition_fx.R")
 
 #Transition
-source("~/LCV_RD_ABM/Model_code/transition_fx.R")
+source("./Model_code/transition_fx.R")
 
 ### Survival ----
 
 #Survival
-source("~/LCV_RD_ABM/Model_code/survival_survive_fx.R")
+source("./Model_code/survival_survive_fx.R")
 
 #Discount of survival cost
-source("~/LCV_RD_ABM/Model_code/survival_discount.R")
+source("./Model_code/survival_discount.R")
 
 #Age
-source("~/LCV_RD_ABM/Model_code/survival_age.R")
+source("./Model_code/survival_age.R")
 
 ### Resource storing ----
 
 #Store resources
-source("~/LCV_RD_ABM/Model_code/storage_fx.R")
+source("./Model_code/storage_fx.R")
 
 # Run for 300 iterations ----
 
@@ -193,7 +193,7 @@ matrices_list <- vector("list", 19)
 for (i in 1:4) { # rows
   for (j in 1:4) { # columns
     # Generate a sequence for each element
-    sequence <- round(seq((blockmatrix[i, j] - 0.2), (blockmatrix[i, j] + 0.2), length = 19), 2)
+    sequence <- round(seq((blockmatrix[i, j] - 0.15), (blockmatrix[i, j] + 0.15), length = 17), 2)
     
     # Step 4: Assign the sequence values to the appropriate position in each of the 19 matrices
     for (k in 1:19) {
@@ -208,6 +208,16 @@ for (i in 1:4) { # rows
 # Now matrices_list contains 19 matrices with the desired sequences.
 # Example: Print the first matrix
 print(matrices_list[[1]])
+
+#transform into log-odds
+#create empty list
+logodds_list <- vector("list", 19)
+#get the log odds of each matrix
+for(k in 1:length(logodds_list)){
+  logodds_list[[k]] <- log(matrices_list[[k]]/(1-matrices_list[[k]]))
+}
+#check it
+head(logodds_list)
 
 #### Survival ----
 #Here, you define the survival cost, which is the amount of resources necessary to cover individual maintenance and survive until the next iteration.
@@ -239,14 +249,14 @@ unregister_dopar <- function() {
 unregister_dopar()
 
 #set up the parallel backend
-num_cores <- 100 
+num_cores <- 5
 #check the number of cores
 num_cores
 
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  type="FORK" #uncomment if you use an OS different than Windows
+#  type="FORK" #uncomment if you use an OS different than Windows
 )
 
 #register the cluster
@@ -258,15 +268,15 @@ getDoParWorkers() #number of cores registered
 #### Parameter sweep ----
 
 #set seed
-set.seed(1990)
+set.seed(1993)
 
 #initialise results_10
-results_10 <- list()
+results_10_3 <- list()
 
 #paralellise the parameter sweep
-results_10 <- foreach(r=1:10,
+results_10_3 <- foreach(r=1:10,
                       .combine="c") %:%
-  foreach(d = 1:ncol(prod_prob),
+  foreach(m = 1:length(logodds_list),
           .combine="c",
           .export=c("produce",
                     "mom_surplus",
@@ -275,6 +285,11 @@ results_10 <- foreach(r=1:10,
                     "desc_need_a",
                     "desc_order",
                     "mat_invest",
+                    "max_deg",
+                    "create_self_noms",
+                    "create_block_probs",
+                    "simulate_SBM_multinomial",
+                    "transfers",
                     "reproduce",
                     "reproduce_c",
                     "lro",
@@ -288,16 +303,16 @@ results_10 <- foreach(r=1:10,
           )
   ) %dopar% {
     
-    #Use unique log file for each parameter value (d)
-    log_file <- paste0(getwd(),"Scenario_3/","log_", d,"_", r,".txt")
+    #Use unique log file for each parameter value (m)
+    log_file <- paste0(getwd(),"/Scenario_3/","log_", m,"_", r,".txt")
     
     sink(log_file, append = TRUE)
-    cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+    cat(paste("Starting simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
     sink()
     start_sim <- Sys.time()  
     
     #Define the number of years (iterations) you want to run the simulation
-    years<-300
+    years<-10
     #Maximum id
     #you record the maximum id so the id of the new individuals start after the existing one
     max_id <- max(it_data$id)
@@ -311,7 +326,7 @@ results_10 <- foreach(r=1:10,
       
       if(nrow(it_indpop)==0){
         sink(log_file, append = TRUE)
-        cat(paste("No individuals in it_indpop for year", b, "and parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+        cat(paste("No individuals in it_indpop for year", b, "and parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
         sink()
         # Create empty it_data with consistent structure (for the current iteration)
         it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
@@ -383,16 +398,16 @@ results_10 <- foreach(r=1:10,
         )
         #generate network
         network <- simulate_SBM_multinomial(nrow(it_indpop), #number of individuals
-                                            it_indpop$max_deg, #maximum out degree per individual
-                                            block_probs, #individual block matrices
-                                            self_noms #self nominations
+                                           it_indpop$max_deg, #maximum out degree per individual
+                                           block_probs, #individual block matrices
+                                           self_noms #self nominations
         )
         #record resource transfers
-        for (i in 1:nrow(it_indpop)){
-          it_indpop <- transfers(it_indpop)
-        }
+       for (i in 1:nrow(it_indpop)){
+         it_indpop <- transfers(it_indpop)
+       }
         #record resource transfers and resources available
-        transfers_data <- it_indpop[,c("id","out_degree","in_degree","res_a")]
+       transfers_data <- it_indpop[,c("id","out_degree","in_degree","res_a")]
         
         #Reproduction
         #you run the functions for reproduction, record the outcomes, and generate a data frame with the newborns
@@ -452,7 +467,7 @@ results_10 <- foreach(r=1:10,
         # Log the time at every 10 iterations
         if (b %% 10 == 0) {
           sink(log_file, append = TRUE)
-          cat(paste("Year", b, "completed for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+          cat(paste("Year", b, "completed for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
           sink()
         }
         
@@ -523,7 +538,7 @@ results_10 <- foreach(r=1:10,
     
     # Final logging after the simulation completes
     sink(log_file, append = TRUE)
-    cat(paste("Completed simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+    cat(paste("Completed simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
     sink()
     
     end_sim <- Sys.time()
@@ -531,17 +546,18 @@ results_10 <- foreach(r=1:10,
     time_sim <- difftime(end_sim,start_sim,units=c("mins"))
     
     sink(log_file, append = TRUE)
-    cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
+    cat(paste("Length of simulation for parameter value =", m, "in repetition =", r, "is", time_sim, "minutes", "\n"))
     sink()
     
     # Return the result with a clear name indicating the combination of d and r
-    setNames(list(it_dataf), paste0("d_", d, "_r_", r))
+    setNames(list(it_dataf), paste0("m_", m, "_r_", r))
     
   }
+
 
 # Stop the cluster after computation
 stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10,file=".Scenario_3/raw_simulation.RData")
+saveRDS(results_10_3,file=".Scenario_3/raw_simulation.RData")

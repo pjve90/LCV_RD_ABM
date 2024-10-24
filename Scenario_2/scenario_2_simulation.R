@@ -190,10 +190,10 @@ getDoParWorkers() #number of cores registered
 set.seed(1992)
 
 #initialise results_10
-results_10 <- list()
+results_10_2 <- list()
 
 #paralellise the parameter sweep
-results_10 <- foreach(r=1:10,
+results_10_2 <- foreach(r=1:10,
                       .combine="c",
                       .export=c("produce",
                                 "mom_surplus",
@@ -443,4 +443,4 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10,file="./Scenario_2/raw_simulation_s2.RData")
+saveRDS(results_10_2,file="./Scenario_2/raw_simulation_s2.RData")
