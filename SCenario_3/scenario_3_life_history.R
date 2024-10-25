@@ -14,9 +14,9 @@ getwd()
 #Data wrangling ----
 
 #import raw results from the simulation
-raw_sim <- readRDS("./Scenario_3/raw_simulation.RData")
+raw_sim <- readRDS("./Scenario_3/raw_simulation_s3.RData")
 #create empty list
-raw_sample <- vector("list", 170)
+raw_sample <- vector("list", length(raw_sim))
 #loop through every simulation to get the sample
 for(i in 1:length(raw_sim)){
   #not born before year 100
@@ -53,7 +53,7 @@ source("./Model_code/life_history_meno.R")
 
 #create data set
 #create list
-lht_list <- vector("list", 170)
+lht_list <- vector("list", length(raw_sim))
 #match the original names with the list
 names(lht_list) <- names(raw_sim)
 names(lht_list)
@@ -126,4 +126,4 @@ for (i in 1:length(lht_list)){
 
 #save the data ----
 
-saveRDS(lht_list,file="./Scenario_3/lht_list.RData")
+saveRDS(lht_list,file="./Scenario_3/lht_list_s3.RData")

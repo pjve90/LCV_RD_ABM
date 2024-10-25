@@ -17,7 +17,7 @@ getwd()
 raw_sim <- readRDS("./Scenario_1/raw_simulation_s1.RData")
 
 #create empty list
-raw_sample <- vector("list", 170)
+raw_sample <- vector("list", length(raw_sim))
 #loop through every simulation to get the sample
 for(i in 1:length(raw_sim)){
   #not born before year 100
@@ -54,7 +54,7 @@ source("./Model_code/life_history_meno.R")
 
 #create data set
 #create list
-lht_list <- vector("list", 170)
+lht_list <- vector("list", length(raw_sim))
 #match the original names with the list
 names(lht_list) <- names(raw_sim)
 names(lht_list)

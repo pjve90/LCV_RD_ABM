@@ -181,7 +181,7 @@ matrices_list <- vector("list", 19)
 for (i in 1:nrow(blockmatrix)) { # rows
   for (j in 1:ncol(blockmatrix)) { # columns
     # Generate a sequence for each element
-    sequence <- round(seq((blockmatrix[i, j] - 0.15), (blockmatrix[i, j] + 0.15), length = 17), 2)
+    sequence <- round(seq((blockmatrix[i, j] - 0.2), (blockmatrix[i, j] + 0.2), length = 19), 2)
     
     # Step 4: Assign the sequence values to the appropriate position in each of the 19 matrices
     for (k in 1:length(matrices_list)) {
@@ -253,7 +253,7 @@ num_cores
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-#  type="FORK" #uncomment if you use an OS different than Windows
+  type="FORK" #uncomment if you use an OS different than Windows
 )
 
 #register the cluster
@@ -309,7 +309,7 @@ results_10_3 <- foreach(r=1:10,
     start_sim <- Sys.time()  
     
     #Define the number of years (iterations) you want to run the simulation
-    years<-10
+    years<-300
     #Maximum id
     #you record the maximum id so the id of the new individuals start after the existing one
     max_id <- max(it_data$id)
@@ -557,4 +557,4 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10,file="./Scenario_3/raw_simulation_s3.RData")
+saveRDS(results_10_3,file="./Scenario_3/raw_simulation_s3.RData")

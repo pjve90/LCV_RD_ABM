@@ -19,7 +19,7 @@ library(scales)
 #Data import ----
 
 #import raw results from the simulation
-results <- readRDS("./Scenario_3/lht_list.RData")
+results <- readRDS("./Scenario_3/lht_list_s3.RData")
 
 #Summary statistics ----
 
