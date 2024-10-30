@@ -1,6 +1,6 @@
-# Life cycle variation and resource dynamics ABM: Scenario 1 - life history calculation ----
+# Life cycle variation and resource dynamics ABM: Scenario 3 - life history calculation ----
 
-#Here is the code to calculate the life history tratis from the simulation of Scenario 1, which aims to understand the influence of resource production on the variability of life cycles.
+#Here is the code to calculate the life history tratis from the simulation of Scenario 3, which aims to understand the influence of resource production on the variability of life cycles.
 
 #Production: parameter sweep between 0.1 and 0.9 (17 values)
 #Transfers: null
@@ -15,6 +15,7 @@ getwd()
 
 #import raw results from the simulation
 raw_sim <- readRDS("./Scenario_3/raw_simulation_s3.RData")
+
 #create empty list
 raw_sample <- vector("list", length(raw_sim))
 #loop through every simulation to get the sample
