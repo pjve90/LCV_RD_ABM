@@ -10,7 +10,7 @@
 
 #set working directory
 getwd()
-setwd("./LCV_RD_ABM")
+#setwd("./LCV_RD_ABM")
 
 #install packages
 #parallel package
@@ -174,7 +174,7 @@ num_cores
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-#  type="FORK" #uncomment if you use an OS different than Windows
+  type="FORK" #uncomment if you use an OS different than Windows
 )
 
 #register the cluster
