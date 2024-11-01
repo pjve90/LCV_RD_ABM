@@ -217,7 +217,7 @@ results_10_4 <- foreach(r=1:10,
   ) %dopar% {
     
     #Use unique log file for each parameter value (d)
-    log_file <- paste0(getwd(),"/Scenario_1/","log_", d,"_", r,".txt")
+    log_file <- paste0(getwd(),"/Scenario_4/","log_", d,"_", r,".txt")
     
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))

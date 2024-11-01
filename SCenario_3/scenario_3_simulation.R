@@ -246,7 +246,7 @@ unregister_dopar <- function() {
 unregister_dopar()
 
 #set up the parallel backend
-num_cores <- 5
+num_cores <- 100
 #check the number of cores
 num_cores
 
@@ -301,7 +301,7 @@ results_10_3 <- foreach(r=1:10,
   ) %dopar% {
     
     #Use unique log file for each parameter value (m)
-    log_file <- paste0(getwd(),"/Scenario_3/","log_", m,"_", r,".txt")
+    log_file <- paste0(getwd(),"/SCenario_3/","log_", m,"_", r,".txt")
 
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
@@ -380,7 +380,8 @@ results_10_3 <- foreach(r=1:10,
         
         #resource transfers
         #you run the functions for resource transfers. First you define the resource surplus of each individual, which is the upper limit for the number of ties an individual can make, then you generate the social netwnork, and then record the resource transfers
-        
+        if(nrow(it_indpop) > 1){
+          
         #define surplus
         for (i in 1:nrow(it_indpop)){
           it_indpop$max_deg <- max_deg(it_indpop)
@@ -405,6 +406,13 @@ results_10_3 <- foreach(r=1:10,
        }
         #record resource transfers and resources available
        transfers_data <- it_indpop[,c("id","out_degree","in_degree","res_a")]
+        
+        } else {
+          # Log that transfers are skipped due to insufficient individuals
+          sink(log_file, append = TRUE)
+          cat(paste("Skipping resource transfers for parameter value m =", m, "in repetition =", r, "due to insufficient individuals (only", nrow(it_indpop), "present) at", Sys.time(), "\n"))
+          sink()
+        }
         
         #Reproduction
         #you run the functions for reproduction, record the outcomes, and generate a data frame with the newborns
@@ -557,4 +565,4 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10_3,file="./Scenario_3/raw_simulation_s3.RData")
+saveRDS(results_10_3,file="./SCenario_3/raw_simulation_s3.RData")
