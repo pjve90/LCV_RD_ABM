@@ -19,7 +19,7 @@ library(scales)
 #Data import ----
 
 #import raw results from the simulation
-results <- readRDS("./Scenario 1/lht_list_s1.RData")
+results <- readRDS("./Scenario_1/lht_list_s1.RData")
 
 #get the parameter values for labeling
 
@@ -203,6 +203,8 @@ lht_median
 
 #Plot it! ----
 
+##Median all together ----
+
 #get the maximum CV of all the life history traits for the scale in the plots
 #create empty vector
 cv_all <- NA
@@ -307,129 +309,9 @@ for(d in 1:nrow(meno_cv)){
 }
 points(lht_median$meno~lht_median$p,pch=16,cex=1)
 
-#Each parameter value separately ----
+##Distribution of life history traits ----
 
-#Longevity ----
-
-par(mfrow=c(4,5))
-
-for(d in 1:17){
-  plot(c(0,100),c(0,600),
-       type = "n",
-       main=paste("Parameter value",prod_prob[2,d]),
-       xlab="Longevity",
-       ylab="Frequency")
-  for(r in 1:10){
-    if(nrow(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]) > 0)
-      points(as.numeric(names(table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$lng))),
-             table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$lng),
-             col=alpha(hcl.colors(10,palette = "Zissou 1")[r],0.5),
-             pch=16)
-  }
-}
-
-#Lifetime reproductive output ----
-
-par(mfrow=c(4,5))
-
-for(d in 1:17){
-  plot(c(0,20),c(0,600),
-       type = "n",
-       main=paste("Parameter value",prod_prob[2,d]),
-       xlab="Lifetime reproductive output",
-       ylab="Frequency")
-  for(r in 1:10){
-    if(nrow(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]) > 0)
-      points(as.numeric(names(table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$lro))),
-             table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$lro),
-             col=alpha(hcl.colors(10,palette = "Zissou 1")[r],0.5),
-             pch=16)
-  }
-}
-
-#Age at sexual maturity ----
-
-
-par(mfrow=c(4,5))
-
-for(d in 1:17){
-  plot(c(0,100),c(0,600),
-       type = "n",
-       main=paste("Parameter value",prod_prob[2,d]),
-       xlab="Age sexual maturity",
-       ylab="Frequency")
-  for(r in 1:10){
-    if(nrow(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]) > 0)
-      points(as.numeric(names(table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$asm))),
-             table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$asm),
-             col=alpha(hcl.colors(10,palette = "Zissou 1")[r],0.5),
-             pch=16)
-  }
-}
-
-#Age at first reproduction ----
-
-
-par(mfrow=c(4,5))
-
-for(d in 1:17){
-  plot(c(0,100),c(0,600),
-       type = "n",
-       main=paste("Parameter value",prod_prob[2,d]),
-       xlab="Age first reproduction",
-       ylab="Frequency")
-  for(r in 1:10){
-    if(nrow(results[grep(paste("d",d,"",sep="_"),names(results))][[r]] > 0))
-      points(as.numeric(names(table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$afr))),
-             table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$afr),
-             col=alpha(hcl.colors(10,palette = "Zissou 1")[r],0.5),
-             pch=16)
-  }
-}
-
-#Age at last reproduction ----
-
-
-par(mfrow=c(4,5))
-
-for(d in 1:17){
-  plot(c(0,100),c(0,600),
-       type = "n",
-       main=paste("Parameter value",prod_prob[2,d]),
-       xlab="Age last reproduction",
-       ylab="Frequency")
-  for(r in 1:10){
-    if(nrow(results[grep(paste("d",d,"",sep="_"),names(results))][[r]] > 0))
-      points(as.numeric(names(table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$alr))),
-             table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$alr),
-             col=alpha(hcl.colors(10,palette = "Zissou 1")[r],0.5),
-             pch=16)
-  }
-}
-
-#Age at menopause ----
-
-
-par(mfrow=c(4,5))
-
-for(d in 1:17){
-  plot(c(0,100),c(0,600),
-       type = "n",
-       main=paste("Parameter value",prod_prob[2,d]),
-       xlab="Age menopause",
-       ylab="Frequency")
-  for(r in 1:10){
-    if(nrow(results[grep(paste("d",d,"",sep="_"),names(results))][[r]] > 0))
-      points(as.numeric(names(table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$meno))),
-             table(results[grep(paste("d",d,"",sep="_"),names(results))][[r]]$meno),
-             col=alpha(hcl.colors(10,palette = "Zissou 1")[r],0.5),
-             pch=16)
-  }
-}
-
-# Compare parameter values ----
-
-#Longevity ----
+###Longevity ----
 
 #get the frequency of each age across parameter values and repetitions
 for (d in 1:17) {
@@ -463,55 +345,76 @@ for (d in 1:17) {
   }
 }
 
-#plot the averages
-
-#set margins
-par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
-
-plot(c(0,100),c(0,200),
-     type="n",
-     main="Longevity",
-     xlab="Longevity",
-     ylab="Frequency"
-     )
+#### Plot the densities ----
 
 # Step 1: Create a vector to store indices of data frames with positive longevity
 valid_indices <- c()
 
 # Step 2: First pass through to identify valid data frames
-for(d in 1:17){
-    # Check if the sum of means is greater than zero
-  if(sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0){
+for(d in 1:17) {
+  # Check if the sum of means is greater than zero
+  if (sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0) {
     valid_indices <- c(valid_indices, d)  # Store the valid index
   }
 }
 
 # Step 3: Create a color palette for only the valid data frames
-color_palette <- hcl.colors(length(valid_indices), palette="zissou 1", alpha=0.5)
+color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha = 0.5)
 
-# Step 4: Second pass through to plot the valid data frames
-for(i in 1:length(valid_indices)){
+# Step 4: Prepare an empty plot
+
+par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
+
+plot(c(0, 0.1) ~ c(0, 100),
+     xlab = "Age", ylab = "Density",
+     main = "Longevity",
+     type = "n")
+
+# Step 5: Loop through valid indices to calculate and plot the KDEs
+for(i in 1:length(valid_indices)) {
   d <- valid_indices[i]
   data <- get(paste("d", d, sep = "_"))
   
-  # Plot the line for this valid data frame
-  lines(0:(ncol(get(paste("d", d, sep = "_")))-1),
-        apply(data, 2, mean),
-        type="o",
-        col=color_palette[i],
-        pch=16
-  )  
+  # Create a common grid for evaluation
+  x_grid <- seq(0, 100, length.out = 200)
+  
+  # Calculate the KDE for each repetition and interpolate on the common grid
+  kde_list <- lapply(1:nrow(data), function(j) {
+    row <- data[j, ]  # Extract the j-th row (repetition)
+    if (any(row > 0)) {  # Check if there are any individuals in this row
+      # Create a weighted vector where age classes correspond to their counts
+      ages <- rep(0:100, row)
+      kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+      approx(kde$x, kde$y, xout = x_grid)$y  # Interpolate on the common grid
+    } else {
+      rep(0, length(x_grid))  # If no individuals, return a zero vector
+    }
+  })
+  
+  # Bind the KDEs into a matrix
+  kde_matrix <- do.call(rbind, kde_list)
+  
+  # Calculate the average KDE by averaging at each point
+  avg_kde <- colMeans(kde_matrix)
+  
+  # Plot the average KDE with the corresponding color from the palette
+  lines(x_grid, avg_kde, 
+        type = "l",
+        col = color_palette[i],
+        lwd = 2,
+        lty = i
+        )
 }
 
-# Step 5: Adjust the legend to match the valid data frames
-legend(x=105,y=208,
-       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
-       col=color_palette,     # Use the corresponding colors from the palette
-       lty=1,
-       pch=16,
+# Step 6: Add a legend
+legend(x=105,y=0.104,
+       legend = prod_prob[2,valid_indices], # Use valid indices for the legend
+       col = color_palette, # Use the corresponding colors from the palette
+       lty = c(1:length(valid_indices)),
+       lwd = 2,
        xpd=T)
 
-#Lifetime reproductive output ----
+###Lifetime reproductive output ----
 
 #get the frequency of each age across parameter values and repetitions
 for (d in 1:17) {
@@ -525,11 +428,11 @@ for (d in 1:17) {
   assign(paste("d", d, sep = "_"), temp_df)
   #loop through repetitions
   for (r in 1:10) {
-    #extract the longevity
+    #extract the Lifetime reproductive output
     lro_vector <- results[grep(paste("d", d, "", sep = "_"), names(results))][[r]]$lro
     #create a new row with zeros
     new_row <- rep(0, 21)
-    #update the new row based on longevity values
+    #update the new row based on Lifetime reproductive output values
     for (val in lro_vector) {
       if (val >= 0 & val <= 20) {
         new_row[val + 1] <- new_row[val + 1] + 1  # +1 to account for index starting at 1 in R
@@ -545,81 +448,104 @@ for (d in 1:17) {
   }
 }
 
-#plot the averages
+#### Plot the densities ----
 
-#set margins
-par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
-
-plot(c(0,20),c(0,1500),
-     type="n",
-     main="Lifetime reproductive output",
-     xlab="Lifetime reproductive output",
-     ylab="Frequency"
-)
-
-# Step 1: Create a vector to store indices of data frames with positive longevity
+# Step 1: Create a vector to store indices of data frames with positive Lifetime reproductive output
 valid_indices <- c()
 
 # Step 2: First pass through to identify valid data frames
-for(d in 1:17){
+for(d in 1:17) {
   # Check if the sum of means is greater than zero
-  if(sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0){
+  if (sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0) {
     valid_indices <- c(valid_indices, d)  # Store the valid index
   }
 }
 
 # Step 3: Create a color palette for only the valid data frames
-color_palette <- hcl.colors(length(valid_indices), palette="zissou 1", alpha=0.5)
+color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha = 0.5)
 
-# Step 4: Second pass through to plot the valid data frames
-for(i in 1:length(valid_indices)){
+# Step 4: Prepare an empty plot
+
+par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
+
+plot(c(0, 1) ~ c(0, 20),
+     xlab = "Number of descendants", ylab = "Density",
+     main = "Lifetime reproductive output",
+     type = "n")
+
+# Step 5: Loop through valid indices to calculate and plot the KDEs
+for(i in 1:length(valid_indices)) {
   d <- valid_indices[i]
   data <- get(paste("d", d, sep = "_"))
   
-  # Plot the line for this valid data frame
-  lines(0:(ncol(get(paste("d", d, sep = "_")))-1),
-        apply(data, 2, mean),
-        type="o",
-        col=color_palette[i],
-        pch=16
-  )  
+  # Create a common grid for evaluation
+  x_grid <- seq(0, 20, length.out = 200)
+  
+  # Calculate the KDE for each repetition and interpolate on the common grid
+  kde_list <- lapply(1:nrow(data), function(j) {
+    row <- data[j, ]  # Extract the j-th row (repetition)
+    if (any(row > 0)) {  # Check if there are any individuals in this row
+      # Create a weighted vector where age classes correspond to their counts
+      lro <- rep(0:20, row)
+      kde <- density(lro, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+      approx(kde$x, kde$y, xout = x_grid)$y  # Interpolate on the common grid
+    } else {
+      rep(0, length(x_grid))  # If no individuals, return a zero vector
+    }
+  })
+  
+  # Bind the KDEs into a matrix
+  kde_matrix <- do.call(rbind, kde_list)
+  
+  # Calculate the average KDE by averaging at each point
+  avg_kde <- colMeans(kde_matrix)
+  
+  # Plot the average KDE with the corresponding color from the palette
+  lines(x_grid, avg_kde, 
+        type = "l",
+        col = color_palette[i],
+        lwd = 2,
+        lty = i
+  )
 }
 
-# Step 5: Adjust the legend to match the valid data frames
-legend(x=21,y=1560,
-       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
-       col=color_palette,     # Use the corresponding colors from the palette
-       lty=1,
-       pch=16,
+# Step 6: Add a legend
+legend(x=21,y=1.04,
+       legend = prod_prob[2,valid_indices], # Use valid indices for the legend
+       col = color_palette, # Use the corresponding colors from the palette
+       lty = c(1:length(valid_indices)),
+       lwd = 2,
        xpd=T)
 
-#Age at sexual maturity ----
+###Age at sexual maturity ----
 
 #get the frequency of each age across parameter values and repetitions
 for (d in 1:17) {
   # create a data frame for each parameter value
-  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 26)))
+  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 101)))
   # retrieve the data frame
   temp_df <- get(paste("d", d, sep = "_"))
   # modify the column names
-  colnames(temp_df) <- as.character(0:25)
+  colnames(temp_df) <- as.character(0:100)
   # reassign the modified data frame in the original data frame
   assign(paste("d", d, sep = "_"), temp_df)
   #loop through repetitions
   for (r in 1:10) {
-    #extract the longevity
+    #extract the Age at sexual maturity
     asm_vector <- results[grep(paste("d", d, "", sep = "_"), names(results))][[r]]$asm
+    #change NAs into zeros
+   # asm_vector[is.na(asm_vector)] <- 0
     #create a new row with zeros
-    new_row <- rep(0, 26)
-    #update the new row based on longevity values
+    new_row <- rep(0, 101)
+    #update the new row based on Age at sexual maturity values
     for (val in asm_vector) {
-      if (val >= 0 & val <= 25 & !is.na(val)) {
+      if (val >= 0 & val <= 100 & !is.na(val)) {
         new_row[val + 1] <- new_row[val + 1] + 1  # +1 to account for index starting at 1 in R
       }
     }
     #change column names to match
     new_row_df <- as.data.frame(t(new_row))
-    colnames(new_row_df) <- as.character(0:25)
+    colnames(new_row_df) <- as.character(0:100)
     #add new row into the data frame
     temp_df <- get(paste("d", d, sep = "_"))  #current data frame
     temp_df <- rbind(temp_df, new_row_df)  #new row
@@ -627,81 +553,118 @@ for (d in 1:17) {
   }
 }
 
-#plot the averages
+#### Plot the densities ----
 
-#set margins
-par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
-
-plot(c(0,25),c(0,300),
-     type="n",
-     main="Age at sexual maturity",
-     xlab="Age at sexual maturity",
-     ylab="Frequency"
-)
-
-# Step 1: Create a vector to store indices of data frames with positive longevity
+# Step 1: Create a vector to store indices of data frames with positive Age at sexual maturity
 valid_indices <- c()
 
 # Step 2: First pass through to identify valid data frames
-for(d in 1:17){
+for(d in 1:17) {
   # Check if the sum of means is greater than zero
-  if(sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0){
+  if (sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0) {
     valid_indices <- c(valid_indices, d)  # Store the valid index
   }
 }
 
 # Step 3: Create a color palette for only the valid data frames
-color_palette <- hcl.colors(length(valid_indices), palette="zissou 1", alpha=0.5)
+color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha = 0.5)
 
-# Step 4: Second pass through to plot the valid data frames
-for(i in 1:length(valid_indices)){
+# Step 4: Prepare an empty plot
+
+par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
+
+plot(c(0, 2.5) ~ c(10, 25),
+     xlab = "Age", ylab = "Density",
+     main = "Age at sexual maturity",
+     type = "n")
+
+# Step 5: Loop through valid indices to calculate and plot the KDEs
+for(i in 1:length(valid_indices)) {
   d <- valid_indices[i]
   data <- get(paste("d", d, sep = "_"))
   
-  # Plot the line for this valid data frame
-  lines(0:(ncol(get(paste("d", d, sep = "_")))-1),
-        apply(data, 2, mean),
-        type="o",
-        col=color_palette[i],
-        pch=16
-  )  
+  # Create a common grid for evaluation
+  x_grid <- seq(10, 25, length.out = 200)
+  
+  # Calculate the KDE for each repetition and interpolate on the common grid
+  kde_list <- lapply(1:nrow(data), function(j) {
+    row <- data[j,11:26 ]  # Extract the j-th row (repetition)
+    if (any(row > 0)) {  # Check if there are any individuals in this row
+      # Create a weighted vector where age classes correspond to their counts
+      ages <- rep(10:25, row)
+      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      
+      if (length(unique_ages) == 1) {
+        # Case with exactly one unique non-zero age class: Create a spike density
+        spike_density <- rep(0, length(x_grid))
+        spike_index <- which.min(abs(x_grid - unique_ages))
+        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
+        return(spike_density)
+        
+      } else {
+        # Case with multiple unique non-zero ages: calculate KDE
+        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
+      }
+      
+    } else {
+      # Case with no individuals: return a zero vector
+      return(rep(0, length(x_grid)))
+    }
+  })
+  
+  # Bind the KDEs into a matrix
+  kde_matrix <- do.call(rbind, kde_list)
+  
+  # Calculate the average KDE by averaging at each point
+  avg_kde <- colMeans(kde_matrix)
+  
+  # Plot the average KDE with the corresponding color from the palette
+  lines(x_grid, avg_kde, 
+        type = "l",
+        col = color_palette[i],
+        lwd = 2,
+        lty = i
+  )
 }
 
-# Step 5: Adjust the legend to match the valid data frames
-legend(x=27,y=312,
-       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
-       col=color_palette,     # Use the corresponding colors from the palette
-       lty=1,
-       pch=16,
+# Step 6: Add a legend
+legend(x=26,y=2.6,
+       legend = prod_prob[2,valid_indices], # Use valid indices for the legend
+       col = color_palette, # Use the corresponding colors from the palette
+       lty = c(1:length(valid_indices)),
+       lwd = 2,
        xpd=T)
 
-#Age at first reproduction ----
+###Age at first reproduction ----
 
 #get the frequency of each age across parameter values and repetitions
 for (d in 1:17) {
   # create a data frame for each parameter value
-  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 36)))
+  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 101)))
   # retrieve the data frame
   temp_df <- get(paste("d", d, sep = "_"))
   # modify the column names
-  colnames(temp_df) <- as.character(0:35)
+  colnames(temp_df) <- as.character(0:100)
   # reassign the modified data frame in the original data frame
   assign(paste("d", d, sep = "_"), temp_df)
   #loop through repetitions
   for (r in 1:10) {
-    #extract the longevity
+    #extract the Age at first reproduction
     afr_vector <- results[grep(paste("d", d, "", sep = "_"), names(results))][[r]]$afr
+    #change NAs into zeros
+    # afr_vector[is.na(afr_vector)] <- 0
     #create a new row with zeros
-    new_row <- rep(0, 36)
-    #update the new row based on longevity values
+    new_row <- rep(0, 101)
+    #update the new row based on Age at first reproduction values
     for (val in afr_vector) {
-      if (val >= 0 & val <= 35 & !is.na(val)) {
+      if (val >= 0 & val <= 100 & !is.na(val)) {
         new_row[val + 1] <- new_row[val + 1] + 1  # +1 to account for index starting at 1 in R
       }
     }
     #change column names to match
     new_row_df <- as.data.frame(t(new_row))
-    colnames(new_row_df) <- as.character(0:35)
+    colnames(new_row_df) <- as.character(0:100)
     #add new row into the data frame
     temp_df <- get(paste("d", d, sep = "_"))  #current data frame
     temp_df <- rbind(temp_df, new_row_df)  #new row
@@ -709,81 +672,118 @@ for (d in 1:17) {
   }
 }
 
-#plot the averages
+#### Plot the densities ----
 
-#set margins
-par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
-
-plot(c(0,35),c(0,200),
-     type="n",
-     main="Age at first reproduction",
-     xlab="Age at first reproduction",
-     ylab="Frequency"
-)
-
-# Step 1: Create a vector to store indices of data frames with positive longevity
+# Step 1: Create a vector to store indices of data frames with positive Age at first reproduction
 valid_indices <- c()
 
 # Step 2: First pass through to identify valid data frames
-for(d in 1:17){
+for(d in 1:17) {
   # Check if the sum of means is greater than zero
-  if(sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0){
+  if (sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0) {
     valid_indices <- c(valid_indices, d)  # Store the valid index
   }
 }
 
 # Step 3: Create a color palette for only the valid data frames
-color_palette <- hcl.colors(length(valid_indices), palette="zissou 1", alpha=0.5)
+color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha = 0.5)
 
-# Step 4: Second pass through to plot the valid data frames
-for(i in 1:length(valid_indices)){
+# Step 4: Prepare an empty plot
+
+par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
+
+plot(c(0, 2) ~ c(10, 45),
+     xlab = "Age", ylab = "Density",
+     main = "Age at first reproduction",
+     type = "n")
+
+# Step 5: Loop through valid indices to calculate and plot the KDEs
+for(i in 1:length(valid_indices)) {
   d <- valid_indices[i]
   data <- get(paste("d", d, sep = "_"))
   
-  # Plot the line for this valid data frame
-  lines(0:(ncol(get(paste("d", d, sep = "_")))-1),
-        apply(data, 2, mean),
-        type="o",
-        col=color_palette[i],
-        pch=16
-  )  
+  # Create a common grid for evaluation
+  x_grid <- seq(10, 45, length.out = 200)
+  
+  # Calculate the KDE for each repetition and interpolate on the common grid
+  kde_list <- lapply(1:nrow(data), function(j) {
+    row <- data[j,11:46 ]  # Extract the j-th row (repetition)
+    if (any(row > 0)) {  # Check if there are any individuals in this row
+      # Create a weighted vector where age classes correspond to their counts
+      ages <- rep(10:45, row)
+      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      
+      if (length(unique_ages) == 1) {
+        # Case with exactly one unique non-zero age class: Create a spike density
+        spike_density <- rep(0, length(x_grid))
+        spike_index <- which.min(abs(x_grid - unique_ages))
+        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
+        return(spike_density)
+        
+      } else {
+        # Case with multiple unique non-zero ages: calculate KDE
+        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
+      }
+      
+    } else {
+      # Case with no individuals: return a zero vector
+      return(rep(0, length(x_grid)))
+    }
+  })
+  
+  # Bind the KDEs into a matrix
+  kde_matrix <- do.call(rbind, kde_list)
+  
+  # Calculate the average KDE by averaging at each point
+  avg_kde <- colMeans(kde_matrix)
+  
+  # Plot the average KDE with the corresponding color from the palette
+  lines(x_grid, avg_kde, 
+        type = "l",
+        col = color_palette[i],
+        lwd = 2,
+        lty = i
+  )
 }
 
-# Step 5: Adjust the legend to match the valid data frames
-legend(x=37,y=208,
-       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
-       col=color_palette,     # Use the corresponding colors from the palette
-       lty=1,
-       pch=16,
+# Step 6: Add a legend
+legend(x=47,y=2.08,
+       legend = prod_prob[2,valid_indices], # Use valid indices for the legend
+       col = color_palette, # Use the corresponding colors from the palette
+       lty = c(1:length(valid_indices)),
+       lwd = 2,
        xpd=T)
 
-#Age at last reproduction ----
+###Age at last reproduction ----
 
 #get the frequency of each age across parameter values and repetitions
 for (d in 1:17) {
   # create a data frame for each parameter value
-  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 61)))
+  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 101)))
   # retrieve the data frame
   temp_df <- get(paste("d", d, sep = "_"))
   # modify the column names
-  colnames(temp_df) <- as.character(0:60)
+  colnames(temp_df) <- as.character(0:100)
   # reassign the modified data frame in the original data frame
   assign(paste("d", d, sep = "_"), temp_df)
   #loop through repetitions
   for (r in 1:10) {
-    #extract the longevity
+    #extract the Age at last reproduction
     alr_vector <- results[grep(paste("d", d, "", sep = "_"), names(results))][[r]]$alr
+    #change NAs into zeros
+    # alr_vector[is.na(alr_vector)] <- 0
     #create a new row with zeros
-    new_row <- rep(0, 61)
-    #update the new row based on longevity values
+    new_row <- rep(0, 101)
+    #update the new row based on Age at last reproduction values
     for (val in alr_vector) {
-      if (val >= 0 & val <= 60 & !is.na(val)) {
+      if (val >= 0 & val <= 100 & !is.na(val)) {
         new_row[val + 1] <- new_row[val + 1] + 1  # +1 to account for index starting at 1 in R
       }
     }
     #change column names to match
     new_row_df <- as.data.frame(t(new_row))
-    colnames(new_row_df) <- as.character(0:60)
+    colnames(new_row_df) <- as.character(0:100)
     #add new row into the data frame
     temp_df <- get(paste("d", d, sep = "_"))  #current data frame
     temp_df <- rbind(temp_df, new_row_df)  #new row
@@ -791,81 +791,118 @@ for (d in 1:17) {
   }
 }
 
-#plot the averages
+#### Plot the densities ----
 
-#set margins
-par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
-
-plot(c(0,60),c(0,100),
-     type="n",
-     main="Age at last reproduction",
-     xlab="Age at last reproduction",
-     ylab="Frequency"
-)
-
-# Step 1: Create a vector to store indices of data frames with positive longevity
+# Step 1: Create a vector to store indices of data frames with positive Age at last reproduction
 valid_indices <- c()
 
 # Step 2: First pass through to identify valid data frames
-for(d in 1:17){
+for(d in 1:17) {
   # Check if the sum of means is greater than zero
-  if(sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0){
+  if (sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0) {
     valid_indices <- c(valid_indices, d)  # Store the valid index
   }
 }
 
 # Step 3: Create a color palette for only the valid data frames
-color_palette <- hcl.colors(length(valid_indices), palette="zissou 1", alpha=0.5)
+color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha = 0.5)
 
-# Step 4: Second pass through to plot the valid data frames
-for(i in 1:length(valid_indices)){
+# Step 4: Prepare an empty plot
+
+par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
+
+plot(c(0, 0.5) ~ c(20, 60),
+     xlab = "Age", ylab = "Density",
+     main = "Age at last reproduction",
+     type = "n")
+
+# Step 5: Loop through valid indices to calculate and plot the KDEs
+for(i in 1:length(valid_indices)) {
   d <- valid_indices[i]
   data <- get(paste("d", d, sep = "_"))
   
-  # Plot the line for this valid data frame
-  lines(0:(ncol(get(paste("d", d, sep = "_")))-1),
-        apply(data, 2, mean),
-        type="o",
-        col=color_palette[i],
-        pch=16
-  )  
+  # Create a common grid for evaluation
+  x_grid <- seq(20, 60, length.out = 200)
+  
+  # Calculate the KDE for each repetition and interpolate on the common grid
+  kde_list <- lapply(1:nrow(data), function(j) {
+    row <- data[j,21:61 ]  # Extract the j-th row (repetition)
+    if (any(row > 0)) {  # Check if there are any individuals in this row
+      # Create a weighted vector where age classes correspond to their counts
+      ages <- rep(20:60, row)
+      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      
+      if (length(unique_ages) == 1) {
+        # Case with exactly one unique non-zero age class: Create a spike density
+        spike_density <- rep(0, length(x_grid))
+        spike_index <- which.min(abs(x_grid - unique_ages))
+        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
+        return(spike_density)
+        
+      } else {
+        # Case with multiple unique non-zero ages: calculate KDE
+        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
+      }
+      
+    } else {
+      # Case with no individuals: return a zero vector
+      return(rep(0, length(x_grid)))
+    }
+  })
+  
+  # Bind the KDEs into a matrix
+  kde_matrix <- do.call(rbind, kde_list)
+  
+  # Calculate the average KDE by averaging at each point
+  avg_kde <- colMeans(kde_matrix)
+  
+  # Plot the average KDE with the corresponding color from the palette
+  lines(x_grid, avg_kde, 
+        type = "l",
+        col = color_palette[i],
+        lwd = 2,
+        lty = i
+  )
 }
 
-# Step 5: Adjust the legend to match the valid data frames
-legend(x=63,y=104,
-       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
-       col=color_palette,     # Use the corresponding colors from the palette
-       lty=1,
-       pch=16,
+# Step 6: Add a legend
+legend(x=62,y=0.52,
+       legend = prod_prob[2,valid_indices], # Use valid indices for the legend
+       col = color_palette, # Use the corresponding colors from the palette
+       lty = c(1:length(valid_indices)),
+       lwd = 2,
        xpd=T)
 
-#Age at menopause ----
+###Age at menopause ----
 
 #get the frequency of each age across parameter values and repetitions
 for (d in 1:17) {
   # create a data frame for each parameter value
-  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 71)))
+  assign(paste("d", d, sep = "_"), data.frame(matrix(0, nrow = 0, ncol = 101)))
   # retrieve the data frame
   temp_df <- get(paste("d", d, sep = "_"))
   # modify the column names
-  colnames(temp_df) <- as.character(0:70)
+  colnames(temp_df) <- as.character(0:100)
   # reassign the modified data frame in the original data frame
   assign(paste("d", d, sep = "_"), temp_df)
   #loop through repetitions
   for (r in 1:10) {
-    #extract the longevity
+    #extract the Age at menopause
     meno_vector <- results[grep(paste("d", d, "", sep = "_"), names(results))][[r]]$meno
+    #change NAs into zeros
+    # meno_vector[is.na(meno_vector)] <- 0
     #create a new row with zeros
-    new_row <- rep(0, 71)
-    #update the new row based on longevity values
+    new_row <- rep(0, 101)
+    #update the new row based on Age at menopause values
     for (val in meno_vector) {
-      if (val >= 0 & val <= 70 & !is.na(val)) {
+      if (val >= 0 & val <= 100 & !is.na(val)) {
         new_row[val + 1] <- new_row[val + 1] + 1  # +1 to account for index starting at 1 in R
       }
     }
     #change column names to match
     new_row_df <- as.data.frame(t(new_row))
-    colnames(new_row_df) <- as.character(0:70)
+    colnames(new_row_df) <- as.character(0:100)
     #add new row into the data frame
     temp_df <- get(paste("d", d, sep = "_"))  #current data frame
     temp_df <- rbind(temp_df, new_row_df)  #new row
@@ -873,51 +910,85 @@ for (d in 1:17) {
   }
 }
 
-#plot the averages
+#### Plot the densities ----
 
-#set margins
-par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
-
-plot(c(0,70),c(0,300),
-     type="n",
-     main="Age at menopause",
-     xlab="Age at menopause",
-     ylab="Frequency"
-)
-
-# Step 1: Create a vector to store indices of data frames with positive longevity
+# Step 1: Create a vector to store indices of data frames with positive Age at menopause
 valid_indices <- c()
 
 # Step 2: First pass through to identify valid data frames
-for(d in 1:17){
+for(d in 1:17) {
   # Check if the sum of means is greater than zero
-  if(sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0){
+  if (sum(apply(get(paste("d", d, sep = "_")), 2, mean)) > 0) {
     valid_indices <- c(valid_indices, d)  # Store the valid index
   }
 }
 
 # Step 3: Create a color palette for only the valid data frames
-color_palette <- hcl.colors(length(valid_indices), palette="zissou 1", alpha=0.5)
+color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha = 0.5)
 
-# Step 4: Second pass through to plot the valid data frames
-for(i in 1:length(valid_indices)){
+# Step 4: Prepare an empty plot
+
+par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
+
+plot(c(0, 1.6) ~ c(20, 65),
+     xlab = "Age", ylab = "Density",
+     main = "Age at menopause",
+     type = "n")
+
+# Step 5: Loop through valid indices to calculate and plot the KDEs
+for(i in 1:length(valid_indices)) {
   d <- valid_indices[i]
   data <- get(paste("d", d, sep = "_"))
   
-  # Plot the line for this valid data frame
-  lines(0:(ncol(get(paste("d", d, sep = "_")))-1),
-        apply(data, 2, mean),
-        type="o",
-        col=color_palette[i],
-        pch=16
-  )  
+  # Create a common grid for evaluation
+  x_grid <- seq(20, 65, length.out = 200)
+  
+  # Calculate the KDE for each repetition and interpolate on the common grid
+  kde_list <- lapply(1:nrow(data), function(j) {
+    row <- data[j,21:66 ]  # Extract the j-th row (repetition)
+    if (any(row > 0)) {  # Check if there are any individuals in this row
+      # Create a weighted vector where age classes correspond to their counts
+      ages <- rep(20:65, row)
+      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      
+      if (length(unique_ages) == 1) {
+        # Case with exactly one unique non-zero age class: Create a spike density
+        spike_density <- rep(0, length(x_grid))
+        spike_index <- which.min(abs(x_grid - unique_ages))
+        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
+        return(spike_density)
+        
+      } else {
+        # Case with multiple unique non-zero ages: calculate KDE
+        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
+      }
+      
+    } else {
+      # Case with no individuals: return a zero vector
+      return(rep(0, length(x_grid)))
+    }
+  })
+  
+  # Bind the KDEs into a matrix
+  kde_matrix <- do.call(rbind, kde_list)
+  
+  # Calculate the average KDE by averaging at each point
+  avg_kde <- colMeans(kde_matrix)
+  
+  # Plot the average KDE with the corresponding color from the palette
+  lines(x_grid, avg_kde, 
+        type = "l",
+        col = color_palette[i],
+        lwd = 2,
+        lty = i
+  )
 }
 
-# Step 5: Adjust the legend to match the valid data frames
-legend(x=75,y=312,
-       legend=prod_prob[2,valid_indices],  # Use valid indices for the legend
-       col=color_palette,     # Use the corresponding colors from the palette
-       lty=1,
-       pch=16,
+# Step 6: Add a legend
+legend(x=67,y=1.67,
+       legend = prod_prob[2,valid_indices], # Use valid indices for the legend
+       col = color_palette, # Use the corresponding colors from the palette
+       lty = c(1:length(valid_indices)),
+       lwd = 2,
        xpd=T)
-
