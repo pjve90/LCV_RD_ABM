@@ -222,7 +222,7 @@ for(i in 1:length(summary_stats)){
 max(cv_all)
 
 #plot the CV together
-par(mfrow=c(1,6))
+par(mar=c(5, 4, 4, 2))
 layout(matrix(c(1,1,2,2,3,4,5,6),ncol=4,byrow=T))
 #longevity
 plot(c(0,max(cv_all)+0.5)~c(0,1),
