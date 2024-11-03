@@ -10,7 +10,7 @@
 
 #set work directory
 getwd()
-setwd("./LCV_RD_ABM")
+#setwd("./LCV_RD_ABM")
 
 #install packages
 #install.packages("scales")
@@ -365,7 +365,7 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 0.1) ~ c(0, 100),
+plot(c(0, 0.15) ~ c(0, 100),
      xlab = "Age", ylab = "Density",
      main = "Longevity",
      type = "n")
@@ -380,14 +380,28 @@ for(i in 1:length(valid_indices)) {
   
   # Calculate the KDE for each repetition and interpolate on the common grid
   kde_list <- lapply(1:nrow(data), function(j) {
-    row <- data[j, ]  # Extract the j-th row (repetition)
+    row <- data[j,1:101 ]  # Extract the j-th row (repetition)
     if (any(row > 0)) {  # Check if there are any individuals in this row
       # Create a weighted vector where age classes correspond to their counts
       ages <- rep(0:100, row)
-      kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-      approx(kde$x, kde$y, xout = x_grid)$y  # Interpolate on the common grid
+      unique_ages <- unique(ages)  # Filter out zeros
+      
+      if (length(unique_ages) == 1) {
+        # Case with exactly one unique non-zero age class: Create a spike density
+        spike_density <- rep(0, length(x_grid))
+        spike_index <- which.min(abs(x_grid - unique_ages))
+        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
+        return(spike_density)
+        
+      } else {
+        # Case with multiple unique non-zero ages: calculate KDE
+        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
+      }
+      
     } else {
-      rep(0, length(x_grid))  # If no individuals, return a zero vector
+      # Case with no individuals: return a zero vector
+      return(rep(0, length(x_grid)))
     }
   })
   
@@ -403,11 +417,11 @@ for(i in 1:length(valid_indices)) {
         col = color_palette[i],
         lwd = 2,
         lty = i
-        )
+  )
 }
 
 # Step 6: Add a legend
-legend(x=105,y=0.104,
+legend(x=105,y=0.156,
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -468,7 +482,7 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 1) ~ c(0, 20),
+plot(c(0, 4.5) ~ c(0, 20),
      xlab = "Number of descendants", ylab = "Density",
      main = "Lifetime reproductive output",
      type = "n")
@@ -486,11 +500,25 @@ for(i in 1:length(valid_indices)) {
     row <- data[j, ]  # Extract the j-th row (repetition)
     if (any(row > 0)) {  # Check if there are any individuals in this row
       # Create a weighted vector where age classes correspond to their counts
-      lro <- rep(0:20, row)
-      kde <- density(lro, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-      approx(kde$x, kde$y, xout = x_grid)$y  # Interpolate on the common grid
+      ages <- rep(0:20, row)
+      unique_ages <- unique(ages)  # Filter out zeros
+      
+      if (length(unique_ages) == 1) {
+        # Case with exactly one unique non-zero age class: Create a spike density
+        spike_density <- rep(0, length(x_grid))
+        spike_index <- which.min(abs(x_grid - unique_ages))
+        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
+        return(spike_density)
+        
+      } else {
+        # Case with multiple unique non-zero ages: calculate KDE
+        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
+        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
+      }
+      
     } else {
-      rep(0, length(x_grid))  # If no individuals, return a zero vector
+      # Case with no individuals: return a zero vector
+      return(rep(0, length(x_grid)))
     }
   })
   
@@ -510,7 +538,7 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=21,y=1.04,
+legend(x=21,y=4.7,
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -573,7 +601,7 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 2.5) ~ c(10, 25),
+plot(c(0, 2) ~ c(10, 25),
      xlab = "Age", ylab = "Density",
      main = "Age at sexual maturity",
      type = "n")
@@ -592,7 +620,7 @@ for(i in 1:length(valid_indices)) {
     if (any(row > 0)) {  # Check if there are any individuals in this row
       # Create a weighted vector where age classes correspond to their counts
       ages <- rep(10:25, row)
-      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      unique_ages <- unique(ages)  # Filter out zeros
       
       if (length(unique_ages) == 1) {
         # Case with exactly one unique non-zero age class: Create a spike density
@@ -629,7 +657,7 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=26,y=2.6,
+legend(x=25.8,y=2.08,
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -692,7 +720,7 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 2) ~ c(10, 45),
+plot(c(0, 1.6) ~ c(10, 45),
      xlab = "Age", ylab = "Density",
      main = "Age at first reproduction",
      type = "n")
@@ -711,7 +739,7 @@ for(i in 1:length(valid_indices)) {
     if (any(row > 0)) {  # Check if there are any individuals in this row
       # Create a weighted vector where age classes correspond to their counts
       ages <- rep(10:45, row)
-      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      unique_ages <- unique(ages)  # Filter out zeros
       
       if (length(unique_ages) == 1) {
         # Case with exactly one unique non-zero age class: Create a spike density
@@ -748,7 +776,7 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=47,y=2.08,
+legend(x=47,y=1.66,
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -811,7 +839,7 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 0.5) ~ c(20, 60),
+plot(c(0, 0.4) ~ c(20, 60),
      xlab = "Age", ylab = "Density",
      main = "Age at last reproduction",
      type = "n")
@@ -830,7 +858,7 @@ for(i in 1:length(valid_indices)) {
     if (any(row > 0)) {  # Check if there are any individuals in this row
       # Create a weighted vector where age classes correspond to their counts
       ages <- rep(20:60, row)
-      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      unique_ages <- unique(ages)  # Filter out zeros
       
       if (length(unique_ages) == 1) {
         # Case with exactly one unique non-zero age class: Create a spike density
@@ -867,7 +895,7 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=62,y=0.52,
+legend(x=62,y=0.416,
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -930,7 +958,7 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 1.6) ~ c(20, 65),
+plot(c(0, 2.5) ~ c(20, 65),
      xlab = "Age", ylab = "Density",
      main = "Age at menopause",
      type = "n")
@@ -949,7 +977,7 @@ for(i in 1:length(valid_indices)) {
     if (any(row > 0)) {  # Check if there are any individuals in this row
       # Create a weighted vector where age classes correspond to their counts
       ages <- rep(20:65, row)
-      unique_ages <- unique(ages[ages > 0])  # Filter out zeros
+      unique_ages <- unique(ages)  # Filter out zeros
       
       if (length(unique_ages) == 1) {
         # Case with exactly one unique non-zero age class: Create a spike density
@@ -986,7 +1014,7 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=67,y=1.67,
+legend(x=67.5,y=2.6,
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
