@@ -422,10 +422,12 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=105,y=0.156,
+       title = "Parameter values",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
        lwd = 2,
+       bty = "n",
        xpd=T)
 
 ###Lifetime reproductive output ----
@@ -539,10 +541,12 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=21,y=4.7,
+       title = "Parameter values",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
        lwd = 2,
+       bty = "n",
        xpd=T)
 
 ###Age at sexual maturity ----
@@ -658,10 +662,12 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=25.8,y=2.08,
+       title = "Parameter values",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
        lwd = 2,
+       bty = "n",
        xpd=T)
 
 ###Age at first reproduction ----
@@ -777,10 +783,12 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=47,y=1.66,
+       title = "Parameter values",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
        lwd = 2,
+       bty = "n",
        xpd=T)
 
 ###Age at last reproduction ----
@@ -896,10 +904,12 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=62,y=0.416,
+       title = "Parameter values",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
        lwd = 2,
+       bty = "n",
        xpd=T)
 
 ###Age at menopause ----
@@ -1015,8 +1025,10 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=67.5,y=2.6,
+       title = "Parameter values",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
        lwd = 2,
+       bty = "n",
        xpd=T)
