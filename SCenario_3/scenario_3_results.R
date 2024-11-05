@@ -66,24 +66,21 @@ for (i in 1:length(results)){
   if(nrow(results[[i]]) == 0){
     summary_stats[[i]] <- summary_stats[[i]]
   } else{
-    if(nrow(results[[i]]) > 1){
+    summary_stats[[i]]$summary <- summary(results[[i]][,c("lng","lro","asm","afr","alr","meno")])
+    summary_stats[[i]]$sd <- as.data.frame(lapply(results[[i]][,c("lng","lro","asm","afr","alr","meno")],sd,na.rm=T))
+    summary_stats[[i]]$mean <- as.data.frame(lapply(results[[i]][,c("lng","lro","asm","afr","alr","meno")],mean,na.rm=T))
+    summary_stats[[i]]$cv <- summary_stats[[i]]$sd / summary_stats[[i]]$mean  
+    if(nrow(results[[i]]) == 1 | summary_stats[[i]]$sd$lng == 0 & summary_stats[[i]]$sd$lro == 0){
       summary_stats[[i]]$summary <- summary(results[[i]][,c("lng","lro","asm","afr","alr","meno")])
-      summary_stats[[i]]$sm <- as.data.frame(lapply(results[[i]][,c("lng","lro","asm","afr","alr","meno")],sd,na.rm=T))
+      summary_stats[[i]]$sd <- as.data.frame(lapply(results[[i]][,c("lng","lro","asm","afr","alr","meno")],sd,na.rm=T))
+      summary_stats[[i]]$sd[,c("lng","lro")][which(is.na(summary_stats[[i]]$sd[,c("lng","lro")]))] <- 0
       summary_stats[[i]]$mean <- as.data.frame(lapply(results[[i]][,c("lng","lro","asm","afr","alr","meno")],mean,na.rm=T))
-      summary_stats[[i]]$cv <- summary_stats[[i]]$sd / summary_stats[[i]]$mean  
-      if(summary_stats[[i]]$sd$lro == 0 & summary_stats[[i]]$mean$lro == 0){
-        summary_stats[[i]]$cv$lro <- 0
-      } else if(nrow(results[[i]]) == 1){
-        summary_stats[[i]]$summary <- summary(results[[i]][,c("lng","lro","asm","afr","alr","meno")])
-        summary_stats[[i]]$sm <- as.data.frame(lapply(results[[i]][,c("lng","lro","asm","afr","alr","meno")],sd,na.rm=T))
-        summary_stats[[i]]$sd[,c("lng","lro")][which(is.na(summary_stats[[i]]$sd[,c("lng","lro")]))] <- 0
-        summary_stats[[i]]$mean <- as.data.frame(lapply(results[[i]][,c("lng","lro","asm","afr","alr","meno")],mean,na.rm=T))
-        summary_stats[[i]]$cv <- summary_stats[[i]]$sd / summary_stats[[i]]$mean  
-      }  
+      summary_stats[[i]]$cv[,c("lng","lro")] <- 0  
+    }  
     }
     
-  }
 }
+
 
 ## CV sorted by life history trait ----
 
@@ -257,7 +254,7 @@ plot(c(0,max(cv_all)+0.5)~c(0.5,1),
      ylim=c(0,max(cv_all)),
      type="n")
 for(m in 1:nrow(lng_cv)){
-  points(as.numeric(lng_cv[d,2:11])~rep(lng_cv[d,1],10),
+  points(as.numeric(lng_cv[m,2:11])~rep(lng_cv[m,1],10),
          pch=16,
          col=alpha("grey",0.5)
   )    
@@ -271,7 +268,7 @@ plot(c(0,max(cv_all)+0.5)~c(0.5,1),
      ylim=c(0,max(cv_all)),
      type="n")
 for(m in 1:nrow(lro_cv)){
-  points(as.numeric(lro_cv[d,2:11])~rep(lro_cv[d,1],10),
+  points(as.numeric(lro_cv[m,2:11])~rep(lro_cv[m,1],10),
          pch=16,
          col=alpha("grey",0.5)
   )    
@@ -285,7 +282,7 @@ plot(c(0,max(cv_all)+0.5)~c(0.5,1),
      ylim=c(0,max(cv_all)),
      type="n")
 for(m in 1:nrow(asm_cv)){
-  points(as.numeric(asm_cv[d,2:11])~rep(asm_cv[d,1],10),
+  points(as.numeric(asm_cv[m,2:11])~rep(asm_cv[m,1],10),
          pch=16,
          col=alpha("grey",0.5)
   )    
@@ -299,7 +296,7 @@ plot(c(0,max(cv_all)+0.5)~c(0.5,1),
      ylim=c(0,max(cv_all)),
      type="n")
 for(m in 1:nrow(afr_cv)){
-  points(as.numeric(afr_cv[d,2:11])~rep(afr_cv[d,1],10),
+  points(as.numeric(afr_cv[m,2:11])~rep(afr_cv[m,1],10),
          pch=16,
          col=alpha("grey",0.5)
   )    
@@ -313,7 +310,7 @@ plot(c(0,max(cv_all)+0.5)~c(0.5,1),
      ylim=c(0,max(cv_all)),
      type="n")
 for(m in 1:nrow(alr_cv)){
-  points(as.numeric(alr_cv[d,2:11])~rep(alr_cv[d,1],10),
+  points(as.numeric(alr_cv[m,2:11])~rep(alr_cv[m,1],10),
          pch=16,
          col=alpha("grey",0.5)
   )    
@@ -327,7 +324,7 @@ plot(c(0,max(cv_all)+0.5)~c(0.5,1),
      ylim=c(0,max(cv_all)),
      type="n")
 for(m in 1:nrow(meno_cv)){
-  points(as.numeric(meno_cv[d,2:11])~rep(meno_cv[d,1],10),
+  points(as.numeric(meno_cv[m,2:11])~rep(meno_cv[m,1],10),
          pch=16,
          col=alpha("grey",0.5)
   )    
@@ -390,10 +387,10 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 0.4) ~ c(0, 100),
-     xlab = "Age", ylab = "Density",
+plot(c(0,100), c(0,2),
+     xlab = "Age",
+     ylab = "Frequency",
      main = "Longevity",
-     cex.main= 2,
      type = "n")
 
 # Step 5: Loop through valid indices to calculate and plot the KDEs
@@ -401,53 +398,18 @@ for(i in 1:length(valid_indices)) {
   m <- valid_indices[i]
   data <- get(paste("m", m, sep = "_"))
   
-  # Create a common grid for evaluation
-  x_grid <- seq(0, 100, length.out = 200)
-  
-  # Calculate the KDE for each repetition and interpolate on the common grid
-  kde_list <- lapply(1:nrow(data), function(j) {
-    row <- data[j,1:101 ]  # Extract the j-th row (repetition)
-    if (any(row > 0)) {  # Check if there are any individuals in this row
-      # Create a weighted vector where age classes correspond to their counts
-      ages <- rep(0:100, row)
-      unique_ages <- unique(ages)  # Filter out zeros
-      
-      if (length(unique_ages) == 1) {
-        # Case with exactly one unique non-zero age class: Create a spike density
-        spike_density <- rep(0, length(x_grid))
-        spike_index <- which.min(abs(x_grid - unique_ages))
-        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
-        return(spike_density)
-        
-      } else {
-        # Case with multiple unique non-zero ages: calculate KDE
-        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
-      }
-      
-    } else {
-      # Case with no individuals: return a zero vector
-      return(rep(0, length(x_grid)))
-    }
-  })
-  
-  # Bind the KDEs into a matrix
-  kde_matrix <- do.call(rbind, kde_list)
-  
-  # Calculate the average KDE by averaging at each point
-  avg_kde <- colMeans(kde_matrix)
-  
-  # Plot the average KDE with the corresponding color from the palette
-  lines(x_grid, avg_kde, 
-        type = "l",
-        col = color_palette[i],
-        lwd = 2,
-        lty = i
+  # Plot the line for this valid data frame
+  lines(0:(ncol(get(paste("m", m, sep = "_")))-1),
+        apply(data, 2, mean),
+        type="o",
+        col=color_palette[i],
+        lty=i,
+        pch=16
   )
 }
 
 # Step 6: Add a legend
-legend(x=105,y=0.42,
+legend(x=105,y=2,
        title = "Parameter values",
        legend = sequence[valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
@@ -510,10 +472,10 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 4.5) ~ c(0, 20),
-     xlab = "Number of descendants", ylab = "Density",
+plot(c(0,20), c(0,6),
+     xlab = "Age",
+     ylab = "Frequency",
      main = "Lifetime reproductive output",
-     cex.main = 2,
      type = "n")
 
 # Step 5: Loop through valid indices to calculate and plot the KDEs
@@ -521,53 +483,18 @@ for(i in 1:length(valid_indices)) {
   m <- valid_indices[i]
   data <- get(paste("m", m, sep = "_"))
   
-  # Create a common grid for evaluation
-  x_grid <- seq(0, 20, length.out = 200)
-  
-  # Calculate the KDE for each repetition and interpolate on the common grid
-  kde_list <- lapply(1:nrow(data), function(j) {
-    row <- data[j, ]  # Extract the j-th row (repetition)
-    if (any(row > 0)) {  # Check if there are any individuals in this row
-      # Create a weighted vector where age classes correspond to their counts
-      ages <- rep(0:20, row)
-      unique_ages <- unique(ages)  # Filter out zeros
-      
-      if (length(unique_ages) == 1) {
-        # Case with exactly one unique non-zero age class: Create a spike density
-        spike_density <- rep(0, length(x_grid))
-        spike_index <- which.min(abs(x_grid - unique_ages))
-        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
-        return(spike_density)
-        
-      } else {
-        # Case with multiple unique non-zero ages: calculate KDE
-        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
-      }
-      
-    } else {
-      # Case with no individuals: return a zero vector
-      return(rep(0, length(x_grid)))
-    }
-  })
-  
-  # Bind the KDEs into a matrix
-  kde_matrix <- do.call(rbind, kde_list)
-  
-  # Calculate the average KDE by averaging at each point
-  avg_kde <- colMeans(kde_matrix)
-  
-  # Plot the average KDE with the corresponding color from the palette
-  lines(x_grid, avg_kde, 
-        type = "l",
-        col = color_palette[i],
-        lwd = 2,
-        lty = i
+  # Plot the line for this valid data frame
+  lines(0:(ncol(get(paste("m", m, sep = "_")))-1),
+        apply(data, 2, mean),
+        type="o",
+        col=color_palette[i],
+        lty=i,
+        pch=16
   )
 }
 
 # Step 6: Add a legend
-legend(x=21,y=4.7,
+legend(x=21,y=6,
        title = "Parameter values",
        legend = sequence[valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
@@ -632,8 +559,9 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 2) ~ c(10, 25),
-     xlab = "Age", ylab = "Density",
+plot(c(10,30), c(0,2),
+     xlab = "Age",
+     ylab = "Frequency",
      main = "Age at sexual maturity",
      type = "n")
 
@@ -642,53 +570,18 @@ for(i in 1:length(valid_indices)) {
   m <- valid_indices[i]
   data <- get(paste("m", m, sep = "_"))
   
-  # Create a common grid for evaluation
-  x_grid <- seq(10, 25, length.out = 200)
-  
-  # Calculate the KDE for each repetition and interpolate on the common grid
-  kde_list <- lapply(1:nrow(data), function(j) {
-    row <- data[j,11:26 ]  # Extract the j-th row (repetition)
-    if (any(row > 0)) {  # Check if there are any individuals in this row
-      # Create a weighted vector where age classes correspond to their counts
-      ages <- rep(10:25, row)
-      unique_ages <- unique(ages)  # Filter out zeros
-      
-      if (length(unique_ages) == 1) {
-        # Case with exactly one unique non-zero age class: Create a spike density
-        spike_density <- rep(0, length(x_grid))
-        spike_index <- which.min(abs(x_grid - unique_ages))
-        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
-        return(spike_density)
-        
-      } else {
-        # Case with multiple unique non-zero ages: calculate KDE
-        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
-      }
-      
-    } else {
-      # Case with no individuals: return a zero vector
-      return(rep(0, length(x_grid)))
-    }
-  })
-  
-  # Bind the KDEs into a matrix
-  kde_matrix <- do.call(rbind, kde_list)
-  
-  # Calculate the average KDE by averaging at each point
-  avg_kde <- colMeans(kde_matrix)
-  
-  # Plot the average KDE with the corresponding color from the palette
-  lines(x_grid, avg_kde, 
-        type = "l",
-        col = color_palette[i],
-        lwd = 2,
-        lty = i
+  # Plot the line for this valid data frame
+  lines(0:(ncol(get(paste("m", m, sep = "_")))-1),
+        apply(data, 2, mean),
+        type="o",
+        col=color_palette[i],
+        lty=i,
+        pch=16
   )
 }
 
 # Step 6: Add a legend
-legend(x=25.8,y=2.08,
+legend(x=31,y=2,
        title = "Parameter values",
        legend = sequence[valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
@@ -753,8 +646,9 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 0.25) ~ c(10, 100),
-     xlab = "Age", ylab = "Density",
+plot(c(10,70), c(0,0.5),
+     xlab = "Age",
+     ylab = "Frequency",
      main = "Age at first reproduction",
      type = "n")
 
@@ -763,53 +657,18 @@ for(i in 1:length(valid_indices)) {
   m <- valid_indices[i]
   data <- get(paste("m", m, sep = "_"))
   
-  # Create a common grid for evaluation
-  x_grid <- seq(10, 100, length.out = 200)
-  
-  # Calculate the KDE for each repetition and interpolate on the common grid
-  kde_list <- lapply(1:nrow(data), function(j) {
-    row <- data[j,11:101 ]  # Extract the j-th row (repetition)
-    if (any(row > 0)) {  # Check if there are any individuals in this row
-      # Create a weighted vector where age classes correspond to their counts
-      ages <- rep(10:100, row)
-      unique_ages <- unique(ages)  # Filter out zeros
-      
-      if (length(unique_ages) == 1) {
-        # Case with exactly one unique non-zero age class: Create a spike density
-        spike_density <- rep(0, length(x_grid))
-        spike_index <- which.min(abs(x_grid - unique_ages))
-        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
-        return(spike_density)
-        
-      } else {
-        # Case with multiple unique non-zero ages: calculate KDE
-        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
-      }
-      
-    } else {
-      # Case with no individuals: return a zero vector
-      return(rep(0, length(x_grid)))
-    }
-  })
-  
-  # Bind the KDEs into a matrix
-  kde_matrix <- do.call(rbind, kde_list)
-  
-  # Calculate the average KDE by averaging at each point
-  avg_kde <- colMeans(kde_matrix)
-  
-  # Plot the average KDE with the corresponding color from the palette
-  lines(x_grid, avg_kde, 
-        type = "l",
-        col = color_palette[i],
-        lwd = 2,
-        lty = i
+  # Plot the line for this valid data frame
+  lines(0:(ncol(get(paste("m", m, sep = "_")))-1),
+        apply(data, 2, mean),
+        type="o",
+        col=color_palette[i],
+        lty=i,
+        pch=16
   )
 }
 
 # Step 6: Add a legend
-legend(x=104,y=0.265,
+legend(x=73,y=0.5,
        title = "Parameter values",
        legend = sequence[valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
@@ -874,8 +733,9 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 0.25) ~ c(20, 60),
-     xlab = "Age", ylab = "Density",
+plot(c(0,100), c(0,0.5),
+     xlab = "Age",
+     ylab = "Frequency",
      main = "Age at last reproduction",
      type = "n")
 
@@ -884,53 +744,18 @@ for(i in 1:length(valid_indices)) {
   m <- valid_indices[i]
   data <- get(paste("m", m, sep = "_"))
   
-  # Create a common grid for evaluation
-  x_grid <- seq(20, 60, length.out = 200)
-  
-  # Calculate the KDE for each repetition and interpolate on the common grid
-  kde_list <- lapply(1:nrow(data), function(j) {
-    row <- data[j,21:61 ]  # Extract the j-th row (repetition)
-    if (any(row > 0)) {  # Check if there are any individuals in this row
-      # Create a weighted vector where age classes correspond to their counts
-      ages <- rep(20:60, row)
-      unique_ages <- unique(ages)  # Filter out zeros
-      
-      if (length(unique_ages) == 1) {
-        # Case with exactly one unique non-zero age class: Create a spike density
-        spike_density <- rep(0, length(x_grid))
-        spike_index <- which.min(abs(x_grid - unique_ages))
-        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
-        return(spike_density)
-        
-      } else {
-        # Case with multiple unique non-zero ages: calculate KDE
-        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
-      }
-      
-    } else {
-      # Case with no individuals: return a zero vector
-      return(rep(0, length(x_grid)))
-    }
-  })
-  
-  # Bind the KDEs into a matrix
-  kde_matrix <- do.call(rbind, kde_list)
-  
-  # Calculate the average KDE by averaging at each point
-  avg_kde <- colMeans(kde_matrix)
-  
-  # Plot the average KDE with the corresponding color from the palette
-  lines(x_grid, avg_kde, 
-        type = "l",
-        col = color_palette[i],
-        lwd = 2,
-        lty = i
+  # Plot the line for this valid data frame
+  lines(0:(ncol(get(paste("m", m, sep = "_")))-1),
+        apply(data, 2, mean),
+        type="o",
+        col=color_palette[i],
+        lty=i,
+        pch=16
   )
 }
 
 # Step 6: Add a legend
-legend(x=62,y=0.26,
+legend(x=104,y=0.5,
        title = "Parameter values",
        legend = sequence[valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
@@ -995,8 +820,9 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(0, 0.25) ~ c(20, 100),
-     xlab = "Age", ylab = "Density",
+plot(c(0,100), c(0,0.8),
+     xlab = "Age",
+     ylab = "Frequency",
      main = "Age at menopause",
      type = "n")
 
@@ -1005,53 +831,18 @@ for(i in 1:length(valid_indices)) {
   m <- valid_indices[i]
   data <- get(paste("m", m, sep = "_"))
   
-  # Create a common grid for evaluation
-  x_grid <- seq(20, 100, length.out = 200)
-  
-  # Calculate the KDE for each repetition and interpolate on the common grid
-  kde_list <- lapply(1:nrow(data), function(j) {
-    row <- data[j,21:101 ]  # Extract the j-th row (repetition)
-    if (any(row > 0)) {  # Check if there are any individuals in this row
-      # Create a weighted vector where age classes correspond to their counts
-      ages <- rep(20:100, row)
-      unique_ages <- unique(ages)  # Filter out zeros
-      
-      if (length(unique_ages) == 1) {
-        # Case with exactly one unique non-zero age class: Create a spike density
-        spike_density <- rep(0, length(x_grid))
-        spike_index <- which.min(abs(x_grid - unique_ages))
-        spike_density[spike_index] <- max(row)  # Set spike height proportional to the count
-        return(spike_density)
-        
-      } else {
-        # Case with multiple unique non-zero ages: calculate KDE
-        kde <- density(ages, from = min(x_grid), to = max(x_grid), na.rm = TRUE, n = length(x_grid))
-        return(approx(kde$x, kde$y, xout = x_grid)$y)  # Interpolate on the common grid
-      }
-      
-    } else {
-      # Case with no individuals: return a zero vector
-      return(rep(0, length(x_grid)))
-    }
-  })
-  
-  # Bind the KDEs into a matrix
-  kde_matrix <- do.call(rbind, kde_list)
-  
-  # Calculate the average KDE by averaging at each point
-  avg_kde <- colMeans(kde_matrix)
-  
-  # Plot the average KDE with the corresponding color from the palette
-  lines(x_grid, avg_kde, 
-        type = "l",
-        col = color_palette[i],
-        lwd = 2,
-        lty = i
+  # Plot the line for this valid data frame
+  lines(0:(ncol(get(paste("m", m, sep = "_")))-1),
+        apply(data, 2, mean),
+        type="o",
+        col=color_palette[i],
+        lty=i,
+        pch=16
   )
 }
 
 # Step 6: Add a legend
-legend(x=104,y=0.265,
+legend(x=104,y=0.8,
        title = "Parameter values",
        legend = sequence[valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette

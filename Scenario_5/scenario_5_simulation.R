@@ -246,7 +246,7 @@ unregister_dopar <- function() {
 unregister_dopar()
 
 #set up the parallel backend
-num_cores <- 5
+num_cores <- 100
 #check the number of cores
 num_cores
 
