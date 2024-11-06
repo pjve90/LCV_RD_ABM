@@ -228,7 +228,9 @@ max(cv_all)
 #plot the CV together
 par(mar=c(5, 4, 4, 2))
 layout(matrix(c(1,1,2,2,3,4,5,6),ncol=4,byrow=T))
-#longevity
+
+### Longevity ----
+
 plot(c(0,max(cv_all)+0.5)~c(0,1),
      main="Longevity",
      xlab="Parameter value",
@@ -242,7 +244,9 @@ for(d in 1:nrow(lng_cv)){
            )    
 }
 points(lht_median$lng~lht_median$p,pch=16,cex=1)
-#lro
+
+### Lifetime reproductive output ----
+
 plot(c(0,max(cv_all)+0.5)~c(0,1),
      main="Lifetime\nreproductive output",
      xlab="Parameter value",
@@ -256,7 +260,9 @@ for(d in 1:nrow(lro_cv)){
   )    
 }
 points(lht_median$lro~lht_median$p,pch=16,cex=1)
-#asm
+
+### Age at sexual maturity ----
+
 plot(c(0,max(cv_all)+0.5)~c(0,1),
      main="Age at\nsexual maturity",
      xlab="Parameter value",
@@ -270,7 +276,9 @@ for(d in 1:nrow(asm_cv)){
   )    
 }
 points(lht_median$asm~lht_median$p,pch=16,cex=1)
-#afr
+
+### Age at first reproduction ----
+
 plot(c(0,max(cv_all)+0.5)~c(0,1),
      main="Age at\nfirst reproduction",
      xlab="Parameter value",
@@ -284,7 +292,9 @@ for(d in 1:nrow(afr_cv)){
   )    
 }
 points(lht_median$afr~lht_median$p,pch=16,cex=1)
-#alr
+
+### Age at last reproduction ----
+
 plot(c(0,max(cv_all)+0.5)~c(0,1),
      main="Age at\nlast reproduction",
      xlab="Parameter value",
@@ -298,7 +308,9 @@ for(d in 1:nrow(alr_cv)){
   )    
 }
 points(lht_median$alr~lht_median$p,pch=16,cex=1)
-#meno
+
+### Age at menopause ----
+
 plot(c(0,max(cv_all)+0.5)~c(0,1),
      main="Age at\nmenopause",
      xlab="Parameter value",
@@ -392,7 +404,7 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=105,y=150,
-       title = "Parameter values",
+       title = "Production\nprobabilities",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -478,7 +490,7 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=21,y=1200,
-       title = "Parameter values",
+       title = "Production\nprobabilities",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -565,8 +577,8 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=25.8,y=250,
-       title = "Parameter values",
+legend(x=25.7,y=250,
+       title = "Production\nprobabilities",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -654,11 +666,12 @@ for(i in 1:length(valid_indices)) {
 
 # Step 6: Add a legend
 legend(x=31,y=180,
-       title = "Parameter values",
+       title = "Production\nprobabilities",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
        lwd = 2,
+       pch=16,
        bty = "n",
        xpd=T)
 
@@ -718,7 +731,7 @@ color_palette <- hcl.colors(length(valid_indices), palette = "zissou 1", alpha =
 
 par(mfrow=c(1,1), mar=c(5, 4, 4, 8))
 
-plot(c(10,60), c(0,80),
+plot(c(10,65), c(0,80),
      xlab = "Age",
      ylab = "Frequency",
      main = "Age at last reproduction",
@@ -740,8 +753,8 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=62,y=80,
-       title = "Parameter values",
+legend(x=67.5,y=80,
+       title = "Production\nprobabilities",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
@@ -828,8 +841,8 @@ for(i in 1:length(valid_indices)) {
 }
 
 # Step 6: Add a legend
-legend(x=105,y=220,
-       title = "Parameter values",
+legend(x=72.5,y=220,
+       title = "Production\nprobabilities",
        legend = prod_prob[2,valid_indices], # Use valid indices for the legend
        col = color_palette, # Use the corresponding colors from the palette
        lty = c(1:length(valid_indices)),
