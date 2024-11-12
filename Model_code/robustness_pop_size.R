@@ -234,28 +234,33 @@ results_10_b <- list()
 #paralellise the parameter sweep
 results_10_b <- foreach(r=1:10,
                         .combine="c",
-          .export=c("produce",
-                    "mom_surplus",
-                    "mom_surplus_a",
-                    "desc_need",
-                    "desc_need_a",
-                    "desc_order",
-                    "mat_invest",
-                    "reproduce",
-                    "reproduce_c",
-                    "lro",
-                    "newborns",
-                    "tlr",
-                    "transition",
-                    "survive",
-                    "survive_c",
-                    "age",
-                    "store"
+                        .export=c("produce",
+                                  "mom_surplus",
+                                  "mom_surplus_a",
+                                  "desc_need",
+                                  "desc_need_a",
+                                  "desc_order",
+                                  "mat_invest",
+                                  "max_deg",
+                                  "create_self_noms",
+                                  "create_block_probs",
+                                  "simulate_SBM_multinomial",
+                                  "transfers",
+                                  "reproduce",
+                                  "reproduce_c",
+                                  "lro",
+                                  "newborns",
+                                  "tlr",
+                                  "transition",
+                                  "survive",
+                                  "survive_c",
+                                  "age",
+                                  "store"
           )
   ) %dopar% {
     
     #Use unique log file for each parameter value (d)
-    log_file <- paste0(getwd(),"/Scenario_1/","log_", r,".txt")
+    log_file <- paste0(getwd(),"/Model_code/","log_", r,".txt")
     
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation in repetition =", r, "at", Sys.time(), "\n"))
@@ -364,7 +369,7 @@ results_10_b <- foreach(r=1:10,
         } else {
           # Log that transfers are skipped due to insufficient individuals
           sink(log_file, append = TRUE)
-          cat(paste("Skipping resource transfers for parameter value m =", m, "in repetition =", r, "due to insufficient individuals (only", nrow(it_indpop), "present) at", Sys.time(), "\n"))
+          cat(paste("Skipping resource transfers in repetition =", r, "due to insufficient individuals (only", nrow(it_indpop), "present) at", Sys.time(), "\n"))
           sink()
         }
         
