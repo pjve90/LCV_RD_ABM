@@ -159,284 +159,295 @@ repro_thresh <- repro_cost*5
 ### Parallelisation settings -----
 
 unregister_dopar <- function() {
-  
   env <- foreach:::.foreachGlobals
   rm(list = ls(name = env), pos = env)
-  
 }
 
 unregister_dopar()
 
-#set up the parallel backend
-num_cores <- 100 
-#check the number of cores
-num_cores
+# Get total number of available cores
+total_cores <- detectCores()
+
+# Calculate 75% of available cores
+dynamic_cores <- ceiling(0.75 * total_cores)
+
+# Set number of cores to 100 if dynamic_cores is less than 100
+num_cores <- max(dynamic_cores, 100)
+
+# Check the number of cores to use
+cat("Number of cores to use:", num_cores, "\n")
 
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  type="FORK" #uncomment if you use an OS different than Windows
-)
+  #type="FORK"
+) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
 registerDoParallel(cl = my_cluster)
+
 #check if cluster is registered
-getDoParRegistered() #if the cluster is registered
-getDoParWorkers() #number of cores registered
+getDoParRegistered() # If the cluster is registered
+getDoParWorkers() # Number of cores registered
 
 #### Parameter sweep ----
 
 #set seed
 set.seed(1992)
 
-#initialise results_10
+# Initialize results_10
 results_10_2 <- list()
 
-#paralellise the parameter sweep
-results_10_2 <- foreach(r=1:10,
-                      .combine="c",
-                      .export=c("produce",
-                                "mom_surplus",
-                                "mom_surplus_a",
-                                "desc_need",
-                                "desc_need_a",
-                                "desc_order",
-                                "mat_invest",
-                                "reproduce",
-                                "reproduce_c",
-                                "lro",
-                                "newborns",
-                                "tlr",
-                                "transition",
-                                "survive",
-                                "survive_c",
-                                "age",
-                                "store"
-          )
-  ) %dopar% {
-    
-    #Use unique log file for each repetition (r)
-    log_file <- paste0(getwd(),"/Scenario_2/","log_", r,".txt")
-    
-    sink(log_file, append = TRUE)
-    cat(paste("Starting simulation for repetition =", r, "at", Sys.time(), "\n"))
-    sink()
-    start_sim <- Sys.time()  
-    
-    #Define the number of years (iterations) you want to run the simulation
-    years<-300
-    #Maximum id
-    #you record the maximum id so the id of the new individuals start after the existing one
-    max_id <- max(it_data$id)
-    #initial population
-    it_indpop<-create_initialpop(popsize)
-    #storing it_dataf
-    it_dataf <- data.frame()
-    
-    #Run the simulation
-    for (b in 1:years){
-      
-      if(nrow(it_indpop)==0){
-        sink(log_file, append = TRUE)
-        cat(paste("No individuals in it_indpop for year", b, "in repetition =", r, "at", Sys.time(), "\n"))
-        sink()
-        # Create empty it_data with consistent structure (for the current iteration)
-        it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
-                              mom_surplus_a = NA, desc_need_a = NA,
-                              out_degree = NA, in_degree = NA,
-                              res_a = NA, repro = NA, lro = NA,
-                              tlr = NA, stage = NA, surv = NA,
-                              age = NA, store_a = NA, year = NA)
-        
-        # Combine the previous data with the empty one
-        it_dataf <- rbind(it_dataf, it_data)
-        
-        break # skip the rest of the loop for this iteration
-      }else{#production
-        #you run the production function for every individual in the population, and record the amount of resources produced and available
-        for (i in 1:nrow(it_indpop)){
-          #resource production
-          it_indpop <- produce(it_indpop)
-        }
-        #record the amount of resources produced by each individual
-        resource_data <- it_indpop[,c("id","prod_a")]
-        
-        #maternal investment
-        #you run the different functions necessary for the need-based maternal investment, and record the surplus of the mother and the need of each descendant
-        #mothers
-        for (i in 1:nrow(it_indpop)){
-          #identify mom surplus
-          it_indpop$mom_surplus <- mom_surplus(it_indpop)
-          #mom surplus amount
-          it_indpop$mom_surplus_a <- mom_surplus_a(it_indpop)
-          #subset mothers
-          it_mompop <- it_indpop[is.na(it_indpop$mom_surplus_a)==F,]
-        }  
-        #descendants  
-        for (i in 1:nrow(it_indpop)){
-          #identify descendant need
-          it_indpop$desc_need <- desc_need(it_indpop)
-          #descendant need amount
-          it_indpop$desc_need_a <- desc_need_a(it_indpop)
-          #order descendants
-          it_descpop <- desc_order(it_indpop)
-        }
-        #maternal investment
-        for (i in 1:nrow(it_mompop)){
-          #subset descendants of mother
-          it_descpop_momsub <- it_descpop[it_mompop$id[i] == it_descpop$mom_id,]
-          #maternal investment
-          if(nrow(it_descpop_momsub)>0){
-            it_indpop <- mat_invest(it_indpop)}
-        }
-        
-        #record maternal investment
-        mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
-        
-        #Reproduction
-        #you run the functions for reproduction, record the outcomes, and generate a data frame with the newborns
-        
-        for (i in 1:nrow(it_indpop)){
-          #reproduction probability
-          it_indpop$repro <- reproduce(it_indpop)
-          #reproductive cost
-          it_indpop$res_a <- reproduce_c(it_indpop)
-          #lifetime reproductive output
-          it_indpop$lro <- lro(it_indpop)
-        }
-        #record reproduction
-        repro_data <- it_indpop[,c("id","repro","lro")]
-        #add newborns
-        new_it_indpop <- newborns(new_it_indpop)
-        
-        #Transition
-        #you update the time since last reproduction, evaluate if the individual transitions to the next life cycle stage, and record the outcomes
-        
-        for (i in 1:nrow(it_indpop)){
-          #time since last reproduction
-          it_indpop$tlr <- tlr(it_indpop)
-          # life cycle transition
-          it_indpop <- transition(it_indpop)
-        }
-        #record time since last reproduction and transition
-        transition_data <- it_indpop[,c("id","tlr","stage")]
-        #record reproduction again to update in case of transition to reproductive career
-        repro_data <- it_indpop[,c("id","repro","lro")]
-        
-        #Survival
-        #you evaluate if the individuals have enough resources to cover the survival costs, update the amount of resources available, and individuals age.
-        
-        for (i in 1:nrow(it_indpop)){
-          #survival
-          it_indpop$surv <- survive(it_indpop)
-          #survival cost
-          it_indpop$res_a <- survive_c(it_indpop)
-          #age
-          it_indpop$age <- age(it_indpop)
-        }
-        #record survival and age
-        surv_data <- it_indpop[,c("id","surv","age")]
-        
-        #Storage
-        #Here, you are storing the resources available by the end of the iteration to take them to the next iteration, and recording them
-        
-        #store
-        for (i in 1:nrow(it_indpop)){
-          #store resources
-          it_indpop$store_a <- store(it_indpop)
-        }
-        #record stored resources
-        store_data <- it_indpop[,c("id","store_a")]
-        
-        # Log the time at every 10 iterations
-        if (b %% 10 == 0) {
-          sink(log_file, append = TRUE)
-          cat(paste("Year", b, "completed in repetition =", r, "at", Sys.time(), "\n"))
-          sink()
-        }
-        
-        #Update datasets at the end of iteration
-        #Here, you update the population and record the individual dynamics at the end of the iteration. In the end you remove the individuals who died to have the population ready for the next iteration
-        
-        #Update the population
-        #combine original population with newborns
-        it_indpop <- rbind(it_indpop,new_it_indpop)
-        #remove NA in id
-        it_indpop <- it_indpop[!is.na(it_indpop$id),]
-        
-        #merge iteration records
-        #Here you differentiate the ways you record the outcomes of the first iteration from the next ones, this way you can keep identify what is happening in each iteration
-        if(b==1){ #first iteration
-          it_data <- it_indpop[,c("id",
-                                  "prod_a",
-                                  "mom_id",
-                                  "mom_surplus_a",
-                                  "desc_need_a",
-                                  "out_degree",
-                                  "in_degree",
-                                  "res_a",
-                                  "repro",
-                                  "lro",
-                                  "tlr",
-                                  "stage",
-                                  "surv",
-                                  "age",
-                                  "store_a"
-          )]
-          #record iteration
-          it_data$year <- rep(b,length.out=nrow(it_data))
-          #update it_dataf for rbind
-          it_dataf <- it_data
-        }else{ #other iterations
-          it_data <- it_indpop[,c("id",
-                                  "prod_a",
-                                  "mom_id",
-                                  "mom_surplus_a",
-                                  "desc_need_a",
-                                  "out_degree",
-                                  "in_degree",
-                                  "res_a",
-                                  "repro",
-                                  "lro",
-                                  "tlr",
-                                  "stage",
-                                  "surv",
-                                  "age",
-                                  "store_a"
-          )]
-          #record iteration
-          it_data$year <- rep(b,length.out=nrow(it_data))
-          #merge with previous iteration records
-          it_dataf <- rbind(it_dataf,it_data)
-          it_dataf <- it_dataf[order(it_dataf$id),]
-        }
-        
-        #Update the maximum id
-        max_id <- max(it_dataf$id)
-        #remove individuals that died
-        it_indpop <- it_indpop[!it_indpop$surv==0,]
-        
-        
-      }
-    }
-    
-    # Final logging after the simulation completes
-    sink(log_file, append = TRUE)
-    cat(paste("Completed simulation for repetition =", r, "at", Sys.time(), "\n"))
-    sink()
-    
-    end_sim <- Sys.time()
-    
-    time_sim <- difftime(end_sim,start_sim,units=c("mins"))
-    
-    sink(log_file, append = TRUE)
-    cat(paste("Length of simulation for repetition =", r, "is", time_sim, "minutes", "\n"))
-    sink()
-    
-    # Return the result with a clear name indicating the combination of d and r
-    setNames(list(it_dataf), paste0("r_", r))
-    
-  }
+#number of repetitions
+reps <- 10
+
+# Calculate total number of tasks
+total_tasks <- reps * ncol(prod_prob)  # 10 repetitions for each parameter value (d)
+
+# Dynamically calculate batch size
+batch_size <- ceiling(total_tasks / num_cores)  # Batch size based on total tasks and available cores
+
+# Parallelise the parameter sweep
+results_10_2 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
+                        .combine="c") %dopar% {
+                          
+                          # Calculate the range of tasks for this batch
+                          start_task <- (batch - 1) * batch_size + 1
+                          end_task <- min(batch * batch_size, total_tasks)
+                          
+                          batch_results <- list()  # To store the results for this batch
+                          
+                          for (task_idx in start_task:end_task) {
+                            r <- ceiling(task_idx / ncol(prod_prob))  # Repetition based on task index
+                            d <- task_idx %% ncol(prod_prob)  # Parameter value index
+                            
+                            if (d == 0) d <- ncol(prod_prob)  # Handle cases where remainder is zero
+                            
+                            # Use unique log file for each parameter value (d)
+                            log_file <- paste0(getwd(), "/Scenario_2/", "log_", d, "_", r, ".txt")
+                            
+                            sink(log_file, append = TRUE)
+                            cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+                            sink()
+                            start_sim <- Sys.time()  
+                            
+                            #Define the number of years (iterations) you want to run the simulation
+                            years<-300
+                            #Maximum id
+                            #you record the maximum id so the id of the new individuals start after the existing one
+                            max_id <- max(it_data$id)
+                            #initial population
+                            it_indpop<-create_initialpop(popsize)
+                            #storing it_dataf
+                            it_dataf <- data.frame()
+                            
+                            #Run the simulation
+                            for (b in 1:years){
+                              
+                              if(nrow(it_indpop)==0){
+                                sink(log_file, append = TRUE)
+                                cat(paste("No individuals in it_indpop for year", b, "and parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+                                sink()
+                                # Create empty it_data with consistent structure (for the current iteration)
+                                it_data <- data.frame(id = NA, prod_a = NA, mom_id = NA,
+                                                      mom_surplus_a = NA, desc_need_a = NA,
+                                                      out_degree = NA, in_degree = NA,
+                                                      res_a = NA, repro = NA, lro = NA,
+                                                      tlr = NA, stage = NA, surv = NA,
+                                                      age = NA, store_a = NA, year = NA)
+                                
+                                # Combine the previous data with the empty one
+                                it_dataf <- rbind(it_dataf, it_data)
+                                
+                                break # skip the rest of the loop for this iteration
+                              }else{#production
+                                #you run the production function for every individual in the population, and record the amount of resources produced and available
+                                for (i in 1:nrow(it_indpop)){
+                                  #resource production
+                                  it_indpop <- produce(it_indpop)
+                                }
+                                #record the amount of resources produced by each individual
+                                resource_data <- it_indpop[,c("id","prod_a")]
+                                
+                                #maternal investment
+                                #you run the different functions necessary for the need-based maternal investment, and record the surplus of the mother and the need of each descendant
+                                #mothers
+                                for (i in 1:nrow(it_indpop)){
+                                  #identify mom surplus
+                                  it_indpop$mom_surplus <- mom_surplus(it_indpop)
+                                  #mom surplus amount
+                                  it_indpop$mom_surplus_a <- mom_surplus_a(it_indpop)
+                                  #subset mothers
+                                  it_mompop <- it_indpop[is.na(it_indpop$mom_surplus_a)==F,]
+                                }  
+                                #descendants  
+                                for (i in 1:nrow(it_indpop)){
+                                  #identify descendant need
+                                  it_indpop$desc_need <- desc_need(it_indpop)
+                                  #descendant need amount
+                                  it_indpop$desc_need_a <- desc_need_a(it_indpop)
+                                  #order descendants
+                                  it_descpop <- desc_order(it_indpop)
+                                }
+                                #maternal investment
+                                for (i in 1:nrow(it_mompop)){
+                                  #subset descendants of mother
+                                  it_descpop_momsub <- it_descpop[it_mompop$id[i] == it_descpop$mom_id,]
+                                  #maternal investment
+                                  if(nrow(it_descpop_momsub)>0){
+                                    it_indpop <- mat_invest(it_indpop)}
+                                }
+                                
+                                #record maternal investment
+                                mat_invest_data <- it_indpop[,c("id","mom_surplus_a","desc_need_a")]
+                                
+                                #Reproduction
+                                #you run the functions for reproduction, record the outcomes, and generate a data frame with the newborns
+                                
+                                for (i in 1:nrow(it_indpop)){
+                                  #reproduction probability
+                                  it_indpop$repro <- reproduce(it_indpop)
+                                  #reproductive cost
+                                  it_indpop$res_a <- reproduce_c(it_indpop)
+                                  #lifetime reproductive output
+                                  it_indpop$lro <- lro(it_indpop)
+                                }
+                                #record reproduction
+                                repro_data <- it_indpop[,c("id","repro","lro")]
+                                #add newborns
+                                new_it_indpop <- newborns(new_it_indpop)
+                                
+                                #Transition
+                                #you update the time since last reproduction, evaluate if the individual transitions to the next life cycle stage, and record the outcomes
+                                
+                                for (i in 1:nrow(it_indpop)){
+                                  #time since last reproduction
+                                  it_indpop$tlr <- tlr(it_indpop)
+                                  # life cycle transition
+                                  it_indpop <- transition(it_indpop)
+                                }
+                                #record time since last reproduction and transition
+                                transition_data <- it_indpop[,c("id","tlr","stage")]
+                                #record reproduction again to update in case of transition to reproductive career
+                                repro_data <- it_indpop[,c("id","repro","lro")]
+                                
+                                #Survival
+                                #you evaluate if the individuals have enough resources to cover the survival costs, update the amount of resources available, and individuals age.
+                                
+                                for (i in 1:nrow(it_indpop)){
+                                  #survival
+                                  it_indpop$surv <- survive(it_indpop)
+                                  #survival cost
+                                  it_indpop$res_a <- survive_c(it_indpop)
+                                  #age
+                                  it_indpop$age <- age(it_indpop)
+                                }
+                                #record survival and age
+                                surv_data <- it_indpop[,c("id","surv","age")]
+                                
+                                #Storage
+                                #Here, you are storing the resources available by the end of the iteration to take them to the next iteration, and recording them
+                                
+                                #store
+                                for (i in 1:nrow(it_indpop)){
+                                  #store resources
+                                  it_indpop$store_a <- store(it_indpop)
+                                }
+                                #record stored resources
+                                store_data <- it_indpop[,c("id","store_a")]
+                                
+                                # Log the time at every 10 iterations
+                                if (b %% 10 == 0) {
+                                  sink(log_file, append = TRUE)
+                                  cat(paste("Year", b, "completed for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+                                  sink()
+                                }
+                                
+                                #Update datasets at the end of iteration
+                                #Here, you update the population and record the individual dynamics at the end of the iteration. In the end you remove the individuals who died to have the population ready for the next iteration
+                                
+                                #Update the population
+                                #combine original population with newborns
+                                it_indpop <- rbind(it_indpop,new_it_indpop)
+                                #remove NA in id
+                                it_indpop <- it_indpop[!is.na(it_indpop$id),]
+                                
+                                #merge iteration records
+                                #Here you differentiate the ways you record the outcomes of the first iteration from the next ones, this way you can keep identify what is happening in each iteration
+                                if(b==1){ #first iteration
+                                  it_data <- it_indpop[,c("id",
+                                                          "prod_a",
+                                                          "mom_id",
+                                                          "mom_surplus_a",
+                                                          "desc_need_a",
+                                                          "out_degree",
+                                                          "in_degree",
+                                                          "res_a",
+                                                          "repro",
+                                                          "lro",
+                                                          "tlr",
+                                                          "stage",
+                                                          "surv",
+                                                          "age",
+                                                          "store_a"
+                                  )]
+                                  #record iteration
+                                  it_data$year <- rep(b,length.out=nrow(it_data))
+                                  #update it_dataf for rbind
+                                  it_dataf <- it_data
+                                }else{ #other iterations
+                                  it_data <- it_indpop[,c("id",
+                                                          "prod_a",
+                                                          "mom_id",
+                                                          "mom_surplus_a",
+                                                          "desc_need_a",
+                                                          "out_degree",
+                                                          "in_degree",
+                                                          "res_a",
+                                                          "repro",
+                                                          "lro",
+                                                          "tlr",
+                                                          "stage",
+                                                          "surv",
+                                                          "age",
+                                                          "store_a"
+                                  )]
+                                  #record iteration
+                                  it_data$year <- rep(b,length.out=nrow(it_data))
+                                  #merge with previous iteration records
+                                  it_dataf <- rbind(it_dataf,it_data)
+                                  it_dataf <- it_dataf[order(it_dataf$id),]
+                                }
+                                
+                                #Update the maximum id
+                                max_id <- max(it_dataf$id)
+                                #remove individuals that died
+                                it_indpop <- it_indpop[!it_indpop$surv==0,]
+                                
+                                
+                              }
+                            }
+                            
+                            # Final logging after the simulation completes
+                            sink(log_file, append = TRUE)
+                            cat(paste("Completed simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+                            sink()
+                            
+                            end_sim <- Sys.time()
+                            
+                            time_sim <- difftime(end_sim,start_sim,units=c("mins"))
+                            
+                            sink(log_file, append = TRUE)
+                            cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
+                            sink()
+                            
+                            # Store the result
+                            batch_results[[paste0("d_", d, "_r_", r)]] <- it_dataf
+                          }
+                          
+                          # Return batch results for this batch
+                          return(batch_results)
+                        }
 
 # Stop the cluster after computation
 stopCluster(my_cluster)
