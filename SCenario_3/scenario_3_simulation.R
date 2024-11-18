@@ -124,6 +124,10 @@ source("./Model_code/survival_age.R")
 #Store resources
 source("./Model_code/storage_fx.R")
 
+### Population splitting ----
+
+source("./Model_code/split_pop_fx.R")
+
 # Run for 300 iterations ----
 
 #Here, you run the simulation for a 300 iterations, resembling 300 years.
@@ -237,72 +241,67 @@ repro_thresh <- repro_cost*5
 ### Parallelisation settings -----
 
 unregister_dopar <- function() {
-  
   env <- foreach:::.foreachGlobals
   rm(list = ls(name = env), pos = env)
-  
 }
 
 unregister_dopar()
 
-#set up the parallel backend
-num_cores <- 100
-#check the number of cores
-num_cores
+# Set number of cores to 100 if dynamic_cores is less than 100
+num_cores <- 5
+
+# Check the number of cores to use
+cat("Number of cores to use:", num_cores, "\n")
 
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  type="FORK" #uncomment if you use an OS different than Windows
-)
+  #type="FORK"
+) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
 registerDoParallel(cl = my_cluster)
+
 #check if cluster is registered
-getDoParRegistered() #if the cluster is registered
-getDoParWorkers() #number of cores registered
+getDoParRegistered() # If the cluster is registered
+getDoParWorkers() # Number of cores registered
 
 #### Parameter sweep ----
 
 #set seed
 set.seed(1993)
 
-#initialise results_10
+# Initialize results_10
 results_10_3 <- list()
 
-#paralellise the parameter sweep
-results_10_3 <- foreach(r=1:10,
-                      .combine="c") %:%
-  foreach(m = 1:length(logodds_list),
-          .combine="c",
-          .export=c("produce",
-                    "mom_surplus",
-                    "mom_surplus_a",
-                    "desc_need",
-                    "desc_need_a",
-                    "desc_order",
-                    "mat_invest",
-                    "max_deg",
-                    "create_self_noms",
-                    "create_block_probs",
-                    "simulate_SBM_multinomial",
-                    "transfers",
-                    "reproduce",
-                    "reproduce_c",
-                    "lro",
-                    "newborns",
-                    "tlr",
-                    "transition",
-                    "survive",
-                    "survive_c",
-                    "age",
-                    "store"
-          )
-  ) %dopar% {
-    
-    #Use unique log file for each parameter value (m)
-    log_file <- paste0(getwd(),"/SCenario_3/","log_", m,"_", r,".txt")
+#number of repetitions
+reps <- 10
 
+# Calculate total number of tasks
+total_tasks <- reps * length(sequence)  # 10 repetitions for each parameter value (d)
+
+# Dynamically calculate batch size
+batch_size <- ceiling(total_tasks / num_cores)  # Batch size based on total tasks and available cores
+
+# Parallelise the parameter sweep
+results_10_3 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
+                        .combine="c") %dopar% {
+                          
+# Calculate the range of tasks for this batch
+start_task <- (batch - 1) * batch_size + 1
+end_task <- min(batch * batch_size, total_tasks)
+                          
+batch_results <- list()  # To store the results for this batch
+                          
+for (task_idx in start_task:end_task) {
+  r <- ceiling(task_idx / length(sequence))  # Repetition based on task index
+  m <- task_idx %% length(sequence)  # Parameter value index
+                            
+  if (m == 0) m <- length(sequence)  # Handle cases where remainder is zero
+                            
+    # Use unique log file for each parameter value (m)
+    log_file <- paste0(getwd(), "/Scenario_3/", "log_", m, "_", r, ".txt")
+                            
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
     sink()
@@ -537,6 +536,15 @@ results_10_3 <- foreach(r=1:10,
         #remove individuals that died
         it_indpop <- it_indpop[!it_indpop$surv==0,]
         
+        # Log the population size when splitting happens
+        if (nrow(it_indpop) > 1000000) {
+          sink(log_file, append = TRUE)
+          cat(paste("Population size =", nrow(it_indpop), "for parameter value =", m, "in repetition =", r, "in year =", b, "\n"))
+          sink()  
+        }
+        
+        #see who stochastically survives if n > 3000
+        it_indpop <- population_thresh(it_indpop)
         
       }
     }
@@ -554,10 +562,13 @@ results_10_3 <- foreach(r=1:10,
     cat(paste("Length of simulation for parameter value =", m, "in repetition =", r, "is", time_sim, "minutes", "\n"))
     sink()
     
-    # Return the result with a clear name indicating the combination of d and r
-    setNames(list(it_dataf), paste0("m_", m, "_r_", r))
-    
+    # Store the result
+    batch_results[[paste0("m_", m, "_r_", r)]] <- it_dataf
   }
+
+# Return batch results for this batch
+return(batch_results)
+}
 
 
 # Stop the cluster after computation
@@ -565,4 +576,6 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10_3,file="./SCenario_3/raw_simulation_s3.RData")
+saveRDS(results_10_3,file="./Scenario_3/raw_simulation_s3.RData")
+
+
