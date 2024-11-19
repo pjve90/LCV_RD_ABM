@@ -10,7 +10,7 @@
 
 #set working directory
 getwd()
-setwd("./LCV_RD_ABM")
+#setwd("./LCV_RD_ABM")
 
 #install packages
 #parallel package
@@ -170,7 +170,7 @@ unregister_dopar <- function() {
 unregister_dopar()
 
 # Set number of cores to 100 if dynamic_cores is less than 100
-num_cores <- 5
+num_cores <- 100
 
 # Check the number of cores to use
 cat("Number of cores to use:", num_cores, "\n")
@@ -178,7 +178,7 @@ cat("Number of cores to use:", num_cores, "\n")
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  #type="FORK"
+  type="FORK"
 ) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
@@ -353,6 +353,7 @@ for (task_idx in start_task:end_task) {
             if (b %% 10 == 0) {
               sink(log_file, append = TRUE)
               cat(paste("Year", b, "completed for repetition =", r, "at", Sys.time(), "\n"))
+              cat(paste("Population size =", nrow(it_indpop), "in repetition =", r, "in year =", b, "\n"))
               sink()
             }
                                 
@@ -418,9 +419,9 @@ for (task_idx in start_task:end_task) {
               it_indpop <- it_indpop[!it_indpop$surv==0,]
                                 
               # Log the population size when splitting happens
-              if (nrow(it_indpop) > 1000000) {
+              if (nrow(it_indpop[it_indpop$stage == 2 | it_indpop$stage == 3 | it_indpop$stage == 4,]) > 5000) {
                 sink(log_file, append = TRUE)
-                cat(paste("Population size =", nrow(it_indpop), "in repetition =", r, "in year =", b, "\n"))
+                cat(paste("Splitting population in year =", b, "in repetition =", r, "with non-juvenile population size =", nrow(it_indpop[it_indpop$stage == 2 | it_indpop$stage == 3 | it_indpop$stage == 4,]), "\n"))
                 sink()  
               }
               

@@ -168,14 +168,8 @@ unregister_dopar <- function() {
 
 unregister_dopar()
 
-# Get total number of available cores
-total_cores <- detectCores()
-
-# Calculate 75% of available cores
-dynamic_cores <- ceiling(0.75 * total_cores)
-
 # Set number of cores to 100 if dynamic_cores is less than 100
-num_cores <- max(dynamic_cores, 100)
+num_cores <- 100
 
 # Check the number of cores to use
 cat("Number of cores to use:", num_cores, "\n")
@@ -183,7 +177,7 @@ cat("Number of cores to use:", num_cores, "\n")
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  #type="FORK"
+  type="FORK"
   ) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
@@ -361,6 +355,7 @@ for (task_idx in start_task:end_task) {
             if (b %% 10 == 0) {
               sink(log_file, append = TRUE)
               cat(paste("Year", b, "completed for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+              cat(paste("Population size =", nrow(it_indpop), "for parameter value =", d, "in repetition =", r, "in year =", b, "\n"))
               sink()
             }
                                 
@@ -420,43 +415,43 @@ for (task_idx in start_task:end_task) {
                 it_dataf <- it_dataf[order(it_dataf$id),]
                 }
                                 
-              #Update the maximum id
-              max_id <- max(it_dataf$id)
-              #remove individuals that died
-              it_indpop <- it_indpop[!it_indpop$surv==0,]
-                                
-              # Log the population size when splitting happens
-              if (nrow(it_indpop) > 1000000) {
-                sink(log_file, append = TRUE)
-                cat(paste("Population size =", nrow(it_indpop), "for parameter value =", d, "in repetition =", r, "in year =", b, "\n"))
-                sink()  
-              }
-              
-              #see who stochastically survives if n > 3000
-              it_indpop <- population_thresh(it_indpop)
-              
+            #Update the maximum id
+            max_id <- max(it_dataf$id)
+            #remove individuals that died
+            it_indpop <- it_indpop[!it_indpop$surv==0,]
+            
+            # Log the population size when splitting happens
+            if (nrow(it_indpop[it_indpop$stage == 2 | it_indpop$stage == 3 | it_indpop$stage == 4,]) > 5000) {
+              sink(log_file, append = TRUE)
+              cat(paste("Splitting population in year =", b, "for parameter value =", d, "in repetition =", r, "with non-juvenile population size =", nrow(it_indpop[it_indpop$stage == 2 | it_indpop$stage == 3 | it_indpop$stage == 4,]), "\n"))
+              sink()  
+            }
+            
+            #see who stochastically survives if n > 3000
+            it_indpop <- population_thresh(it_indpop)
+            
         }
-      }
-                            
-      # Final logging after the simulation completes
-      sink(log_file, append = TRUE)
-      cat(paste("Completed simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
-      sink()
-                            
-      end_sim <- Sys.time()
-                            
-      time_sim <- difftime(end_sim,start_sim,units=c("mins"))
-                            
-      sink(log_file, append = TRUE)
-      cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
-      sink()
-                            
-      # Store the result
-      batch_results[[paste0("d_", d, "_r_", r)]] <- it_dataf
-                          }
-                          
-      # Return batch results for this batch
-      return(batch_results)
+    }
+    
+    # Final logging after the simulation completes
+    sink(log_file, append = TRUE)
+    cat(paste("Completed simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
+    sink()
+    
+    end_sim <- Sys.time()
+    
+    time_sim <- difftime(end_sim,start_sim,units=c("mins"))
+    
+    sink(log_file, append = TRUE)
+    cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
+    sink()
+    
+    # Store the result
+    batch_results[[paste0("r_", r)]] <- it_dataf
+}
+
+# Return batch results for this batch
+return(batch_results)
 }
 
 # Stop the cluster after computation
