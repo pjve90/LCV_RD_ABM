@@ -295,12 +295,9 @@ results_10_7 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
                           
                           for (task_idx in start_task:end_task) {
                             r <- ceiling(task_idx / length(sequence))  # Repetition based on task index
-                            remainder <- task_idx %% (ncol(prod_prob) * length(sequence))
-                            if (remainder == 0) remainder <- ncol(prod_prob) * length(sequence)
-                            
-                            d_idx <- ceiling(remainder / length(sequence)) # Index for d
-                            m_idx <- remainder %% length(sequence)         # Index for m
-                            if (m_idx == 0) m_idx <- length(sequence)      # Handle zero remainder
+                            remainder <- (task_idx - 1) %% (ncol(prod_prob) * length(sequence)) + 1
+                            d_idx <- ceiling(remainder / length(sequence))
+                            m_idx <- (remainder - 1) %% length(sequence) + 1
                             
                             d <- d_idx # Column index in prod_prob (or equivalent label if mapping exists)
                             m <- sequence[m_idx] # Retrieve the m value
