@@ -296,7 +296,7 @@ results_10_7 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
                           for (task_idx in start_task:end_task) {
                             r <- ceiling(task_idx / length(sequence))  # Repetition based on task index
                             remainder <- task_idx %% (ncol(prod_prob) * length(sequence))
-                            if (remainder == 0) remainder <- sequence_d * length(sequence)
+                            if (remainder == 0) remainder <- ncol(prod_prob) * length(sequence)
                             
                             d_idx <- ceiling(remainder / length(sequence)) # Index for d
                             m_idx <- remainder %% length(sequence)         # Index for m
