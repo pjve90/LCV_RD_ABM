@@ -256,7 +256,7 @@ cat("Number of cores to use:", num_cores, "\n")
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  #type="FORK"
+  type="FORK"
 ) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
@@ -272,7 +272,7 @@ getDoParWorkers() # Number of cores registered
 set.seed(1997)
 
 # Initialize results_10
-results_10_6 <- list()
+results_10_7 <- list()
 
 #number of repetitions
 reps <- 10
@@ -294,13 +294,13 @@ results_10_7 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
                           batch_results <- list()  # To store the results for this batch
                           
                           for (task_idx in start_task:end_task) {
-                            r <- ceiling(task_idx / length(sequence))  # Repetition based on task index
+                            r <- ceiling(task_idx / (ncol(prod_prob) * length(sequence)))  # Repetition based on task index
                             remainder <- (task_idx - 1) %% (ncol(prod_prob) * length(sequence)) + 1
                             d_idx <- ceiling(remainder / length(sequence))
                             m_idx <- (remainder - 1) %% length(sequence) + 1
                             
                             d <- d_idx # Column index in prod_prob (or equivalent label if mapping exists)
-                            m <- sequence[m_idx] # Retrieve the m value
+                            m <- m_idx # Retrieve the m value
                             
                             #Use unique log file for each parameter value (d)
                             log_file <- paste0(getwd(),"/Scenario_7/","log_", d,"_", m, "_", r,".txt")
