@@ -311,7 +311,7 @@ results_10_6 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
     start_sim <- Sys.time()  
     
     #Define the number of years (iterations) you want to run the simulation
-    years<-10
+    years<-300
     #Maximum id
     #you record the maximum id so the id of the new individuals start after the existing one
     max_id <- max(it_data$id)
