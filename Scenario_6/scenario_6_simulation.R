@@ -10,7 +10,7 @@
 
 #set working directory
 getwd()
-setwd("./LCV_RD_ABM")
+#setwd("./LCV_RD_ABM")
 
 #install packages
 #parallel package
@@ -248,7 +248,7 @@ unregister_dopar <- function() {
 unregister_dopar()
 
 # Set number of cores to 100 if dynamic_cores is less than 100
-num_cores <- 5
+num_cores <- 100
 
 # Check the number of cores to use
 cat("Number of cores to use:", num_cores, "\n")
@@ -256,7 +256,7 @@ cat("Number of cores to use:", num_cores, "\n")
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-#  type="FORK"
+  type="FORK"
 ) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
