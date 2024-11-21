@@ -10,7 +10,7 @@
 
 #set working directory
 getwd()
-#setwd("./LCV_RD_ABM")
+setwd("./LCV_RD_ABM")
 
 #install packages
 #parallel package
@@ -248,7 +248,7 @@ unregister_dopar <- function() {
 unregister_dopar()
 
 # Set number of cores to 100 if dynamic_cores is less than 100
-num_cores <- 100
+num_cores <- 5
 
 # Check the number of cores to use
 cat("Number of cores to use:", num_cores, "\n")
@@ -294,13 +294,13 @@ results_10_6 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
                           batch_results <- list()  # To store the results for this batch
                           
                           for (task_idx in start_task:end_task) {
-                            r <- ceiling(task_idx / length(sequence))  # Repetition based on task index
+                            r <- ceiling(task_idx / (ncol(prod_prob) * length(sequence)))  # Repetition based on task index
                             remainder <- (task_idx - 1) %% (ncol(prod_prob) * length(sequence)) + 1
                             d_idx <- ceiling(remainder / length(sequence))
                             m_idx <- (remainder - 1) %% length(sequence) + 1
                             
                             d <- d_idx # Column index in prod_prob (or equivalent label if mapping exists)
-                            m <- sequence[m_idx] # Retrieve the m value
+                            m <- m_idx # Retrieve the m value
                             
                             #Use unique log file for each parameter value (d)
     log_file <- paste0(getwd(),"/Scenario_6/","log_", d,"_", m, "_", r,".txt")
@@ -311,7 +311,7 @@ results_10_6 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
     start_sim <- Sys.time()  
     
     #Define the number of years (iterations) you want to run the simulation
-    years<-300
+    years<-10
     #Maximum id
     #you record the maximum id so the id of the new individuals start after the existing one
     max_id <- max(it_data$id)
