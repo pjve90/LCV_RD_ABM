@@ -447,7 +447,7 @@ for (task_idx in start_task:end_task) {
     sink()
     
     # Store the result
-    batch_results[[paste0("r_", r)]] <- it_dataf
+    batch_results[[paste0("d_",d,"_r_", r)]] <- it_dataf
 }
 
 # Return batch results for this batch

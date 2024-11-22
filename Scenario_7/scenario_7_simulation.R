@@ -567,7 +567,7 @@ results_10_7 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
                             sink()
                             
                             # Store the result
-                            batch_results[[paste0("m_", m, "_r_", r)]] <- it_dataf
+                            batch_results[[paste0("d_", d, "_m_", m, "_r_", r)]] <- it_dataf
                           }
                           
                           # Return batch results for this batch
