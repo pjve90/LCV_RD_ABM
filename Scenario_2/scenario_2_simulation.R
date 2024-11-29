@@ -225,7 +225,7 @@ for (task_idx in start_task:end_task) {
   r <- task_idx  # Directly use task_idx as repetition index
     
   # Use unique log file for each parameter value (d)
-  log_file <- file.path(output_dir, paste0("log_", d, "_", r, ".txt"))
+  log_file <- file.path(output_dir, paste0("log_", r, ".txt"))
                             
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation for repetition =", r, "at", Sys.time(), "\n"))
@@ -451,7 +451,7 @@ for (task_idx in start_task:end_task) {
       sink()
                             
       # Save results to .fst file
-      output_file <- file.path(output_dir, paste0("results_d", d, "_r", r, ".fst"))
+      output_file <- file.path(output_dir, paste0("results_r", r, ".fst"))
       write_fst(it_dataf, output_file)
 }
                           
