@@ -180,7 +180,7 @@ cat("Number of cores to use:", num_cores, "\n")
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-#  type="FORK"
+  type="FORK"
   ) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
@@ -195,8 +195,9 @@ getDoParWorkers() # Number of cores registered
 #set seed
 set.seed(1991)
 
-# Initialize results_10
-results_10_1 <- list()
+# Directory to save .fst files
+output_dir <- "Scenario_1/fst_results"
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 #number of repetitions
 reps <- 10
@@ -208,14 +209,14 @@ total_tasks <- reps * ncol(prod_prob)  # 10 repetitions for each parameter value
 batch_size <- ceiling(total_tasks / num_cores)  # Batch size based on total tasks and available cores
 
 # Parallelise the parameter sweep
-results_10_1 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
-                        .combine="c") %dopar% {
-                          
+foreach(batch = 1:ceiling(total_tasks / batch_size)) %dopar% {
+  
+#load fst package
+library(fst)
+  
 # Calculate the range of tasks for this batch
 start_task <- (batch - 1) * batch_size + 1
 end_task <- min(batch * batch_size, total_tasks)
-                          
-batch_results <- list()  # To store the results for this batch
 
 for (task_idx in start_task:end_task) {
   r <- ceiling(task_idx / ncol(prod_prob))  # Repetition based on task index
@@ -224,7 +225,7 @@ for (task_idx in start_task:end_task) {
   if (d == 0) d <- ncol(prod_prob)  # Handle cases where remainder is zero
     
     # Use unique log file for each parameter value (d)
-    log_file <- paste0(getwd(), "/Scenario_1/", "log_", d, "_", r, ".txt")
+    log_file <- file.path(output_dir, paste0("log_", d, "_", r, ".txt"))
                             
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
@@ -449,24 +450,23 @@ for (task_idx in start_task:end_task) {
     cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
     sink()
     
-    # Store the result
-    batch_results[[paste0("d_",d,"_r_", r)]] <- it_dataf
+    # Save results to .fst file
+    output_file <- file.path(output_dir, paste0("results_d", d, "_r", r, ".fst"))
+    write_fst(it_dataf, output_file)
 }
 
-# Return batch results for this batch
-return(batch_results)
 }
 
 # Stop the cluster after computation
 stopCluster(my_cluster)
 
-#Save data ----
-
-# Flatten the list into one large data frame
-flattened_data_s1 <- do.call(rbind, results_10_1)
-#save flattened data to a .fst file
-write.fst(flattened_data_s1,"./Scenario_1/raw_simulation_s1.fst")
-#get the row counts for later use
-row_counts_s1 <- sapply(results_10_1, nrow)
-#save the row counts
-saveRDS(row_counts_s1, "./Scenario_1/row_counts_s1.RData")
+# #Save data ----
+# 
+# # Flatten the list into one large data frame
+# flattened_data_s1 <- do.call(rbind, results_10_1)
+# #save flattened data to a .fst file
+# write.fst(flattened_data_s1,"./Scenario_1/raw_simulation_s1.fst")
+# #get the row counts for later use
+# row_counts_s1 <- sapply(results_10_1, nrow)
+# #save the row counts
+# saveRDS(row_counts_s1, "./Scenario_1/row_counts_s1.RData")

@@ -195,8 +195,9 @@ getDoParWorkers() # Number of cores registered
 #set seed
 set.seed(1994)
 
-# Initialize results_10
-results_10_4 <- list()
+# Directory to save .fst files
+output_dir <- "Scenario_4/fst_results"
+dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 #number of repetitions
 reps <- 10
@@ -208,9 +209,11 @@ total_tasks <- reps * ncol(prod_prob)  # 10 repetitions for each parameter value
 batch_size <- ceiling(total_tasks / num_cores)  # Batch size based on total tasks and available cores
 
 # Parallelise the parameter sweep
-results_10_4 <- foreach(batch = 1:ceiling(total_tasks / batch_size),
-                        .combine="c") %dopar% {
-
+foreach(batch = 1:ceiling(total_tasks / batch_size)) %dopar% {
+  
+#load fst package
+library(fst)
+  
 # Calculate the range of tasks for this batch
 start_task <- (batch - 1) * batch_size + 1
 end_task <- min(batch * batch_size, total_tasks)
@@ -224,8 +227,8 @@ for (task_idx in start_task:end_task) {
   if (d == 0) d <- ncol(prod_prob)  # Handle cases where remainder is zero
                             
   # Use unique log file for each parameter value (d)
-  log_file <- paste0(getwd(), "/Scenario_4/", "log_", d, "_", r, ".txt")
-                            
+  log_file <- file.path(output_dir, paste0("log_", d, "_", r, ".txt"))
+  
   sink(log_file, append = TRUE)
   cat(paste("Starting simulation for parameter value =", d, "in repetition =", r, "at", Sys.time(), "\n"))
   sink()
@@ -449,12 +452,11 @@ for (task_idx in start_task:end_task) {
         cat(paste("Length of simulation for parameter value =", d, "in repetition =", r, "is", time_sim, "minutes", "\n"))
         sink()
                             
-        # Store the result
-        batch_results[[paste0("d_", d, "_r_", r)]] <- it_dataf
-                          }
-                          
-        # Return batch results for this batch
-        return(batch_results)
+        # Save results to .fst file
+        output_file <- file.path(output_dir, paste0("results_d", d, "_r", r, ".fst"))
+        write_fst(it_dataf, output_file)
+}
+
 }
 
 # Stop the cluster after computation
