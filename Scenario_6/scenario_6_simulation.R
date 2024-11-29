@@ -275,7 +275,7 @@ getDoParWorkers() # Number of cores registered
 set.seed(1996)
 
 # Directory to save .fst files
-output_dir <- "Scenario_5/fst_results"
+output_dir <- "Scenario_6/fst_results"
 dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 #number of repetitions
