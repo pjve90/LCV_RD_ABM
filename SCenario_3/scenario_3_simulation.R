@@ -22,6 +22,9 @@ library(doParallel)
 #foreach package
 #install.packages("foreach")
 library(foreach)
+#fst package
+#install.packages("fst")
+library(fst)
 
 ## Sourcing functions ----
 
@@ -41,7 +44,7 @@ source("./Model_code/production_maxprod_fx.R")
 source("./Model_code/production_prodprob_fx.R")
 
 #Production function
-source("./Model_code/production_fx_s2.R")
+source("./Model_code/production_fx_s3.R")
 
 ### Maternal investment ----
 
@@ -300,7 +303,7 @@ for (task_idx in start_task:end_task) {
   if (m == 0) m <- length(sequence)  # Handle cases where remainder is zero
                             
     # Use unique log file for each parameter value (m)
-    log_file <- paste0(getwd(), "/Scenario_3/", "log_", m, "_", r, ".txt")
+    log_file <- paste0(getwd(), "/SCenario_3/", "log_", m, "_", r, ".txt")
                             
     sink(log_file, append = TRUE)
     cat(paste("Starting simulation for parameter value =", m, "in repetition =", r, "at", Sys.time(), "\n"))
@@ -577,6 +580,11 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10_3,file="./Scenario_3/raw_simulation_s3.RData")
-
-
+# Flatten the list into one large data frame
+flattened_data_s3 <- do.call(rbind, results_10_3)
+#save flattened data to a .fst file
+write.fst(flattened_data_s3,"./SCenario_3/raw_simulation_s3.fst")
+#get the row counts for later use
+row_counts_s3 <- sapply(results_10_3, nrow)
+#save the row counts
+saveRDS(row_counts_s3, "./SCenario_3/row_counts_s3.RData")

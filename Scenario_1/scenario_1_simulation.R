@@ -22,6 +22,9 @@ library(doParallel)
 #foreach package
 #install.packages("foreach")
 library(foreach)
+#fst package
+#install.packages("fst")
+library(fst)
 
 ## Sourcing functions ----
 
@@ -177,7 +180,7 @@ cat("Number of cores to use:", num_cores, "\n")
 #create the cluster
 my_cluster <- makeCluster(
   num_cores,
-  type="FORK"
+#  type="FORK"
   ) # Use 'FORK' for Unix-based systems (Linux/macOS)
 
 #register the cluster
@@ -459,4 +462,11 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10_1,file="./Scenario_1/raw_simulation_s1.RData")
+# Flatten the list into one large data frame
+flattened_data_s1 <- do.call(rbind, results_10_1)
+#save flattened data to a .fst file
+write.fst(flattened_data_s1,"./Scenario_1/raw_simulation_s1.fst")
+#get the row counts for later use
+row_counts_s1 <- sapply(results_10_1, nrow)
+#save the row counts
+saveRDS(row_counts_s1, "./Scenario_1/row_counts_s1.RData")

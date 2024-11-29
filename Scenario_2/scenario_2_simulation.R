@@ -22,6 +22,9 @@ library(doParallel)
 #foreach package
 #install.packages("foreach")
 library(foreach)
+#fst package
+#install.packages("fst")
+library(fst)
 
 ## Sourcing functions ----
 
@@ -457,4 +460,11 @@ stopCluster(my_cluster)
 
 #Save data ----
 
-saveRDS(results_10_2,file="./Scenario_2/raw_simulation_s2.RData")
+# Flatten the list into one large data frame
+flattened_data_s2 <- do.call(rbind, results_10_2)
+#save flattened data to a .fst file
+write.fst(flattened_data_s2,"./Scenario_2/raw_simulation_s2.fst")
+#get the row counts for later use
+row_counts_s2 <- sapply(results_10_2, nrow)
+#save the row counts
+saveRDS(row_counts_s2, "./Scenario_2/row_counts_s2.RData")
