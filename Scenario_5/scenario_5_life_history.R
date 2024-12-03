@@ -11,10 +11,30 @@
 getwd()
 #setwd("./LCV_RD_ABM")
 
+#loading R packages
+#install.packages("fst")
+library(fst)
+
 #Data wrangling ----
 
-#import raw results from the simulation
-raw_sim <- readRDS("./Scenario_5/raw_simulation_s5.RData")
+# Initialize an empty list to store the data
+raw_sim <- list()
+
+# Loop over the values of d and r
+for (m in 1:19) {
+  for (r in 1:10) {
+    # Construct the file path
+    file_path <- sprintf("./SCenario_3/fst_results/results_m%d_r%d.fst", m, r)
+    
+    # Check if the file exists
+    if (file.exists(file_path)) {
+      # Read the .fst file and store it in the list
+      raw_sim[[paste0("m", m, "_r", r)]] <- read_fst(file_path)
+    } else {
+      warning(sprintf("File not found: %s", file_path))
+    }
+  }
+}
 
 #create empty list
 raw_sample <- vector("list", length(raw_sim))
