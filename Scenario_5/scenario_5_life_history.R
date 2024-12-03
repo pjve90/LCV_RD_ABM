@@ -24,7 +24,7 @@ raw_sim <- list()
 for (m in 1:19) {
   for (r in 1:10) {
     # Construct the file path
-    file_path <- sprintf("./SCenario_3/fst_results/results_m%d_r%d.fst", m, r)
+    file_path <- sprintf("./Scenario_5/fst_results/results_m%d_r%d.fst", m, r)
     
     # Check if the file exists
     if (file.exists(file_path)) {
