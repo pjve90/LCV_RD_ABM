@@ -4,22 +4,27 @@
 #' 
 #' The age at first reproduction of an individual is the age at which an individual has her first descendants, transitioning from an adult stage to a reproductive career stage.
 
-afr <- function(lht_list){
-  if(sum(is.na(raw_sample[[i]][raw_sample[[i]]$stage == 3,]$stage))>=1 & nrow(raw_sample[[i]][raw_sample[[i]]$stage == 3,]) <= 1){
-    lht_list[[i]]$afr <- rep(NA,nrow(lht_list[[i]]))
-  } else {
-    age_min <- aggregate(age ~ id,
-                         data=raw_sample[[i]][raw_sample[[i]]$stage == 3,],
-                         min)
-    # Initialize afr with NA
-    lht_list[[i]]$afr <- rep(NA, nrow(lht_list[[i]]))
-    
-    # Loop over each individual in lht_list to assign minimum age or NA
-    for (j in 1:nrow(lht_list[[i]])) {
-      if (lht_list[[i]]$id[j] %in% age_min$id) {
-        lht_list[[i]]$afr[j] <- age_min$age[age_min$id == lht_list[[i]]$id[j]]
-      }
-    }
+afr <- function(lht_element, raw_sample_element) {
+  # Deduplicate lht_element by id
+  lht_element <- lht_element[!duplicated(lht_element$id), ]
+  
+  # Filter raw_sample_element for individuals at stage 3 (first reproduction)
+  stage_3_data <- raw_sample_element[raw_sample_element$stage == 3, ]
+  
+  # Check if there are no individuals at stage 2
+  if (nrow(stage_3_data) == 0) {
+    lht_element$afr <- NA  # No adults, set asm to NA
+    return(lht_element)
   }
-  return(lht_list[[i]])
+
+    # Aggregate to find the minimum age at stage 3 for each id
+  min_age <- aggregate(age ~ id, data = stage_3_data, min)
+  
+  # Initialize afr column in lht_element with NA
+  lht_element$afr <- NA
+  
+  # Match ids and assign the minimum age at first reproduction
+  lht_element$afr <- min_age$age[match(lht_element$id, min_age$id)]
+  
+  return(lht_element)
 }

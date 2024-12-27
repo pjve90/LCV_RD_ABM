@@ -4,25 +4,29 @@
 #' 
 #' The age at last reproduction of an individual is the age at which an individual has her last descendant.
 
-alr <- function(lht_list){
-  if(sum(is.na(raw_sample[[i]][raw_sample[[i]]$lro >= 1 & raw_sample[[i]]$stage == 3,]$stage))>=1 & nrow(raw_sample[[i]][raw_sample[[i]]$stage == 3,]) <= 1){
-    lht_list[[i]]$alr <- rep(NA,nrow(lht_list[[i]]))
-  } else {
-    age_max <- aggregate(age ~ id,
-                         data=raw_sample[[i]][raw_sample[[i]]$lro >= 1& raw_sample[[i]]$stage == 3,],
-                         max)
-    tlr <- aggregate(tlr ~ id,
-                     data=raw_sample[[i]][raw_sample[[i]]$lro >= 1& raw_sample[[i]]$stage == 3,],
-                     function(x)tail(x,1))
-    # Initialize alr with NA
-    lht_list[[i]]$alr <- rep(NA, nrow(lht_list[[i]]))
-    
-    # Loop over each individual in lht_list to assign minimum age or NA
-    for (j in 1:nrow(lht_list[[i]])) {
-      if (lht_list[[i]]$id[j] %in% age_max$id) {
-        lht_list[[i]]$alr[j] <- age_max$age[age_max$id == lht_list[[i]]$id[j]] - tlr$tlr[tlr$id == lht_list[[i]]$id[j]]
-      }
-    }
+alr <- function(lht_element, raw_sample_element) {
+  # Deduplicate lht_element by id
+  lht_element <- lht_element[!duplicated(lht_element$id), ]
+  
+  # Filter raw_sample_element for individuals with lro >= 1 and stage == 3
+  relevant_data <- raw_sample_element[raw_sample_element$lro >= 1 & raw_sample_element$stage == 3, ]
+  
+  # Check if there are no relevant individuals
+  if (nrow(relevant_data) == 0) {
+    lht_element$alr <- NA  # No relevant individuals, set alr to NA
+    return(lht_element)
   }
-  return(lht_list[[i]])
+
+  # Aggregate to find the maximum age and last lro
+  max_age <- aggregate(age ~ id, data = relevant_data, max)
+  last_lro <- aggregate(tlr ~ id, data = relevant_data, function(x) tail(x, 1))
+  
+  # Initialize alr column in lht_element with NA
+  lht_element$alr <- NA
+  
+  # Match ids and calculate alr as maximum age - last lro
+  lht_element$alr <- max_age$age[match(lht_element$id, max_age$id)] - 
+    last_lro$tlr[match(lht_element$id, last_lro$id)]
+  
+  return(lht_element)
 }

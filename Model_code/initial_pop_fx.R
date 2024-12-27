@@ -22,6 +22,7 @@ create_initialpop <- function(popsize){
                           lro=rep(0,length.out=popsize), #lifetime reproductive output
                           tlr=rep(0,length.out=popsize), #time since last reproduction
                           surv=rep(NA,length.out=popsize), #survival output
+                          #surv2=rep(NA,length.out=popsize), #survival output
                           age=c(rep(0,length.out=popsize/4),rep(10,length.out=popsize/4),rep(15,length.out=popsize/4),rep(45,length.out=popsize/4)) #age
   )
   it_indpop$mom_id[it_indpop$stage==1] <- it_indpop$id[it_indpop$stage==3]

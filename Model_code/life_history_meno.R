@@ -4,23 +4,27 @@
 #' 
 #' The age at menopause of an individual is the age at which an individual transitions from an adult or reproductive career stage into a post-reproductive stage.
 
-meno <- function(lht_list){
-  #check if there are adult individuals in the sample
-  if(sum(is.na(raw_sample[[i]][raw_sample[[i]]$stage == 4,]$stage))>=1 & nrow(raw_sample[[i]][raw_sample[[i]]$stage == 4,]) <= 1){
-    lht_list[[i]]$meno <- rep(NA,nrow(lht_list[[i]]))
-  } else {
-    age_min <- aggregate(age ~ id,
-                         data=raw_sample[[i]][raw_sample[[i]]$stage == 4,],
-                         min)
-    # Initialize asm with NA
-    lht_list[[i]]$meno <- rep(NA, nrow(lht_list[[i]]))
-    
-    # Loop over each individual in lht_list to assign minimum age or NA
-    for (j in 1:nrow(lht_list[[i]])) {
-      if (lht_list[[i]]$id[j] %in% age_min$id) {
-        lht_list[[i]]$meno[j] <- age_min$age[age_min$id == lht_list[[i]]$id[j]]
-      }
-    }
+meno <- function(lht_element, raw_sample_element) {
+  # Deduplicate lht_element by id
+  lht_element <- lht_element[!duplicated(lht_element$id), ]
+  
+  # Filter raw_sample_element for individuals in stage 4 (menopause)
+  relevant_data <- raw_sample_element[raw_sample_element$stage == 4, ]
+  
+  # Check if there are no relevant individuals
+  if (nrow(relevant_data) == 0) {
+    lht_element$meno <- NA  # No relevant individuals, set alr to NA
+    return(lht_element)
   }
-  return(lht_list[[i]])
+  
+  # Aggregate to find the minimum age for each id
+  min_age <- aggregate(age ~ id, data = relevant_data, min)
+  
+  # Initialize meno column in lht_element with NA
+  lht_element$meno <- NA
+  
+  # Match ids and assign the minimum age for menopause
+  lht_element$meno <- min_age$age[match(lht_element$id, min_age$id)]
+  
+  return(lht_element)
 }

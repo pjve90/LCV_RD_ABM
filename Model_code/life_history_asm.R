@@ -4,25 +4,28 @@
 #' 
 #' The age at sexual maturity of an individual is the age at which an individual transitions from a juvenile to an adult.
 
-asm <- function(lht_list){
-  #check if there are adult individuals in the sample
-  if(sum(is.na(raw_sample[[i]][raw_sample[[i]]$stage == 2,]$stage))>=1 & nrow(raw_sample[[i]][raw_sample[[i]]$stage == 2,]) <= 1){
-    lht_list[[i]]$asm <- rep(NA,nrow(lht_list[[i]]))
-  } else {
-    age_min <- aggregate(age ~ id,
-                         data=raw_sample[[i]][raw_sample[[i]]$stage == 2,],
-                         min)
-    # Initialize asm with NA
-    lht_list[[i]]$asm <- rep(NA, nrow(lht_list[[i]]))
-    
-    # Loop over each individual in lht_list to assign minimum age or NA
-    for (j in 1:nrow(lht_list[[i]])) {
-      if (lht_list[[i]]$id[j] %in% age_min$id) {
-        lht_list[[i]]$asm[j] <- age_min$age[age_min$id == lht_list[[i]]$id[j]]
-      }
-    }
+asm <- function(lht_element, raw_sample_element) {
+  # Deduplicate lht_element by id
+  lht_element <- lht_element[!duplicated(lht_element$id), ]
+  
+  # Filter raw_sample_element for individuals at stage 2 (sexual maturity)
+  stage_2_data <- raw_sample_element[raw_sample_element$stage == 2, ]
+  
+  # Check if there are no individuals at stage 2
+  if (nrow(stage_2_data) == 0) {
+    lht_element$asm <- NA  # No adults, set asm to NA
+    return(lht_element)
   }
-  return(lht_list[[i]])
+  
+  # Aggregate to find the minimum age at stage 2 for each id
+  min_age <- aggregate(age ~ id, data = stage_2_data, min)
+  
+  # Initialize asm column in lht_element with NA
+  lht_element$asm <- NA
+  
+  # Match ids and assign the minimum age at sexual maturity
+  lht_element$asm <- min_age$age[match(lht_element$id, min_age$id)]
+  
+  return(lht_element)
 }
-
 
