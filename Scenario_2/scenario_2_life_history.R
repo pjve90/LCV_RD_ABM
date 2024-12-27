@@ -9,9 +9,19 @@
 #R settings ----
 
 getwd()
-setwd("./LCV_RD_ABM")
+#setwd("./LCV_RD_ABM")
 
-#loading R packages
+#install packages
+#parallel package
+#install.packages("parallel")
+library(parallel)
+#doParallel
+#install.packages("doParrallel")
+library(doParallel)
+#foreach package
+#install.packages("foreach")
+library(foreach)
+#fst package
 #install.packages("fst")
 library(fst)
 
@@ -27,26 +37,25 @@ raw_sim <- list()
     
     # Check if the file exists
     if (file.exists(file_path)) {
-      # Read the .fst file and store it in the list
-      raw_sim[[paste0("r", r)]] <- read_fst(file_path)
+      # Read the .fst file
+      raw_sim <- read_fst(file_path)
+      
+      # Apply the filtering criteria
+      filtered_sample <- raw_sim[!(raw_sim$id %in% raw_sim$id[raw_sim$year < 100]), ]
+      filtered_sample <- filtered_sample[!(filtered_sample$id %in% filtered_sample$id[filtered_sample$year > 200 & filtered_sample$age == 0]), ]
+      
+      # Check if the directory exists, if not, create it
+      if (!dir.exists("./Scenario_2/samples/")) {
+        dir.create("./Scenario_2/samples/", recursive = TRUE)
+      }
+      
+      # Save each filtered sample as an .fst file
+      output_file <- sprintf("./Scenario_2/samples/raw_sample_r%d.fst", r)
+      write_fst(filtered_sample, output_file)
     } else {
       warning(sprintf("File not found: %s", file_path))
     }
   }
-
-#create empty list
-raw_sample <- vector("list", length(raw_sim))
-#loop through every simulation to get the sample
-for(i in 1:length(raw_sim)){
-  #not born before year 100
-  raw_sample[[i]] <- raw_sim[[i]][which(!(raw_sim[[i]]$id %in% raw_sim[[i]]$id[which(raw_sim[[i]]$year <100 )])),]
-  #not born after year 200
-  raw_sample[[i]] <- raw_sample[[i]][which(!(raw_sample[[i]]$id %in% raw_sample[[i]]$id[which(raw_sample[[i]]$year > 200 & raw_sample[[i]]$age == 0 )])),]
-  
-}
-#match the original names with the sample
-names(raw_sample) <- names(raw_sim)
-names(raw_sample)
 
 #Import functions to calculate life history traits ----
 
@@ -70,79 +79,88 @@ source("./Model_code/life_history_meno.R")
 
 # Calculate life history traits ----
 
-#create data set
-#create list
-lht_list <- vector("list", length(raw_sim))
-#match the original names with the list
-names(lht_list) <- names(raw_sim)
-names(lht_list)
-#create data frame within each element of the list
-for(i in 1:length(lht_list)){
-  lht_list[[i]] <- data.frame(id=levels(as.factor(raw_sample[[i]]$id)))
-}
-#check
-head(lht_list)
-
-#Longevity ----
-
-for (i in 1:length(lht_list)){
-  if (nrow(lht_list[[i]]) == 0){
-    lht_list[[i]] <- lht_list[[i]]
-  } else{
-    lht_list[[i]] <- longevity(lht_list)
+# Define the batch process function
+batch_process <- function(batch_index, input_dir, output_dir, chunk_size) {
+  # Get a chunk of files dynamically based on the batch index and chunk size
+  all_files <- list.files(input_dir, pattern = "raw_sample_r[0-9]+\\.fst$", full.names = TRUE)
+  start_idx <- (batch_index - 1) * chunk_size + 1
+  end_idx <- min(batch_index * chunk_size, length(all_files))
+  
+  # If there are no files left for this batch, return
+  if (start_idx > length(all_files)) return(NULL)
+  
+  # Loop through each file in the batch
+  for (file_path in all_files[start_idx:end_idx]) {
+    # Extract the 'd' and 'r' values from the filename using regex
+    matches <- regexpr("r([0-9]+)", basename(file_path))
+    if (matches[1] != -1) {
+      # The result of regmatches should be accessed with the `matches` object
+      match_values <- regmatches(basename(file_path), matches)
+      # Split the match_values to get d_value and r_value
+      r_value <- as.integer(sub("r([0-9]+)", "\\1", match_values))
+      
+      # Read the input file
+      raw_sample <- read_fst(file_path)
+      
+      # Skip processing if the data frame is empty
+      if (nrow(raw_sample) == 0) {
+        lht_list <- list(raw_sample)  # Use the empty raw_sample directly
+        
+        # Construct the output file path based on d and r
+        output_file <- file.path(output_dir, sprintf("lht_list_r%d.fst", r_value))
+        
+        # Save the empty lht_list as an .fst file
+        write_fst(lht_list[[1]], output_file)
+        
+        next  # Skip to the next file in the batch
+      }
+      
+      # Apply the longevity function to calculate maximum age (longevity)
+      lht_list <- list(raw_sample)
+      lht_list[[1]] <- longevity(lht_list[[1]], raw_sample)
+      lht_list[[1]] <- lifetime_reproductive_output(lht_list[[1]], raw_sample)
+      lht_list[[1]] <- asm(lht_list[[1]], raw_sample)
+      lht_list[[1]] <- afr(lht_list[[1]], raw_sample)
+      lht_list[[1]] <- alr(lht_list[[1]], raw_sample)
+      lht_list[[1]] <- meno(lht_list[[1]], raw_sample)
+      
+      # Construct the output file path based on d and r
+      output_file <- file.path(output_dir, sprintf("lht_list_r%d.fst", r_value))
+      
+      # Save the resulting lht_list as an .fst file
+      write_fst(lht_list[[1]], output_file)
+    } else {
+      warning(sprintf("File does not match expected naming convention: %s", basename(file_path)))
+    }
   }
 }
 
-#Lifetime reproductive output ----
+# Step 2: Set up parallel processing
+num_cores <- 5  # Adjust based on your system
+cl <- makeCluster(num_cores)
+registerDoParallel(cl)
 
-for (i in 1:length(lht_list)){
-  if (nrow(lht_list[[i]]) == 0){
-    lht_list[[i]] <- lht_list[[i]]
-  } else{
-    lht_list[[i]] <- lifetime_reproductive_output(lht_list)
-  }
+# Step 3: Define directories and create batches
+input_dir <- "./Scenario_2/samples/"  # Directory containing raw_sample .fst files
+output_dir <- "./Scenario_2/lht_lists/"  # Directory for lht_list .fst files
+
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir)
 }
 
-#Age at sexual maturity ----
+# Get the total number of files in the input directory
+total_files <- length(list.files(input_dir, pattern = "raw_sample_r[0-9]+\\.fst$"))
 
-for (i in 1:length(lht_list)){
-  if (nrow(lht_list[[i]]) == 0){
-    lht_list[[i]] <- lht_list[[i]]
-  } else{
-    lht_list[[i]] <- asm(lht_list)
-  }
+# Define chunk size (number of files per batch)
+chunk_size <- ceiling(total_files / num_cores)
+
+# Create a vector of batch indices
+batch_indices <- 1:num_cores
+
+# Step 4: Process batches in parallel
+foreach(batch_index = batch_indices, .packages = c("fst")) %dopar% {
+  batch_process(batch_index, input_dir, output_dir, chunk_size)
 }
 
-#Age at first reproduction ----
-
-for (i in 1:length(lht_list)){
-  if (nrow(lht_list[[i]]) == 0){
-    lht_list[[i]] <- lht_list[[i]]
-  } else{
-    lht_list[[i]] <- afr(lht_list)
-  }
-}
-
-#Age at last reproduction ----
-
-for (i in 1:length(lht_list)){
-  if (nrow(lht_list[[i]]) == 0){
-    lht_list[[i]] <- lht_list[[i]]
-  } else{
-    lht_list[[i]] <- alr(lht_list)
-  }
-}
-
-#Age at menopause ----
-
-for (i in 1:length(lht_list)){
-  if (nrow(lht_list[[i]]) == 0){
-    lht_list[[i]] <- lht_list[[i]]
-  } else{
-    lht_list[[i]] <- meno(lht_list)
-  }
-}
-
-#save the data ----
-
-saveRDS(lht_list,file="./Scenario_2/lht_list_s2.RData")
+# Step 5: Stop the parallel cluster
+stopCluster(cl)
