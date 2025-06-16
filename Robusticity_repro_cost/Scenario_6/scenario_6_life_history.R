@@ -25,7 +25,7 @@ for(d in 1:17){
 for (m in 1:19) {
   for (r in 1:10) {
     # Construct the file path
-    file_path <- sprintf("./Scenario_6/fst_results/results_d%d_m%d_r%d.fst", d, m, r)
+    file_path <- sprintf("./Robusticity_repro_cost/Scenario_6/fst_results/results_d%d_m%d_r%d.fst", d, m, r)
     
     # Check if the file exists
     if (file.exists(file_path)) {
@@ -37,12 +37,12 @@ for (m in 1:19) {
       filtered_sample <- filtered_sample[!(filtered_sample$id %in% filtered_sample$id[filtered_sample$year > 200 & filtered_sample$age == 0]), ]
       
       # Check if the directory exists, if not, create it
-      if (!dir.exists("./Scenario_6/samples/")) {
-        dir.create("./Scenario_6/samples/", recursive = TRUE)
+      if (!dir.exists("./Robusticity_repro_cost/Scenario_6/samples/")) {
+        dir.create("./Robusticity_repro_cost/Scenario_6/samples/", recursive = TRUE)
       }
       
       # Save each filtered sample as an .fst file
-      output_file <- sprintf("./Scenario_6/samples/raw_sample_d%d_m%d_r%d.fst", d, m, r)
+      output_file <- sprintf("./Robusticity_repro_cost/Scenario_6/samples/raw_sample_d%d_m%d_r%d.fst", d, m, r)
       write_fst(filtered_sample, output_file)
     } else {
       warning(sprintf("File not found: %s", file_path))
@@ -137,8 +137,8 @@ cl <- makeCluster(num_cores)
 registerDoParallel(cl)
 
 # Step 3: Define directories and create batches
-input_dir <- "./Scenario_6/samples/"  # Directory containing raw_sample .fst files
-output_dir <- "./Scenario_6/lht_lists/"  # Directory for lht_list .fst files
+input_dir <- "./Robusticity_repro_cost/Scenario_6/samples/"  # Directory containing raw_sample .fst files
+output_dir <- "./Robusticity_repro_cost/Scenario_6/lht_lists/"  # Directory for lht_list .fst files
 
 if (!dir.exists(output_dir)) {
   dir.create(output_dir)
